@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28917.181
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Helper", "GoogleAuth\Helper.csproj", "{BF4425C6-EF58-4A5C-8156-D378308D292D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GDriveProvider", "GoogleDriveUploader\GDriveProvider.csproj", "{FB03170D-E27B-4026-ABC5-4CB8C2CCFF8B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudBackuper", "CloudBackuper\CloudBackuper.csproj", "{375FC88F-3768-4CDB-8186-3C87D8AD4E6F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DropboxProvider", "DropboxProvider\DropboxProvider.csproj", "{5F68082A-9229-4301-A8D4-4D7A9B291686}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Providers", "Providers", "{F1D95C30-A4D8-4078-AAB1-9EC6AE65F68B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helper", "Helper", "{0343C56F-6BB8-4F76-8E63-C5CCAF1C8DF8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BF4425C6-EF58-4A5C-8156-D378308D292D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF4425C6-EF58-4A5C-8156-D378308D292D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF4425C6-EF58-4A5C-8156-D378308D292D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF4425C6-EF58-4A5C-8156-D378308D292D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB03170D-E27B-4026-ABC5-4CB8C2CCFF8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB03170D-E27B-4026-ABC5-4CB8C2CCFF8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB03170D-E27B-4026-ABC5-4CB8C2CCFF8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB03170D-E27B-4026-ABC5-4CB8C2CCFF8B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{375FC88F-3768-4CDB-8186-3C87D8AD4E6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{375FC88F-3768-4CDB-8186-3C87D8AD4E6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{375FC88F-3768-4CDB-8186-3C87D8AD4E6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{375FC88F-3768-4CDB-8186-3C87D8AD4E6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F68082A-9229-4301-A8D4-4D7A9B291686}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F68082A-9229-4301-A8D4-4D7A9B291686}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F68082A-9229-4301-A8D4-4D7A9B291686}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F68082A-9229-4301-A8D4-4D7A9B291686}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BF4425C6-EF58-4A5C-8156-D378308D292D} = {0343C56F-6BB8-4F76-8E63-C5CCAF1C8DF8}
+		{FB03170D-E27B-4026-ABC5-4CB8C2CCFF8B} = {F1D95C30-A4D8-4078-AAB1-9EC6AE65F68B}
+		{5F68082A-9229-4301-A8D4-4D7A9B291686} = {F1D95C30-A4D8-4078-AAB1-9EC6AE65F68B}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {04EE51AD-4728-45BE-9DE6-7B21E3118740}
+	EndGlobalSection
+EndGlobal
