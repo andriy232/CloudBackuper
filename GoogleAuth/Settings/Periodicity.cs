@@ -3,9 +3,9 @@ using System.Diagnostics;
 
 namespace Helper.Settings
 {
-    public struct PeriodicitySettings
+    public struct PeriodSettings
     {
-        public static PeriodicitySettings Empty = new PeriodicitySettings(Periodicity.None, string.Empty);
+        public static PeriodSettings Empty = new PeriodSettings(Periodicity.None, string.Empty);
 
         public enum Periodicity : byte
         {
@@ -18,7 +18,7 @@ namespace Helper.Settings
         private Periodicity Period { get; }
         private string Parameter { get; }
 
-        public PeriodicitySettings(Periodicity period, string parameter)
+        public PeriodSettings(Periodicity period, string parameter)
         {
             Period = period;
             Parameter = parameter;
@@ -29,7 +29,7 @@ namespace Helper.Settings
             return $"{Period};{Parameter}";
         }
 
-        public static PeriodicitySettings Parse(string value)
+        public static PeriodSettings Parse(string value)
         {
             if (!string.IsNullOrWhiteSpace(value))
             {
@@ -37,7 +37,7 @@ namespace Helper.Settings
                 if (parts.Length == 2)
                 {
                     if (Enum.TryParse<Periodicity>(parts[0], true, out var period))
-                        return new PeriodicitySettings(period, parts[1]);
+                        return new PeriodSettings(period, parts[1]);
                 }
             }
 

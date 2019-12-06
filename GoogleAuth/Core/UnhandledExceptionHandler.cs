@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.ExceptionServices;
 
-namespace Helper
+namespace Helper.Core
 {
     internal sealed class UnhandledExceptionHandler
     {

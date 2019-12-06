@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -6,10 +7,10 @@ using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Dropbox.Api;
-using Dropbox.Api.Common;
 using Dropbox.Api.Files;
-using Dropbox.Api.Team;
 using Helper;
+using Helper.Backups;
+using Helper.Core;
 
 namespace DropboxProvider
 {
@@ -40,68 +41,11 @@ namespace DropboxProvider
         private static extern bool SetForegroundWindow(IntPtr hWnd);
 
         // Chunk size is 128KB.
-        const int ChunkSize = 128 * 1024;
+        private const int ChunkSize = 128 * 1024;
 
-        [STAThread]
-        static int Main(string[] args)
-        {
-            var instance = new DropboxProvider();
+        private const string RemotePath = "/Backup";
 
-            var task = Task.Run(instance.Run);
-
-            task.Wait();
-
-            return task.Result;
-        }
-
-        private async Task<int> Run()
-        {
-            var accessToken = await GetConnectionSettings();
-
-            // Specify socket level timeout which decides maximum waiting time when no bytes are
-            // received by the socket.
-
-            //var httpClient = new HttpClient(new WebRequestHandler {ReadWriteTimeout = 10 * 1000})
-            var httpClient = new HttpClient
-            {
-                // Specify request level timeout which decides maximum time that can be spent on
-                // download/upload files.
-                Timeout = TimeSpan.FromMinutes(20)
-            };
-
-            try
-            {
-                var config = new DropboxClientConfig("SimpleTestApp")
-                {
-                    HttpClient = httpClient
-                };
-
-                var client = new DropboxClient(accessToken.AccessToken, config);
-                await RunUserTests(client);
-
-                // Tests below are for Dropbox Business endpoints. To run these tests, make sure the ApiKey is for
-                // a Dropbox Business app and you have an admin account to log in.
-
-                /*
-                var client = new DropboxTeamClient(accessToken, userAgent: "SimpleTeamTestApp", httpClient: httpClient);
-                await RunTeamTests(client);
-                */
-            }
-            catch (HttpException e)
-            {
-                Console.WriteLine("Exception reported from RPC layer");
-                Console.WriteLine("    Status code: {0}", e.StatusCode);
-                Console.WriteLine("    Message    : {0}", e.Message);
-                if (e.RequestUri != null)
-                {
-                    Console.WriteLine("    Request uri: {0}", e.RequestUri);
-                }
-            }
-
-            return 0;
-        }
-
-        private async Task<DropboxSettings> GetConnectionSettings()
+        private async Task<DropboxSettings> GetAuthSettings()
         {
             DropboxCertHelper.InitializeCertPinning();
 
@@ -114,54 +58,6 @@ namespace DropboxProvider
                 throw new ArgumentException(nameof(accessSettings));
 
             return accessSettings;
-        }
-
-        /// <summary>
-        /// Run tests for user-level operations.
-        /// </summary>
-        /// <param name="client">The Dropbox client.</param>
-        /// <returns>An asynchronous task.</returns>
-        private async Task RunUserTests(DropboxClient client)
-        {
-            await GetCurrentAccount(client);
-
-            var path = "/Backup";
-            var folder = await CreateFolder(client, path);
-            var list = await ListFolder(client, path);
-
-            var firstFile = list.Entries.FirstOrDefault(i => i.IsFile);
-            if (firstFile != null)
-            {
-                await Download(client, path, firstFile.AsFile);
-            }
-
-            var pathInTeamSpace = "/Test";
-            await ListFolderInTeamSpace(client, pathInTeamSpace);
-
-            await Upload(client, path, "Test.txt", "This is a text file");
-
-            await ChunkUpload(client, path, "Binary");
-        }
-
-        /// <summary>
-        /// Run tests for team-level operations.
-        /// </summary>
-        /// <param name="client">The Dropbox client.</param>
-        /// <returns>An asynchronous task.</returns>
-        private async Task RunTeamTests(DropboxTeamClient client)
-        {
-            var members = await client.Team.MembersListAsync();
-
-            var member = members.Members.FirstOrDefault();
-
-            if (member != null)
-            {
-                // A team client can perform action on a team member's behalf. To do this,
-                // just pass in team member id in to AsMember function which returns a user client.
-                // This client will operates on this team member's Dropbox.
-                var userClient = client.AsMember(member.Profile.TeamMemberId);
-                await RunUserTests(userClient);
-            }
         }
 
         /// <summary>
@@ -227,14 +123,14 @@ namespace DropboxProvider
         /// <returns>A valid access token or null.</returns>
         private async Task<DropboxSettings> Autorize()
         {
-            string ApiKey = "v8cdaioqdid2cwu";
+            var apiKey = Core.ReadLine("Please enter api key");
 
             try
             {
                 Console.WriteLine("Waiting for credentials.");
                 var state = Guid.NewGuid().ToString("N");
                 var authorizeUri =
-                    DropboxOAuth2Helper.GetAuthorizeUri(OAuthResponseType.Token, ApiKey, RedirectUri, state: state);
+                    DropboxOAuth2Helper.GetAuthorizeUri(OAuthResponseType.Token, apiKey, RedirectUri, state: state);
                 var http = new HttpListener();
                 http.Prefixes.Add(LoopbackHost);
 
@@ -277,49 +173,13 @@ namespace DropboxProvider
         }
 
         /// <summary>
-        /// Gets information about the currently authorized account.
-        /// <para>
-        /// This demonstrates calling a simple rpc style api from the Users namespace.
-        /// </para>
-        /// </summary>
-        /// <param name="client">The Dropbox client.</param>
-        /// <returns>An asynchronous task.</returns>
-        private async Task GetCurrentAccount(DropboxClient client)
-        {
-            var full = await client.Users.GetCurrentAccountAsync();
-
-            Console.WriteLine("Account id    : {0}", full.AccountId);
-            Console.WriteLine("Country       : {0}", full.Country);
-            Console.WriteLine("Email         : {0}", full.Email);
-            Console.WriteLine("Is paired     : {0}", full.IsPaired ? "Yes" : "No");
-            Console.WriteLine("Locale        : {0}", full.Locale);
-            Console.WriteLine("Name");
-            Console.WriteLine("  Display  : {0}", full.Name.DisplayName);
-            Console.WriteLine("  Familiar : {0}", full.Name.FamiliarName);
-            Console.WriteLine("  Given    : {0}", full.Name.GivenName);
-            Console.WriteLine("  Surname  : {0}", full.Name.Surname);
-            Console.WriteLine("Referral link : {0}", full.ReferralLink);
-
-            if (full.Team != null)
-            {
-                Console.WriteLine("Team");
-                Console.WriteLine("  Id   : {0}", full.Team.Id);
-                Console.WriteLine("  Name : {0}", full.Team.Name);
-            }
-            else
-            {
-                Console.WriteLine("Team - None");
-            }
-        }
-
-        /// <summary>
         /// Creates the specified folder.
         /// </summary>
         /// <remarks>This demonstrates calling an rpc style api in the Files namespace.</remarks>
         /// <param name="path">The path of the folder to create.</param>
         /// <param name="client">The Dropbox client.</param>
         /// <returns>The result from the ListFolderAsync call.</returns>
-        private async Task<FolderMetadata> CreateFolder(DropboxClient client, string path)
+        private async Task<FolderMetadata> CreateFolderAsync(DropboxClient client, string path)
         {
             var lastIndexOf = path.LastIndexOf("/", StringComparison.OrdinalIgnoreCase);
             var basePath = path.Remove(lastIndexOf, path.Length - lastIndexOf);
@@ -338,243 +198,119 @@ namespace DropboxProvider
             return folder.Metadata;
         }
 
-        /// <summary>
-        /// Lists the items within a folder inside team space. See
-        /// https://www.dropbox.com/developers/reference/namespace-guide for details about
-        /// user namespace vs team namespace.
-        /// </summary>
-        /// <param name="client">The Dropbox client.</param>
-        /// <param name="path">The path to list.</param>
-        /// <returns>The <see cref="Task"/></returns>
-        private async Task ListFolderInTeamSpace(DropboxClient client, string path)
+        public async Task<RemoteBackupsState> GetRemoteBackups()
         {
-            // Fetch root namespace info from user's account info.
-            var account = await client.Users.GetCurrentAccountAsync();
-
-            if (!account.RootInfo.IsTeam)
+            using (var client = await GetDropboxClient())
             {
-                Console.WriteLine("This user doesn't belong to a team with shared space.");
-            }
-            else
-            {
-                try
-                {
-                    // Point path root to namespace id of team space.
-                    client = client.WithPathRoot(new PathRoot.Root(account.RootInfo.RootNamespaceId));
-                    await ListFolder(client, path);
-                }
-                catch (PathRootException ex)
-                {
-                    Console.WriteLine(
-                        "The user's root namespace ID has changed to {0}",
-                        ex.ErrorResponse.AsInvalidRoot.Value);
-                }
+                return await ListFolderAsync(client, RemotePath);
             }
         }
 
-        /// <summary>
-        /// Lists the items within a folder.
-        /// </summary>
-        /// <remarks>This demonstrates calling an rpc style api in the Files namespace.</remarks>
-        /// <param name="path">The path to list.</param>
-        /// <param name="client">The Dropbox client.</param>
-        /// <returns>The result from the ListFolderAsync call.</returns>
-        private async Task<ListFolderResult> ListFolder(DropboxClient client, string path)
+        private async Task<RemoteBackupsState> ListFolderAsync(DropboxClient client, string path)
         {
-            Console.WriteLine("--- Files ---");
             var list = await client.Files.ListFolderAsync(path);
+            var files = list?.Entries?.Where(i => i.IsFile).Select(x => x.AsFile).ToList() ?? new List<FileMetadata>();
 
-            // show folders then files
-            foreach (var item in list.Entries.Where(i => i.IsFolder))
+            while (list != null && list.HasMore)
             {
-                Console.WriteLine("D  {0}/", item.Name);
+                list = await client.Files.ListFolderContinueAsync(list.Cursor);
+
+                var fileMetadatas = list.Entries.Where(i => i.IsFile).Select(x => x.AsFile);
+
+                files.AddRange(fileMetadatas);
             }
 
-            foreach (var item in list.Entries.Where(i => i.IsFile))
-            {
-                var file = item.AsFile;
-
-                Console.WriteLine("F {0,8} {1}",
-                    file.Size,
-                    item.Name);
-            }
-
-            if (list.HasMore)
-            {
-                Console.WriteLine("   ...");
-            }
-
-            return list;
+            return new RemoteBackupsState(this,
+                list?.Entries?.Select(x => (x.AsFile.Id, x.Name, x.AsFile.ClientModified)));
         }
 
-        /// <summary>
-        /// Downloads a file.
-        /// </summary>
-        /// <remarks>This demonstrates calling a download style api in the Files namespace.</remarks>
-        /// <param name="client">The Dropbox client.</param>
-        /// <param name="folder">The folder path in which the file should be found.</param>
-        /// <param name="file">The file to download within <paramref name="folder"/>.</param>
-        /// <returns></returns>
-        private async Task Download(DropboxClient client, string folder, FileMetadata file)
+        public async Task Upload(LocalBackup localBackup)
         {
-            Console.WriteLine("Download file...");
-
-            using (var response = await client.Files.DownloadAsync(folder + "/" + file.Name))
+            using (var client = await GetDropboxClient())
             {
-                Console.WriteLine("Downloaded {0} Rev {1}", response.Response.Name, response.Response.Rev);
-                Console.WriteLine("------------------------------");
-                var content = await response.GetContentAsStringAsync();
-                Console.WriteLine(content);
-                File.WriteAllText(file.Name, content);
-                Console.WriteLine("------------------------------");
-            }
-        }
+                await CreateFolderAsync(client, RemotePath);
 
-        /// <summary>
-        /// Uploads given content to a file in Dropbox.
-        /// </summary>
-        /// <param name="client">The Dropbox client.</param>
-        /// <param name="folder">The folder to upload the file.</param>
-        /// <param name="fileName">The name of the file.</param>
-        /// <param name="fileContent">The file content.</param>
-        /// <returns></returns>
-        private async Task Upload(DropboxClient client, string folder, string fileName, string fileContent)
-        {
-            Console.WriteLine("Upload file...");
-
-            using (var stream = new MemoryStream(System.Text.UTF8Encoding.UTF8.GetBytes(fileContent)))
-            {
-                var response = await client.Files.UploadAsync(folder + "/" + fileName, WriteMode.Overwrite.Instance,
-                    body: stream);
-
-                Console.WriteLine("Uploaded Id {0} Rev {1}", response.Id, response.Rev);
-            }
-        }
-
-        /// <summary>
-        /// Uploads a big file in chunk. The is very helpful for uploading large file in slow network condition
-        /// and also enable capability to track upload progerss.
-        /// </summary>
-        /// <param name="client">The Dropbox client.</param>
-        /// <param name="folder">The folder to upload the file.</param>
-        /// <param name="fileName">The name of the file.</param>
-        /// <returns></returns>
-        private async Task ChunkUpload(DropboxClient client, string folder, string fileName)
-        {
-            Console.WriteLine("Chunk upload file...");
-            // Chunk size is 128KB.
-            const int chunkSize = 128 * 1024;
-
-            // Create a random file of 1MB in size.
-            var fileContent = new byte[1024 * 1024];
-            new Random().NextBytes(fileContent);
-
-            using (var stream = new MemoryStream(fileContent))
-            {
-                int numChunks = (int) Math.Ceiling((double) stream.Length / chunkSize);
-
-                byte[] buffer = new byte[chunkSize];
-                string sessionId = null;
-
-                for (var idx = 0; idx < numChunks; idx++)
-                {
-                    Console.WriteLine("Start uploading chunk {0}", idx);
-                    var byteRead = stream.Read(buffer, 0, chunkSize);
-
-                    using (MemoryStream memStream = new MemoryStream(buffer, 0, byteRead))
-                    {
-                        if (idx == 0)
-                        {
-                            var result = await client.Files.UploadSessionStartAsync(body: memStream);
-                            sessionId = result.SessionId;
-                        }
-
-                        else
-                        {
-                            UploadSessionCursor cursor = new UploadSessionCursor(sessionId, (ulong) (chunkSize * idx));
-
-                            if (idx == numChunks - 1)
-                            {
-                                await client.Files.UploadSessionFinishAsync(cursor,
-                                    new CommitInfo(folder + "/" + fileName), memStream);
-                            }
-
-                            else
-                            {
-                                await client.Files.UploadSessionAppendV2Async(cursor, body: memStream);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// List all members in the team.
-        /// </summary>
-        /// <param name="client">The Dropbox team client.</param>
-        /// <returns>The result from the MembersListAsync call.</returns>
-        private async Task<MembersListResult> ListTeamMembers(DropboxTeamClient client)
-        {
-            var members = await client.Team.MembersListAsync();
-
-            foreach (var member in members.Members)
-            {
-                Console.WriteLine("Member id    : {0}", member.Profile.TeamMemberId);
-                Console.WriteLine("Name         : {0}", member.Profile.Name);
-                Console.WriteLine("Email        : {0}", member.Profile.Email);
-            }
-
-            return members;
-        }
-
-        public Task<BackupState> GetExistingBackups()
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task Upload(Backup backup)
-        {
-            var accessToken = await GetConnectionSettings();
-            var httpClient = new HttpClient
-            {
-                Timeout = TimeSpan.FromMinutes(20)
-            };
-
-            try
-            {
-                var config = new DropboxClientConfig("SimpleTestApp")
-                {
-                    HttpClient = httpClient
-                };
-
-                var client = new DropboxClient(accessToken.AccessToken, config);
-                var path = "/Backup";
-                var folder = await CreateFolder(client, path);
-
-                var size = FileSystem.GetFileSize(backup.ResultPath);
+                var size = FileSystem.GetFileSize(localBackup.ResultPath);
                 if (size > ChunkSize)
                 {
-                    await UploadChunked(client, path, backup.ResultPath);
+                    await UploadChunkedAsync(client, RemotePath, localBackup.ResultPath);
                 }
                 else
                 {
-                    await Upload(client, path, backup.ResultPath);
-                }
-            }
-            catch (HttpException e)
-            {
-                Console.WriteLine("Exception reported from RPC layer");
-                Console.WriteLine("    Status code: {0}", e.StatusCode);
-                Console.WriteLine("    Message    : {0}", e.Message);
-                if (e.RequestUri != null)
-                {
-                    Console.WriteLine("    Request uri: {0}", e.RequestUri);
+                    await UploadAsync(client, RemotePath, localBackup.ResultPath);
                 }
             }
         }
 
-        private async Task UploadChunked(DropboxClient client, string folder, string fileName)
+        public async Task DownloadAsync(RemoteBackupsState.RemoteBackup backup, string outputPath)
+        {
+            using (var client = await GetDropboxClient())
+            {
+                var list = await client.Files.ListFolderAsync(RemotePath);
+
+                var file = list.Entries.Select(x => x.AsFile)
+                    .Where(x => x != null)
+                    .FirstOrDefault(x => x.AsFile.Id == backup.UniqueId);
+
+                if (file != null)
+                    await DownloadToFileAsync(client, RemotePath, file, outputPath);
+                else
+                    Core.WriteLine("Remote file not found");
+            }
+        }
+
+        private async Task DownloadToFileAsync(DropboxClient client, string folder, FileMetadata fileMetadata,
+            string outputPath)
+        {
+            using (var response = await client.Files.DownloadAsync($"{folder}/{fileMetadata.Name}"))
+            {
+                Console.WriteLine($"Downloaded {response.Response.Name} Rev {response.Response.Rev}");
+
+                var content = await response.GetContentAsStringAsync();
+                try
+                {
+                    File.WriteAllText(outputPath, content);
+                }
+                catch (Exception ex)
+                {
+                    Core.WriteLine(ex);
+                }
+            }
+        }
+
+        public async Task DeleteAsync(RemoteBackupsState.RemoteBackup backup)
+        {
+            using (var client = await GetDropboxClient())
+            {
+                var list = await client.Files.ListFolderAsync(RemotePath);
+
+                var fileMetadata = list.Entries.Select(x => x.AsFile)
+                    .Where(x => x != null)
+                    .FirstOrDefault(x => x.AsFile.Id == backup.UniqueId);
+
+                if (fileMetadata != null)
+                    await client.Files.DeleteV2Async($"{RemotePath}/{fileMetadata.Name}");
+                else
+                    Core.WriteLine("Remote file not found");
+            }
+        }
+
+        private async Task<DropboxClient> GetDropboxClient()
+        {
+            var accessToken = await GetAuthSettings();
+
+            var config = new DropboxClientConfig(Name)
+            {
+                HttpClient = new HttpClient
+                {
+                    Timeout = TimeSpan.FromMinutes(20)
+                }
+            };
+
+            return new DropboxClient(accessToken.AccessToken, config);
+        }
+
+        private async Task UploadChunkedAsync(DropboxClient client, string folder, string fileName)
         {
             var content = File.ReadAllBytes(fileName);
 
@@ -616,7 +352,7 @@ namespace DropboxProvider
             }
         }
 
-        private async Task Upload(DropboxClient client, string folder, string fileName)
+        private async Task UploadAsync(DropboxClient client, string folder, string fileName)
         {
             var fileContent = File.ReadAllBytes(fileName);
             var resultPath = $"{folder}/{Path.GetFileName(fileName)}";
@@ -631,9 +367,9 @@ namespace DropboxProvider
             }
         }
 
-        public object GetValues()
+        public object GetConnectionValues()
         {
-            var task = Task.Run(GetConnectionSettings);
+            var task = Task.Run(GetAuthSettings);
 
             task.Wait();
 

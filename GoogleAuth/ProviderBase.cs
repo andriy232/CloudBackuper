@@ -5,14 +5,14 @@ namespace Helper
 {
     public abstract class ProviderBase<T> where T : SettingsBase
     {
-        protected T GetSettings(Guid id)
+        public T GetSettings(Guid id)
         {
-            return Core.Database.ReadSettings<T>(id);
+            return Core.Core.Database.ReadSettings<T>(id);
         }
 
         protected void SaveSettings(Guid id, T settings)
         {
-            Core.Database.SaveSettings(id, settings);
+            Core.Core.Database.SaveSettings(id, settings);
         }
     }
 }

@@ -2,16 +2,17 @@
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using Helper.Core;
 
-namespace Helper
+namespace Helper.Backups
 {
-    public class Backup : IDisposable
+    public class LocalBackup : IDisposable
     {
         public string ResultPath { get; private set; }
 
         private string _tempDir;
 
-        public Backup(string path, string backupFileName)
+        public LocalBackup(string path, string backupFileName)
         {
             CreateZip(path, backupFileName);
         }
@@ -49,7 +50,8 @@ namespace Helper
                 var entryName = Path.GetFileName(sourcePath);
                 var destinationPath = Path.Combine(_tempDir, entryName);
 
-                Core.WriteLine($"Copying data to temp: {destinationPath}");
+                Core.Core.WriteLine($"Copying data to temp: {destinationPath}");
+                Directory.CreateDirectory(destinationPath);
 
                 if (FileSystem.IsDirectory(sourcePath))
                 {
@@ -60,9 +62,9 @@ namespace Helper
                     FileSystem.CopyFile(sourcePath, destinationPath);
                 }
 
-                var zipName = $"{backupFileName}_{DateTime.Today:dd-MM-yyyy}.zip";
+                var zipName = $"{backupFileName}_{DateTime.Today:dd-MM-yyyy}_{DateTime.Now:HH-mm-ss}.zip";
                 ResultPath = Path.Combine(_tempDir, zipName);
-                Core.WriteLine($"Creating archive: {ResultPath}");
+                Core.Core.WriteLine($"Creating archive: {ResultPath}");
 
                 using (var archive = ZipFile.Open(ResultPath, ZipArchiveMode.Create))
                 {
@@ -83,12 +85,12 @@ namespace Helper
                     }
                 }
 
-                Core.WriteLine($"Data archived: {ResultPath}");
+                Core.Core.WriteLine($"Data archived: {ResultPath}");
             }
             catch (Exception ex)
             {
                 ClearTemp();
-                Core.WriteLine(ex);
+                Core.Core.WriteLine(ex);
             }
         }
 
@@ -106,7 +108,7 @@ namespace Helper
             }
             catch (Exception ex)
             {
-                Core.WriteLine(ex);
+                Core.Core.WriteLine(ex);
             }
         }
     }

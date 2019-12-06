@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 using Helper.Settings;
 using Serilog;
 
-namespace Helper
+namespace Helper.Core
 {
     public static class Core
     {
@@ -113,16 +113,23 @@ namespace Helper
             CurrentLog = Log.Logger;
         }
 
-        public static void InitAppFolder()
+        private static void InitAppFolder()
+        {
+            var path = GetAppDataPath();
+
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            _appFolder = path;
+        }
+
+        public static string GetAppDataPath()
         {
             var exeName = GetExeName();
             var path = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 exeName);
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-
-            _appFolder = path;
+            return path;
         }
 
         private static string GetExeName()
@@ -138,10 +145,6 @@ namespace Helper
         public static void WriteLine(Exception ex)
         {
             Log.Debug(ex, "Error");
-        }
-
-        public static void AddScript(Script script)
-        {
         }
 
         public static void StartProcess(string uri)
@@ -163,11 +166,50 @@ namespace Helper
             }
         }
 
-        public static void AddScript(IConnection connection, string targetPath, PeriodicitySettings periodicity)
+        public static Script AddScript(IConnection connection, string targetPath, PeriodSettings period)
         {
-            var script = new Script(connection, targetPath, periodicity);
+            var script = new Script(0, connection, targetPath, period);
             Database.SaveScript(script);
             scripts.Add(script);
+            return script;
+        }
+
+        public static IConnection AddConnection(string name, IProvider provider, object connectionSettings)
+        {
+            var connection = new Connection(0, name, provider, connectionSettings);
+
+            var exists = connections.FirstOrDefault(x => x.Equals(connection));
+            if (exists != null)
+                return exists;
+
+            Database.SaveConnection(connection);
+            connections.Add(connection);
+            return connection;
+        }
+
+        public static void RemoveScript(Script script)
+        {
+            Database.RemoveScript(script);
+            scripts.Remove(script);
+        }
+
+        public static void RemoveConnection(IConnection connection)
+        {
+            Database.RemoveConnection(connection);
+            connections.Remove(connection);
+        }
+
+        public static string ReadLine(string message, Func<string, bool> validationFunc = null)
+        {
+            string input = null;
+
+            while (string.IsNullOrWhiteSpace(input) || validationFunc != null && !validationFunc(input))
+            {
+                Console.WriteLine(message);
+                input = Console.ReadLine();
+            }
+
+            return input;
         }
     }
 }

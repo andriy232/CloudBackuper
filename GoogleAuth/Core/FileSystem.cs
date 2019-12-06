@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace Helper
+namespace Helper.Core
 {
     public class FileSystem
     {
@@ -72,6 +72,12 @@ namespace Helper
         public static long GetFileSize(string file)
         {
             return new FileInfo(file).Length;
+        }
+
+        public static bool FileExists(string filePath)
+        {
+            return !string.IsNullOrWhiteSpace(filePath) &&
+                   (Path.HasExtension(filePath) && File.Exists(filePath)) || Directory.Exists(filePath);
         }
     }
 }

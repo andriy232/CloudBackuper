@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Helper;
+using Helper.Backups;
+using Helper.Core;
 using Helper.Settings;
 
 namespace CloudBackuper
@@ -28,57 +30,80 @@ namespace CloudBackuper
 
         private async Task Go()
         {
+            RemoteBackupsState remoteBackupsState = null;
+
             foreach (var provider in Core.Providers)
             {
-                Core.WriteLine($"Provider: {provider.Id} - {provider.Name}");
+                Core.WriteLine($"Available provider: {provider}");
             }
 
-            foreach (var provider in Core.Connections)
+            foreach (var connection in Core.Connections)
             {
-                Core.WriteLine($"Connection: {provider}");
+                remoteBackupsState = await connection.GetRemoteBackups();
+                Core.WriteLine($"{connection}, {remoteBackupsState}");
             }
 
             foreach (var script in Core.Scripts)
             {
-                Core.WriteLine($"Script: {script}");
+                Core.WriteLine(script.ToString());
             }
 
             IConnection dropboxConnection;
             IConnection driveConnection;
 
-            if (!Core.Connections.Any())
+            if (true)
             {
-                //          var drive = Core.Providers.First(x => x.Name.Contains("drive", StringComparison.OrdinalIgnoreCase));
-                //          var driveValues = drive.GetValues();
-                //
-                //          driveConnection = Core.Database.AddConnection(
-                //              "Google Drive",
-                //              drive,
-                //              driveValues);
+                var drive = Core.Providers.First(x => x.Name.Contains("drive", StringComparison.OrdinalIgnoreCase));
+                var driveValues = drive.GetConnectionValues();
+
+                driveConnection = Core.AddConnection(
+                    "Google Drive",
+                    drive,
+                    driveValues);
 
                 var dropbox = Core.Providers.First(x => x.Name.Contains("dropbox", StringComparison.OrdinalIgnoreCase));
-                var dropboxValues = dropbox.GetValues();
+                var dropboxValues = dropbox.GetConnectionValues();
 
-                dropboxConnection = Core.Database.SaveConnection(
+                dropboxConnection = Core.AddConnection(
                     "Dropbox",
                     dropbox,
                     dropboxValues);
             }
             else
             {
-                //           driveConnection =
-                //              Core.Connections.First(x => x.Provider.Name.Contains("drive", StringComparison.OrdinalIgnoreCase));
+                driveConnection =
+                    Core.Connections.First(x => x.Provider.Name.Contains("drive", StringComparison.OrdinalIgnoreCase));
                 dropboxConnection =
                     Core.Connections.First(x =>
                         x.Provider.Name.Contains("dropbox", StringComparison.OrdinalIgnoreCase));
             }
 
-            //    Core.AddScript(new Script(driveConnection, "%userprofile%\\Desktop\\temp.db", Periodicity.DateTime));
-            Core.AddScript(dropboxConnection, "%userprofile%\\Desktop\\temp.db", PeriodicitySettings.Empty);
+            if (false)
+            {
+                Core.AddScript(driveConnection, "%userprofile%\\Documents\\AgenaTraderData", PeriodSettings.Empty);
+                Core.AddScript(dropboxConnection, "%userprofile%\\Documents\\AgenaTraderData", PeriodSettings.Empty);
+            }
 
             foreach (var script in Core.Scripts)
             {
-                await script.Perform();
+                await script.PerformAsync();
+            }
+
+            if (false)
+            {
+                var backup = remoteBackupsState.Backups[0];
+
+                await remoteBackupsState.Provider.DownloadAsync(backup,
+                    System.IO.Path.Combine("%userprofile%\\Desktop\\Results", backup.BackupName));
+
+                await remoteBackupsState.Provider.DeleteAsync(backup);
+
+                Core.RemoveScript(Core.Scripts.First());
+
+                var script = Core.AddScript(Core.Connections.First(), "%userprofile%\\Desktop\\Results",
+                    PeriodSettings.Empty);
+
+                await script.PerformAsync();
             }
         }
     }
