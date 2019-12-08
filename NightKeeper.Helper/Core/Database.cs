@@ -4,10 +4,10 @@ using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Helper.Settings;
 using Newtonsoft.Json;
+using NightKeeper.Helper.Settings;
 
-namespace Helper.Core
+namespace NightKeeper.Helper.Core
 {
     public class Database
     {

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Helper;
-using Helper.Backups;
-using Helper.Core;
-using Helper.Settings;
+using NightKeeper.Helper;
+using NightKeeper.Helper.Backups;
+using NightKeeper.Helper.Core;
+using NightKeeper.Helper.Settings;
 
-namespace CloudBackuper
+namespace NightKeeper.ConsoleClient
 {
     internal class Program
     {

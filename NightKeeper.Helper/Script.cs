@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Helper.Backups;
-using Helper.Settings;
+using NightKeeper.Helper.Backups;
+using NightKeeper.Helper.Settings;
 
-namespace Helper
+namespace NightKeeper.Helper
 {
     public class Script
     {

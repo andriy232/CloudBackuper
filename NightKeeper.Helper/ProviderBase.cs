@@ -1,7 +1,7 @@
 ﻿using System;
-using Helper.Settings;
+using NightKeeper.Helper.Settings;
 
-namespace Helper
+namespace NightKeeper.Helper
 {
     public abstract class ProviderBase<T> where T : SettingsBase
     {

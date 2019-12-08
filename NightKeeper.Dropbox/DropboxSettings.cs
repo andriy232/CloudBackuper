@@ -1,6 +1,6 @@
-﻿using Helper.Settings;
+﻿using NightKeeper.Helper.Settings;
 
-namespace DropboxProvider
+namespace NightKeeper.Dropbox
 {
     public class DropboxSettings : SettingsBase
     {

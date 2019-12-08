@@ -1,6 +1,6 @@
-﻿using Helper.Settings;
+﻿using NightKeeper.Helper.Settings;
 
-namespace GDriveProvider
+namespace NightKeeper.GoogleDrive
 {
     public class GoogleDriveSettings : SettingsBase
     {

@@ -3,23 +3,18 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
-using Helper;
-using Helper.Backups;
-using Helper.Core;
-using Newtonsoft.Json;
+using NightKeeper.Helper;
+using NightKeeper.Helper.Backups;
+using NightKeeper.Helper.Core;
 using File = Google.Apis.Drive.v3.Data.File;
 
-namespace GDriveProvider
+namespace NightKeeper.GoogleDrive
 {
     public class GoogleDriveWrapper : ProviderBase<GoogleDriveSettings>, IProvider
     {

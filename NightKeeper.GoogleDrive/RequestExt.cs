@@ -1,6 +1,6 @@
 ﻿using Google.Apis.Drive.v3;
 
-namespace GDriveProvider
+namespace NightKeeper.GoogleDrive
 {
     public static class RequestExt
     {

@@ -8,11 +8,11 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Dropbox.Api;
 using Dropbox.Api.Files;
-using Helper;
-using Helper.Backups;
-using Helper.Core;
+using NightKeeper.Helper;
+using NightKeeper.Helper.Backups;
+using NightKeeper.Helper.Core;
 
-namespace DropboxProvider
+namespace NightKeeper.Dropbox
 {
     public class DropboxProvider : ProviderBase<DropboxSettings>, IProvider
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace Helper.Core
+namespace NightKeeper.Helper.Core
 {
     public class FileSystem
     {

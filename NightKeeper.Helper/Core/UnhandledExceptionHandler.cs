@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.ExceptionServices;
 
-namespace Helper.Core
+namespace NightKeeper.Helper.Core
 {
     internal sealed class UnhandledExceptionHandler
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace Helper.Settings
+namespace NightKeeper.Helper.Settings
 {
     public struct PeriodSettings
     {

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Helper.Settings
+namespace NightKeeper.Helper.Settings
 {
     public class SettingsBase
     {

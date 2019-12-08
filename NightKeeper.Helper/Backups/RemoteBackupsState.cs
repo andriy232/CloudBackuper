@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Helper.Backups
+namespace NightKeeper.Helper.Backups
 {
     public class RemoteBackupsState
     {

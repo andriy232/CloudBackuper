@@ -5,10 +5,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Helper.Settings;
+using NightKeeper.Helper.Settings;
 using Serilog;
 
-namespace Helper.Core
+namespace NightKeeper.Helper.Core
 {
     public static class Core
     {

@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
-using Helper.Core;
+using NightKeeper.Helper.Core;
 
-namespace Helper.Backups
+namespace NightKeeper.Helper.Backups
 {
     public class LocalBackup : IDisposable
     {

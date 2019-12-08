@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Helper.Backups;
+using NightKeeper.Helper.Backups;
 
-namespace Helper
+namespace NightKeeper.Helper
 {
     public interface IProvider
     {
