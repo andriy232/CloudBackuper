@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GoogleAuth\Helper.csproj" />
+    <ProjectReference Include="..\Helper\NightKeeper.Helper.csproj" />
   </ItemGroup>
 
   <ItemGroup>
