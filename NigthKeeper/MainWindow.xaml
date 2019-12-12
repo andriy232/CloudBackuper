@@ -4,9 +4,57 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NigthKeeper"
+        xmlns:col="clr-namespace:System.Collections;assembly=mscorlib"
+        xmlns:helper="clr-namespace:NightKeeper.Helper;assembly=NightKeeper.Helper"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
+        <Grid Name="splitterGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="25*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="75*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <GridSplitter Grid.Column="1" Grid.Row="0" ShowsPreview="False" Width="3"
+                          HorizontalAlignment="Center" VerticalAlignment="Stretch" />
+            <GridSplitter Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="0" Height="3"
+                          HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+            <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Background="Coral">
+                <TextBlock>Connections</TextBlock>
+                <ListView Name="lvConnections" />
+            </StackPanel>
+            <StackPanel Grid.Column="2" Grid.Row="0" Background="LightGreen">
+                <TextBlock>Scripts</TextBlock>
+                <ListView Name="lvScripts" />
+            </StackPanel>
+            <StackPanel Grid.Column="2" Grid.Row="2" Background="#dfffff">
+                <TextBlock Text="Output" TextWrapping="Wrap" />
+                <ListView Name="lvPhones"  ItemsSource="{DynamicResource ResourceKey=phones}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=Title}">Model</GridViewColumn>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=Company}" Width="100">Company</GridViewColumn>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=Price}">Price</GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                    <ListView.Resources>
+                        <col:ArrayList x:Key="phones">
+                            <helper:Phone Title="iPhone 6S" Company="Apple" Price="54990" />
+                            <helper:Phone Title="Lumia 950" Company="Microsoft" Price="39990" />
+                            <helper:Phone Title="Nexus 5X" Company="Google" Price="29990" />
+                            <helper:Phone Title="Galaxy Edge" Company="Samsung" Price="45670" />
+                        </col:ArrayList>
+                    </ListView.Resources>
+                </ListView>
+            </StackPanel>
+
+
+        </Grid>
 
     </Grid>
 </Window>

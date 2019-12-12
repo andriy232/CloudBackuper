@@ -10,6 +10,8 @@ namespace NightKeeper.Helper
 
         string Name { get; }
 
+        byte[] Logo { get; }
+
         object GetConnectionValues();
 
         Task<RemoteBackupsState> GetRemoteBackups();
@@ -20,4 +22,17 @@ namespace NightKeeper.Helper
 
         Task DeleteAsync(RemoteBackupsState.RemoteBackup backup);
     }
+
+    public class Phone
+    {
+        public string Title { get; set; }
+        public string Company { get; set; }
+        public int Price { get; set; }
+
+        public override string ToString()
+        {
+            return $"Phone: {this.Title}; price: {this.Price}";
+        }
+    }
+
 }

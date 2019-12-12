@@ -9,6 +9,7 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
+using NightKeeper.GoogleDrive.Properties;
 using NightKeeper.Helper;
 using NightKeeper.Helper.Backups;
 using NightKeeper.Helper.Core;
@@ -18,10 +19,13 @@ namespace NightKeeper.GoogleDrive
 {
     public class GoogleDriveWrapper : ProviderBase<GoogleDriveSettings>, IProvider
     {
-        private static readonly string TargetScope = DriveService.Scope.Drive;
         public Guid Id => Guid.Parse("{3D8C2F96-32C3-44B0-8B4B-7DD4DE3D3AE6}");
+
         public string Name => "GDriveProvider";
 
+        public byte[] Logo => Resources.Img_GoogleDrive;
+
+        private static readonly string TargetScope = DriveService.Scope.Drive;
         private const int EntriesPerPage = 100;
 
         private async Task Upload(DriveService service, string zipPath)

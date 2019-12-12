@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Dropbox.Api;
 using Dropbox.Api.Files;
+using NightKeeper.Dropbox.Properties;
 using NightKeeper.Helper;
 using NightKeeper.Helper.Backups;
 using NightKeeper.Helper.Core;
@@ -17,8 +18,11 @@ namespace NightKeeper.Dropbox
     public class DropboxProvider : ProviderBase<DropboxSettings>, IProvider
     {
         public string Name => "Dropbox";
-        public Guid Id => Guid.Parse("{D799FFF5-CACC-4E02-ACFD-ED2275F3BE56}");
 
+        public byte[] Logo => Resources.Img_Dropbox;
+
+        public Guid Id => Guid.Parse("{D799FFF5-CACC-4E02-ACFD-ED2275F3BE56}");
+        
         // Add an ApiKey (from https://www.dropbox.com/developers/apps) here
         // private const string ApiKey = "XXXXXXXXXXXXXXX";
 
@@ -50,7 +54,7 @@ namespace NightKeeper.Dropbox
             DropboxCertHelper.InitializeCertPinning();
 
             var accessSettings = GetSettings(Id);
-
+            
             if (string.IsNullOrEmpty(accessSettings?.AccessToken))
                 accessSettings = await Autorize();
 
