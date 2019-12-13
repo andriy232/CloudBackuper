@@ -4,11 +4,18 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NigthKeeper"
-        xmlns:col="clr-namespace:System.Collections;assembly=mscorlib"
         xmlns:helper="clr-namespace:NightKeeper.Helper;assembly=NightKeeper.Helper"
+        xmlns:collections="clr-namespace:System.Collections;assembly=System.Runtime.Extensions"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <Window.Resources>
+        <collections:ArrayList x:Key="log">
+            <helper:LogEntry Time="" Source="Source sample" Type="Info" Message="Log message sample" />
+        </collections:ArrayList>
+        <local:StarWidthConverter x:Key="starWidthConverter" />
+    </Window.Resources>
+
+    <Grid Loaded="OnRootGridLoaded">
         <Grid Name="splitterGrid">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="25*" />
@@ -32,29 +39,22 @@
                 <TextBlock>Scripts</TextBlock>
                 <ListView Name="lvScripts" />
             </StackPanel>
-            <StackPanel Grid.Column="2" Grid.Row="2" Background="#dfffff">
-                <TextBlock Text="Output" TextWrapping="Wrap" />
-                <ListView Name="lvPhones"  ItemsSource="{DynamicResource ResourceKey=phones}">
+            <DockPanel Grid.Column="2" Grid.Row="2" Background="#dfffff">
+                <TextBlock DockPanel.Dock="Top" Height="25" Margin="5" FontSize="18" Text="Output" TextWrapping="Wrap" />
+                <ListView Name="lvLogOutput"  ItemsSource="{DynamicResource ResourceKey=log}">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=Title}">Model</GridViewColumn>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=Company}" Width="100">Company</GridViewColumn>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=Price}">Price</GridViewColumn>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=Time}" Width="130">Time</GridViewColumn>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=Type}" Width="40">Type</GridViewColumn>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=Source}" Width="130">Source</GridViewColumn>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=Message}"
+                                            Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}, Converter={StaticResource ResourceKey=starWidthConverter}}">
+                                Message
+                            </GridViewColumn>
                         </GridView>
                     </ListView.View>
-                    <ListView.Resources>
-                        <col:ArrayList x:Key="phones">
-                            <helper:Phone Title="iPhone 6S" Company="Apple" Price="54990" />
-                            <helper:Phone Title="Lumia 950" Company="Microsoft" Price="39990" />
-                            <helper:Phone Title="Nexus 5X" Company="Google" Price="29990" />
-                            <helper:Phone Title="Galaxy Edge" Company="Samsung" Price="45670" />
-                        </col:ArrayList>
-                    </ListView.Resources>
                 </ListView>
-            </StackPanel>
-
-
+            </DockPanel>
         </Grid>
-
     </Grid>
 </Window>

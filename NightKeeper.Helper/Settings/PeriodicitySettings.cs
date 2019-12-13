@@ -3,22 +3,14 @@ using System.Diagnostics;
 
 namespace NightKeeper.Helper.Settings
 {
-    public struct PeriodSettings
+    public struct PeriodicitySettings
     {
-        public static PeriodSettings Empty = new PeriodSettings(Periodicity.None, string.Empty);
+        public static PeriodicitySettings Empty = new PeriodicitySettings(Period.None, string.Empty);
 
-        public enum Periodicity : byte
-        {
-            Every,
-            DateTime,
-            TimeSpan,
-            None
-        }
-
-        private Periodicity Period { get; }
+        private Period Period { get; }
         private string Parameter { get; }
-
-        public PeriodSettings(Periodicity period, string parameter)
+        
+        public PeriodicitySettings(Period period, string parameter)
         {
             Period = period;
             Parameter = parameter;
@@ -29,15 +21,15 @@ namespace NightKeeper.Helper.Settings
             return $"{Period};{Parameter}";
         }
 
-        public static PeriodSettings Parse(string value)
+        public static PeriodicitySettings Parse(string value)
         {
             if (!string.IsNullOrWhiteSpace(value))
             {
                 var parts = value.Split(';');
                 if (parts.Length == 2)
                 {
-                    if (Enum.TryParse<Periodicity>(parts[0], true, out var period))
-                        return new PeriodSettings(period, parts[1]);
+                    if (Enum.TryParse<Period>(parts[0], true, out var period))
+                        return new PeriodicitySettings(period, parts[1]);
                 }
             }
 

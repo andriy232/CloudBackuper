@@ -10,14 +10,17 @@ namespace NightKeeper.Helper.Backups
     {
         public string ResultPath { get; private set; }
 
+        private readonly Core.Core _core;
         private string _tempDir;
 
         public LocalBackup(string path, string backupFileName)
         {
+            _core = Core.Core.GetInstance();
+
             CreateZip(path, backupFileName);
         }
 
-        public void CreateZip(string targetPath, string backupFileName)
+        private void CreateZip(string targetPath, string backupFileName)
         {
             void CreateArchiveEntry(FileInfo fileInfo, string destinationPath, ZipArchive archive)
             {
@@ -50,7 +53,7 @@ namespace NightKeeper.Helper.Backups
                 var entryName = Path.GetFileName(sourcePath);
                 var destinationPath = Path.Combine(_tempDir, entryName);
 
-                Core.Core.WriteLine($"Copying data to temp: {destinationPath}");
+                _core.Log($"Copying data to temp: {destinationPath}");
                 Directory.CreateDirectory(destinationPath);
 
                 if (FileSystem.IsDirectory(sourcePath))
@@ -64,7 +67,7 @@ namespace NightKeeper.Helper.Backups
 
                 var zipName = $"{backupFileName}_{DateTime.Today:dd-MM-yyyy}_{DateTime.Now:HH-mm-ss}.zip";
                 ResultPath = Path.Combine(_tempDir, zipName);
-                Core.Core.WriteLine($"Creating archive: {ResultPath}");
+                _core.Log($"Creating archive: {ResultPath}");
 
                 using (var archive = ZipFile.Open(ResultPath, ZipArchiveMode.Create))
                 {
@@ -85,12 +88,12 @@ namespace NightKeeper.Helper.Backups
                     }
                 }
 
-                Core.Core.WriteLine($"Data archived: {ResultPath}");
+                _core.Log($"Data archived: {ResultPath}");
             }
             catch (Exception ex)
             {
                 ClearTemp();
-                Core.Core.WriteLine(ex);
+                _core.Log(ex);
             }
         }
 
@@ -108,7 +111,7 @@ namespace NightKeeper.Helper.Backups
             }
             catch (Exception ex)
             {
-                Core.Core.WriteLine(ex);
+                _core.Log(ex);
             }
         }
     }

@@ -5,8 +5,11 @@ namespace NightKeeper.Helper.Core
 {
     internal sealed class UnhandledExceptionHandler
     {
-        public void Init()
+        private Core _core;
+
+        public void Init(Core core)
         {
+            _core = core;
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
             AppDomain.CurrentDomain.FirstChanceException += OnFirstChanceException;
         }
@@ -39,7 +42,7 @@ namespace NightKeeper.Helper.Core
 
         private void HandleException(Exception e)
         {
-            Core.WriteLine(e);
+            _core.Log(e);
         }
     }
 }

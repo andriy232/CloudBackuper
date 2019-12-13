@@ -7,7 +7,7 @@ namespace NightKeeper.Helper
 {
     public class Script
     {
-        public PeriodSettings Period { get; }
+        public PeriodicitySettings Period { get; }
         public IConnection Connection { get; }
         public string TargetPath { get; }
 
@@ -18,7 +18,7 @@ namespace NightKeeper.Helper
         public Script(int id,
             IConnection connection,
             string targetPath,
-            PeriodSettings period,
+            PeriodicitySettings period,
             string backupFileName = "Backup",
             string name = "Sample script")
         {

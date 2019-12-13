@@ -14,38 +14,38 @@ namespace NightKeeper.ConsoleClient
         {
             try
             {
-                Core.Load();
-
                 new Program().Go().GetAwaiter().GetResult();
 
-                Core.WriteLine("Program returned 0");
+                Core.GetInstance().Log("Program returned 0");
             }
             catch (Exception ex)
             {
-                Core.WriteLine(ex);
-                Core.WriteLine("Program returned -1");
+                Core.GetInstance().Log(ex);
+                Core.GetInstance().Log("Program returned -1");
                 Console.ReadLine();
             }
         }
 
         private async Task Go()
         {
+            var core = Core.GetInstance();
+
             RemoteBackupsState remoteBackupsState = null;
 
-            foreach (var provider in Core.Providers)
+            foreach (var provider in core.Providers)
             {
-                Core.WriteLine($"Available provider: {provider}");
+                core.Log($"Available provider: {provider}");
             }
 
-            foreach (var connection in Core.Connections)
+            foreach (var connection in core.Connections)
             {
                 remoteBackupsState = await connection.GetRemoteBackups();
-                Core.WriteLine($"{connection}, {remoteBackupsState}");
+                core.Log($"{connection}, {remoteBackupsState}");
             }
 
-            foreach (var script in Core.Scripts)
+            foreach (var script in core.Scripts)
             {
-                Core.WriteLine(script.ToString());
+                core.Log(script.ToString());
             }
 
             IConnection dropboxConnection;
@@ -53,18 +53,18 @@ namespace NightKeeper.ConsoleClient
 
             if (true)
             {
-                var drive = Core.Providers.First(x => x.Name.Contains("drive", StringComparison.OrdinalIgnoreCase));
+                var drive = core.Providers.First(x => x.Name.Contains("drive", StringComparison.OrdinalIgnoreCase));
                 var driveValues = drive.GetConnectionValues();
 
-                driveConnection = Core.AddConnection(
+                driveConnection = core.AddConnection(
                     "Google Drive",
                     drive,
                     driveValues);
 
-                var dropbox = Core.Providers.First(x => x.Name.Contains("dropbox", StringComparison.OrdinalIgnoreCase));
+                var dropbox = core.Providers.First(x => x.Name.Contains("dropbox", StringComparison.OrdinalIgnoreCase));
                 var dropboxValues = dropbox.GetConnectionValues();
 
-                dropboxConnection = Core.AddConnection(
+                dropboxConnection = core.AddConnection(
                     "Dropbox",
                     dropbox,
                     dropboxValues);
@@ -72,19 +72,19 @@ namespace NightKeeper.ConsoleClient
             else
             {
                 driveConnection =
-                    Core.Connections.First(x => x.Provider.Name.Contains("drive", StringComparison.OrdinalIgnoreCase));
+                    core.Connections.First(x => x.Provider.Name.Contains("drive", StringComparison.OrdinalIgnoreCase));
                 dropboxConnection =
-                    Core.Connections.First(x =>
+                    core.Connections.First(x =>
                         x.Provider.Name.Contains("dropbox", StringComparison.OrdinalIgnoreCase));
             }
 
             if (false)
             {
-                Core.AddScript(driveConnection, "%userprofile%\\Documents\\AgenaTraderData", PeriodSettings.Empty);
-                Core.AddScript(dropboxConnection, "%userprofile%\\Documents\\AgenaTraderData", PeriodSettings.Empty);
+                core.AddScript(driveConnection, "%userprofile%\\Documents\\AgenaTraderData", PeriodicitySettings.Empty);
+                core.AddScript(dropboxConnection, "%userprofile%\\Documents\\AgenaTraderData", PeriodicitySettings.Empty);
             }
 
-            foreach (var script in Core.Scripts)
+            foreach (var script in core.Scripts)
             {
                 await script.PerformAsync();
             }
@@ -98,10 +98,10 @@ namespace NightKeeper.ConsoleClient
 
                 await remoteBackupsState.Provider.DeleteAsync(backup);
 
-                Core.RemoveScript(Core.Scripts.First());
+                core.RemoveScript(core.Scripts.First());
 
-                var script = Core.AddScript(Core.Connections.First(), "%userprofile%\\Desktop\\Results",
-                    PeriodSettings.Empty);
+                var script = core.AddScript(core.Connections.First(), "%userprofile%\\Desktop\\Results",
+                    PeriodicitySettings.Empty);
 
                 await script.PerformAsync();
             }

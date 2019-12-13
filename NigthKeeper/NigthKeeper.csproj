@@ -8,6 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NightKeeper.Dropbox\NightKeeper.Dropbox.csproj" />
+    <ProjectReference Include="..\NightKeeper.GoogleDrive\NightKeeper.GoogleDrive.csproj" />
     <ProjectReference Include="..\NightKeeper.Helper\NightKeeper.Helper.csproj" />
   </ItemGroup>
 

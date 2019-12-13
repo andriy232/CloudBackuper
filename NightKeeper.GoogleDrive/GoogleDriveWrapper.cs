@@ -17,13 +17,13 @@ using File = Google.Apis.Drive.v3.Data.File;
 
 namespace NightKeeper.GoogleDrive
 {
-    public class GoogleDriveWrapper : ProviderBase<GoogleDriveSettings>, IProvider
+    public class GoogleDriveWrapper : ProviderBase<GoogleDriveSettings>
     {
-        public Guid Id => Guid.Parse("{3D8C2F96-32C3-44B0-8B4B-7DD4DE3D3AE6}");
+        public override Guid Id => Guid.Parse("{3D8C2F96-32C3-44B0-8B4B-7DD4DE3D3AE6}");
 
-        public string Name => "GDriveProvider";
+        public override string Name => "GDriveProvider";
 
-        public byte[] Logo => Resources.Img_GoogleDrive;
+        public override byte[] Logo => Resources.Img_GoogleDrive;
 
         private static readonly string TargetScope = DriveService.Scope.Drive;
         private const int EntriesPerPage = 100;
@@ -35,7 +35,7 @@ namespace NightKeeper.GoogleDrive
                 var fileMetadata = new File
                 {
                     Name = Path.GetFileName(zipPath),
-                    Parents = new List<string> {GetSettings(Id).DriveFolderId}
+                    Parents = new List<string> {GetSettings().DriveFolderId}
                 };
 
                 FilesResource.CreateMediaUpload request;
@@ -49,15 +49,15 @@ namespace NightKeeper.GoogleDrive
                 }
 
                 var file = request.ResponseBody;
-                Core.WriteLine($"Backup uploaded, file Id: {file.Id}");
+                Core.Log($"Backup uploaded, file Id: {file.Id}");
             }
             catch (Exception ex)
             {
-                Core.WriteLine(ex.ToString());
+                Core.Log(ex.ToString());
             }
             finally
             {
-                Core.WriteLine("Clean up garbage");
+                Core.Log("Clean up garbage");
             }
         }
 
@@ -66,12 +66,12 @@ namespace NightKeeper.GoogleDrive
         {
             var request = service.Files.Delete(backupUniqueId);
             var result = await request.ExecuteAsync();
-            Core.WriteLine($"Removing backup: {result}");
+            Core.Log($"Removing backup: {result}");
         }
 
         private async Task<RemoteBackupsState> GetBackupsAsync(DriveService service)
         {
-            var settings = GetSettings(Id);
+            var settings = GetSettings();
             var folderGet = service.Files.Get(settings.DriveFolderId).SetFields();
             var folderResult = await folderGet.ExecuteAsync();
 
@@ -82,7 +82,7 @@ namespace NightKeeper.GoogleDrive
 
             var backups = new List<File>();
             string pageToken;
-            Core.WriteLine("Searching for backups");
+            Core.Log("Searching for backups");
             do
             {
                 var listRequestResult = await listRequest.ExecuteAsync();
@@ -104,19 +104,19 @@ namespace NightKeeper.GoogleDrive
                     x.ModifiedTime ?? x.ModifiedByMeTime ?? x.CreatedTime ?? DateTime.MinValue)));
         }
 
-        public async Task<RemoteBackupsState> GetRemoteBackups()
+        public override async Task<RemoteBackupsState> GetRemoteBackups()
         {
             using (var service = await GetDriveService())
                 return await GetBackupsAsync(service);
         }
 
-        public async Task Upload(LocalBackup localBackup)
+        public override async Task Upload(LocalBackup localBackup)
         {
             using (var service = await GetDriveService())
                 await Upload(service, localBackup.ResultPath);
         }
 
-        public async Task DownloadAsync(RemoteBackupsState.RemoteBackup backup, string outputPath)
+        public override async Task DownloadAsync(RemoteBackupsState.RemoteBackup backup, string outputPath)
         {
             using (var service = await GetDriveService())
                 await DownloadToFile(service, backup.UniqueId, outputPath);
@@ -129,7 +129,7 @@ namespace NightKeeper.GoogleDrive
                 await file.DownloadAsync(stream);
         }
 
-        public async Task DeleteAsync(RemoteBackupsState.RemoteBackup backup)
+        public override async Task DeleteAsync(RemoteBackupsState.RemoteBackup backup)
         {
             using (var service = await GetDriveService())
                 await Delete(service, backup.UniqueId);
@@ -171,7 +171,7 @@ namespace NightKeeper.GoogleDrive
 
         private async Task<(UserCredential, GoogleDriveSettings)> GetCredentials()
         {
-            var driveSettings = GetSettings(Id);
+            var driveSettings = GetSettings();
 
             if (!FileSystem.FileExists(driveSettings?.AuthInfoPath))
             {
@@ -208,7 +208,7 @@ namespace NightKeeper.GoogleDrive
 
             var credential = HandleGoogleAuthorizationBroker(credentialsPath, authDataDir, scope);
 
-            var settings = GetSettings(Id);
+            var settings = GetSettings();
             if (settings != null
                 && settings.AuthInfoPath.Equals(authDataDir, StringComparison.OrdinalIgnoreCase)
                 && settings.CredentialsPath.Equals(credentialsPath, StringComparison.OrdinalIgnoreCase))
@@ -221,12 +221,12 @@ namespace NightKeeper.GoogleDrive
             if (string.IsNullOrWhiteSpace(settings.DriveFolderId))
                 settings.DriveFolderId = Core.ReadLine("Enter folder id");
 
-            Core.Database.SaveSettings(Id, settings);
+            Core.Settings.SaveSettings(Id, settings);
 
             return (credential, settings);
         }
 
-        private static UserCredential HandleGoogleAuthorizationBroker(string credentialsPath, string authDataDir,
+        private UserCredential HandleGoogleAuthorizationBroker(string credentialsPath, string authDataDir,
             string scope)
         {
             while (true)
@@ -241,18 +241,18 @@ namespace NightKeeper.GoogleDrive
                             "user",
                             CancellationToken.None,
                             new FileDataStore(authDataDir, true)).Result;
-                        Core.WriteLine($"Credential file saved to: {authDataDir}");
+                        Core.Log($"Credential file saved to: {authDataDir}");
                         return cred;
                     }
                 }
                 catch (Exception ex)
                 {
-                    Core.WriteLine($"Authorization issue: {ex},{Environment.NewLine}Please, try again");
+                    Core.Log($"Authorization issue: {ex},{Environment.NewLine}Please, try again");
                 }
             }
         }
 
-        public object GetConnectionValues()
+        public override object GetConnectionValues()
         {
             var task = Task.Run(GetOAuthSettingsAsync);
 

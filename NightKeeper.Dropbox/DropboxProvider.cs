@@ -15,13 +15,13 @@ using NightKeeper.Helper.Core;
 
 namespace NightKeeper.Dropbox
 {
-    public class DropboxProvider : ProviderBase<DropboxSettings>, IProvider
+    public class DropboxProvider : ProviderBase<DropboxSettings>
     {
-        public string Name => "Dropbox";
+        public override string Name => "Dropbox";
 
-        public byte[] Logo => Resources.Img_Dropbox;
+        public override byte[] Logo => Resources.Img_Dropbox;
 
-        public Guid Id => Guid.Parse("{D799FFF5-CACC-4E02-ACFD-ED2275F3BE56}");
+        public override Guid Id => Guid.Parse("{D799FFF5-CACC-4E02-ACFD-ED2275F3BE56}");
         
         // Add an ApiKey (from https://www.dropbox.com/developers/apps) here
         // private const string ApiKey = "XXXXXXXXXXXXXXX";
@@ -53,7 +53,7 @@ namespace NightKeeper.Dropbox
         {
             DropboxCertHelper.InitializeCertPinning();
 
-            var accessSettings = GetSettings(Id);
+            var accessSettings = GetSettings();
             
             if (string.IsNullOrEmpty(accessSettings?.AccessToken))
                 accessSettings = await Autorize();
@@ -202,7 +202,7 @@ namespace NightKeeper.Dropbox
             return folder.Metadata;
         }
 
-        public async Task<RemoteBackupsState> GetRemoteBackups()
+        public override async Task<RemoteBackupsState> GetRemoteBackups()
         {
             using (var client = await GetDropboxClient())
             {
@@ -210,7 +210,7 @@ namespace NightKeeper.Dropbox
             }
         }
 
-        private async Task<RemoteBackupsState> ListFolderAsync(DropboxClient client, string path)
+        private  async Task<RemoteBackupsState> ListFolderAsync(DropboxClient client, string path)
         {
             var list = await client.Files.ListFolderAsync(path);
             var files = list?.Entries?.Where(i => i.IsFile).Select(x => x.AsFile).ToList() ?? new List<FileMetadata>();
@@ -228,7 +228,7 @@ namespace NightKeeper.Dropbox
                 list?.Entries?.Select(x => (x.AsFile.Id, x.Name, x.AsFile.ClientModified)));
         }
 
-        public async Task Upload(LocalBackup localBackup)
+        public override async Task Upload(LocalBackup localBackup)
         {
             using (var client = await GetDropboxClient())
             {
@@ -246,7 +246,7 @@ namespace NightKeeper.Dropbox
             }
         }
 
-        public async Task DownloadAsync(RemoteBackupsState.RemoteBackup backup, string outputPath)
+        public override async Task DownloadAsync(RemoteBackupsState.RemoteBackup backup, string outputPath)
         {
             using (var client = await GetDropboxClient())
             {
@@ -259,7 +259,7 @@ namespace NightKeeper.Dropbox
                 if (file != null)
                     await DownloadToFileAsync(client, RemotePath, file, outputPath);
                 else
-                    Core.WriteLine("Remote file not found");
+                    Core.Log("Remote file not found");
             }
         }
 
@@ -277,12 +277,12 @@ namespace NightKeeper.Dropbox
                 }
                 catch (Exception ex)
                 {
-                    Core.WriteLine(ex);
+                    Core.Log(ex);
                 }
             }
         }
 
-        public async Task DeleteAsync(RemoteBackupsState.RemoteBackup backup)
+        public override async Task DeleteAsync(RemoteBackupsState.RemoteBackup backup)
         {
             using (var client = await GetDropboxClient())
             {
@@ -295,7 +295,7 @@ namespace NightKeeper.Dropbox
                 if (fileMetadata != null)
                     await client.Files.DeleteV2Async($"{RemotePath}/{fileMetadata.Name}");
                 else
-                    Core.WriteLine("Remote file not found");
+                    Core.Log("Remote file not found");
             }
         }
 
@@ -367,11 +367,11 @@ namespace NightKeeper.Dropbox
                     WriteMode.Overwrite.Instance,
                     body: stream);
 
-                Core.WriteLine($"Uploaded Id {response.Id} Rev {response.Rev}");
+                Core.Log($"Uploaded Id {response.Id} Rev {response.Rev}");
             }
         }
 
-        public object GetConnectionValues()
+        public override object GetConnectionValues()
         {
             var task = Task.Run(GetAuthSettings);
 

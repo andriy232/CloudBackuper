@@ -5,31 +5,52 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security;
+using Dropbox.Api.TeamLog;
 using NightKeeper.Helper.Settings;
 using Serilog;
 
 namespace NightKeeper.Helper.Core
 {
-    public static class Core
+    public class Core
     {
-        internal static string _appFolder;
+        internal string AppFolder;
 
-        public static IEnumerable<IProvider> Providers => providers;
-        public static IEnumerable<IConnection> Connections => connections;
-        public static IEnumerable<Script> Scripts => scripts;
+        public IEnumerable<IProvider> Providers => _providers;
+        public IEnumerable<IConnection> Connections => _connections;
+        public IEnumerable<Script> Scripts => scripts;
 
-        private static readonly List<IProvider> providers = new List<IProvider>();
-        private static readonly List<IConnection> connections = new List<IConnection>();
-        private static readonly List<Script> scripts = new List<Script>();
+        private readonly List<IProvider> _providers = new List<IProvider>();
+        private readonly List<IConnection> _connections = new List<IConnection>();
+        private readonly List<Script> scripts = new List<Script>();
 
-        public static readonly FileSystem FileSystem = FileSystem.GetInstance();
-        public static readonly Database Database = Database.GetInstance();
+        public readonly FileSystem FileSystem = FileSystem.GetInstance();
+        public readonly Settings Settings;
 
-        private static UnhandledExceptionHandler _handler;
+        private UnhandledExceptionHandler _handler;
 
-        public static ILogger CurrentLog { get; private set; }
+        private static readonly object Locker = new object();
+        private static Core _instance;
+        private InputRequestDelegate _inputRequestor;
 
-        public static string GetConfiguration()
+        public delegate string InputRequestDelegate(string message, Func<string,bool> validationFunc);
+
+        public static Core GetInstance()
+        {
+            lock (Locker)
+            {
+                return _instance ?? (_instance = new Core());
+            }
+        }
+
+        private Core()
+        {
+            Settings = Settings.GetInstance(this);
+        }
+
+        public ILogger CurrentLog { get; private set; }
+
+        public string GetConfiguration()
         {
             return IsDebug() ? "Debug" : "Release";
         }
@@ -43,21 +64,21 @@ namespace NightKeeper.Helper.Core
 #endif
         }
 
-        public static void Load()
+        public void Load()
         {
             _handler = new UnhandledExceptionHandler();
 
             InitAppFolder();
             InitLogs();
 
-            Database.EnsureDatabase();
+            Settings.EnsureDatabase();
 
             EnsureProviders();
-            connections.AddRange(Database.ReadConnections(Providers));
-            scripts.AddRange(Database.ReadScripts(Connections));
+            _connections.AddRange(Settings.ReadConnections(Providers));
+            scripts.AddRange(Settings.ReadScripts(Connections));
         }
 
-        private static void EnsureProviders()
+        private void EnsureProviders()
         {
             var info = typeof(IProvider);
 
@@ -71,7 +92,7 @@ namespace NightKeeper.Helper.Core
                 }
                 catch (Exception ex)
                 {
-                    WriteLine(ex);
+                    Log(ex);
                 }
             }
 
@@ -86,41 +107,44 @@ namespace NightKeeper.Helper.Core
                     foreach (var type in types)
                     {
                         if (Activator.CreateInstance(type) is IProvider instance)
-                            providers.Add(instance);
+                        {
+                            instance.Init(this);
+                            _providers.Add(instance);
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
-                    WriteLine(ex);
+                    Log(ex);
                 }
             }
 
-            if (providers.Count == 0)
+            if (_providers.Count == 0)
                 throw new ApplicationException("no providers");
         }
 
-        private static void InitLogs()
+        private void InitLogs()
         {
-            var logsPath = Path.Combine(_appFolder, "Logs");
+            var logsPath = Path.Combine(AppFolder, "Logs");
 
             var logFilePath = Path.Combine(logsPath, $"{GetExeName()}_{GetConfiguration()}_.log");
-            Log.Logger = new LoggerConfiguration()
+            Serilog.Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Console()
                 .WriteTo.File(logFilePath, rollingInterval: RollingInterval.Day)
                 .CreateLogger();
 
-            CurrentLog = Log.Logger;
+            CurrentLog = Serilog.Log.Logger;
         }
 
-        private static void InitAppFolder()
+        private void InitAppFolder()
         {
             var path = GetAppDataPath();
 
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
-            _appFolder = path;
+            AppFolder = path;
         }
 
         public static string GetAppDataPath()
@@ -132,19 +156,29 @@ namespace NightKeeper.Helper.Core
             return path;
         }
 
+        public string GetTitle()
+        {
+            return $"{GetExeName()} - {GetConfiguration()}";
+        }
+
         private static string GetExeName()
         {
             return Assembly.GetEntryAssembly()?.GetName().Name;
         }
 
-        public static void WriteLine(string message)
+        public event EventHandler<LogEntry> NewLog;
+        private const string Default = "Default";
+
+        public void Log(string message)
         {
-            Log.Information(message);
+            NewLog?.Invoke(this, new LogEntry(InfoLogType.Info, Default, message));
+            Serilog.Log.Information(message);
         }
 
-        public static void WriteLine(Exception ex)
+        public void Log(Exception ex)
         {
-            Log.Debug(ex, "Error");
+            NewLog?.Invoke(this, new LogEntry(InfoLogType.Error, Default, ex.ToString()));
+            Serilog.Log.Debug(ex, "Error");
         }
 
         public static void StartProcess(string uri)
@@ -166,41 +200,44 @@ namespace NightKeeper.Helper.Core
             }
         }
 
-        public static Script AddScript(IConnection connection, string targetPath, PeriodSettings period)
+        public Script AddScript(IConnection connection, string targetPath, PeriodicitySettings period)
         {
             var script = new Script(0, connection, targetPath, period);
-            Database.SaveScript(script);
+            Settings.SaveScript(script);
             scripts.Add(script);
             return script;
         }
 
-        public static IConnection AddConnection(string name, IProvider provider, object connectionSettings)
+        public IConnection AddConnection(string name, IProvider provider, object connectionSettings)
         {
             var connection = new Connection(0, name, provider, connectionSettings);
 
-            var exists = connections.FirstOrDefault(x => x.Equals(connection));
+            var exists = _connections.FirstOrDefault(x => x.Equals(connection));
             if (exists != null)
                 return exists;
 
-            Database.SaveConnection(connection);
-            connections.Add(connection);
+            Settings.SaveConnection(connection);
+            _connections.Add(connection);
             return connection;
         }
 
-        public static void RemoveScript(Script script)
+        public void RemoveScript(Script script)
         {
-            Database.RemoveScript(script);
+            Settings.RemoveScript(script);
             scripts.Remove(script);
         }
 
-        public static void RemoveConnection(IConnection connection)
+        public void RemoveConnection(IConnection connection)
         {
-            Database.RemoveConnection(connection);
-            connections.Remove(connection);
+            Settings.RemoveConnection(connection);
+            _connections.Remove(connection);
         }
 
-        public static string ReadLine(string message, Func<string, bool> validationFunc = null)
+        public string ReadLine(string message, Func<string, bool> validationFunc = null)
         {
+            if (_inputRequestor != null)
+                return _inputRequestor(message, validationFunc);
+
             string input = null;
 
             while (string.IsNullOrWhiteSpace(input) || validationFunc != null && !validationFunc(input))
@@ -210,6 +247,12 @@ namespace NightKeeper.Helper.Core
             }
 
             return input;
+        }
+        
+        public void RegisterOutput(EventHandler<LogEntry> action, InputRequestDelegate inputRequestDelegate)
+        {
+            _inputRequestor = inputRequestDelegate;
+            NewLog += action;
         }
     }
 }

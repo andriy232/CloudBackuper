@@ -9,36 +9,38 @@ using NightKeeper.Helper.Settings;
 
 namespace NightKeeper.Helper.Core
 {
-    public class Database
+    public class Settings
     {
-        private const string DbFileName = "CloudBackuper.sqlite";
+        private const string DbFileName = "Store.sqlite";
+        private readonly Core _core;
         private static string _databasePath;
-        private static Database _instance;
+        private static Settings _instance;
 
-        private Database()
+        private Settings(Core core)
         {
+            _core = core;
         }
 
-        public static Database GetInstance()
+        public static Settings GetInstance(Core core)
         {
-            return _instance ?? (_instance = new Database());
+            return _instance ?? (_instance = new Settings(core));
         }
 
-        internal static void EnsureDatabase()
+        internal void EnsureDatabase()
         {
             _databasePath = DbFileName;
             if (File.Exists(_databasePath))
                 return;
 
-            _databasePath = Path.Combine(Core._appFolder, DbFileName);
+            _databasePath = Path.Combine(_core.AppFolder, DbFileName);
 
             if (!File.Exists(_databasePath))
-                Core.WriteLine($"Database '{DbFileName}' is empty!");
+                _core.Log($"Database '{DbFileName}' not exist!");
 
-            InitDatabase();
+            InitDatabaseIfNeed();
         }
 
-        private static void InitDatabase()
+        private void InitDatabaseIfNeed()
         {
             if (!File.Exists(_databasePath))
             {
@@ -59,7 +61,7 @@ FOREIGN KEY(`connectionId`) REFERENCES `connnections`(`id`))";
             }
         }
 
-        private static SQLiteConnection CreateConnection()
+        private SQLiteConnection CreateConnection()
         {
             SQLiteConnection connection;
 
@@ -70,7 +72,7 @@ FOREIGN KEY(`connectionId`) REFERENCES `connnections`(`id`))";
             }
             catch (Exception ex)
             {
-                Core.WriteLine(ex);
+                _core.Log(ex);
                 throw;
             }
 
@@ -181,7 +183,7 @@ FOREIGN KEY(`connectionId`) REFERENCES `connnections`(`id`))";
                         var script = new Script(id,
                             enumerable.First(x => x.Id == connectionId),
                             targetPath,
-                            PeriodSettings.Parse(period),
+                            PeriodicitySettings.Parse(period),
                             backupName,
                             name);
 

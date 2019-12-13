@@ -6,11 +6,9 @@
 
   <ItemGroup>
     <PackageReference Include="Dropbox.Api" Version="4.9.4" />
-    <PackageReference Include="Microsoft.Net.Http" Version="2.2.29" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Helper\NightKeeper.Helper.csproj" />
     <ProjectReference Include="..\NightKeeper.Helper\NightKeeper.Helper.csproj" />
   </ItemGroup>
 

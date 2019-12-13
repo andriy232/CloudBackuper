@@ -27,7 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Helper\NightKeeper.Helper.csproj" />
     <ProjectReference Include="..\NightKeeper.Helper\NightKeeper.Helper.csproj" />
   </ItemGroup>
 
