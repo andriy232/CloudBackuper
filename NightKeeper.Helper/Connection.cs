@@ -5,10 +5,11 @@ namespace NightKeeper.Helper
 {
     public class Connection : IConnection
     {
-        public IProvider Provider { get; }
-        public object ConnectionSettings { get; }
-        public string Name { get; }
-        public int Id { get; private set; }
+        public IProvider Provider { get; set; }
+        public object ConnectionSettings { get; set; }
+        public string Name { get; set; }
+        public int Id { get; set; }
+        public byte[] Logo => Provider?.Logo;
 
         public Task<RemoteBackupsState> GetRemoteBackups()
         {
@@ -18,6 +19,10 @@ namespace NightKeeper.Helper
         public Task Upload(LocalBackup localBackup)
         {
             return Provider.Upload(localBackup);
+        }
+
+        public Connection()
+        {
         }
 
         public Connection(int id, string name, IProvider provider, object connectionSettings)
@@ -35,7 +40,7 @@ namespace NightKeeper.Helper
 
         public override string ToString()
         {
-            return $"Connection: {Name}, {Provider.Name}";
+            return Name;
         }
 
         public override bool Equals(object obj)
@@ -47,8 +52,8 @@ namespace NightKeeper.Helper
 
         private bool IsSame(Connection conn1, Connection conn2)
         {
-            return conn1.Provider.Equals(conn2.Provider) &&
-                   conn1.Name.Equals(conn2.Name);
+            return conn1?.Provider?.Equals(conn2?.Provider) ?? true &&
+                   conn1.Name.Equals(conn2?.Name);
         }
     }
 }

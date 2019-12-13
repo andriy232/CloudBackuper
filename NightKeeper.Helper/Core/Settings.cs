@@ -280,7 +280,7 @@ values (@name, @connectionId, @backupName, @targetPath, @period)";
             using (var connection = CreateConnection())
             using (var command = connection.CreateCommand())
             {
-                command.CommandText = "update `connections` set `values`=@value where providerId like '@guid'";
+                command.CommandText = "update `connections` set `values`=@value where providerId like @guid";
                 command.Parameters.AddWithValue("@value", settings.ToString());
                 command.Parameters.AddWithValue("@guid", id.ToString());
                 command.ExecuteNonQuery();

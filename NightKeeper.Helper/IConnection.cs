@@ -9,6 +9,8 @@ namespace NightKeeper.Helper
 
         int Id { get; }
 
+        byte[] Logo { get; }
+
         Task<RemoteBackupsState> GetRemoteBackups();
         Task Upload(LocalBackup localBackup);
     }

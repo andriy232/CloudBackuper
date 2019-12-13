@@ -12,7 +12,14 @@
         <collections:ArrayList x:Key="log">
             <helper:LogEntry Time="" Source="Source sample" Type="Info" Message="Log message sample" />
         </collections:ArrayList>
+        <collections:ArrayList x:Key="connection">
+            <helper:Connection Name="Conn" />
+        </collections:ArrayList>
+        <collections:ArrayList x:Key="script">
+            <helper:Script Name="Backup data" Id="0" TargetPath="%userdir%\\Desktop" BackupFileName="Backup" />
+        </collections:ArrayList>
         <local:StarWidthConverter x:Key="starWidthConverter" />
+        <local:BitmapConverter x:Key="converter" />
     </Window.Resources>
 
     <Grid Loaded="OnRootGridLoaded">
@@ -31,22 +38,47 @@
                           HorizontalAlignment="Center" VerticalAlignment="Stretch" />
             <GridSplitter Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="0" Height="3"
                           HorizontalAlignment="Stretch" VerticalAlignment="Center" />
-            <StackPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Background="Coral">
-                <TextBlock>Connections</TextBlock>
-                <ListView Name="lvConnections" />
-            </StackPanel>
-            <StackPanel Grid.Column="2" Grid.Row="0" Background="LightGreen">
-                <TextBlock>Scripts</TextBlock>
-                <ListView Name="lvScripts" />
-            </StackPanel>
-            <DockPanel Grid.Column="2" Grid.Row="2" Background="#dfffff">
-                <TextBlock DockPanel.Dock="Top" Height="25" Margin="5" FontSize="18" Text="Output" TextWrapping="Wrap" />
-                <ListView Name="lvLogOutput"  ItemsSource="{DynamicResource ResourceKey=log}">
+
+            <DockPanel Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Background="CadetBlue">
+                <TextBlock Height="25" Margin="5" FontSize="18" DockPanel.Dock="Top">Connections</TextBlock>
+                <ListView Name="lvConnections" ItemsSource="{DynamicResource ResourceKey=connection}">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=Time}" Width="130">Time</GridViewColumn>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=Type}" Width="40">Type</GridViewColumn>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=Source}" Width="130">Source</GridViewColumn>
+                            <GridViewColumn Header="Icon">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Image Source="{Binding Logo, Converter={StaticResource converter}}" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=Name}" Width="150">Name</GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </DockPanel>
+
+            <DockPanel Grid.Column="2" Grid.Row="0" Background="LightSkyBlue">
+                <TextBlock DockPanel.Dock="Top" Height="25" Margin="5" FontSize="18">Scripts</TextBlock>
+                <ListView Name="lvScripts" ItemsSource="{DynamicResource ResourceKey=script}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=Name}" Width="150">Name</GridViewColumn>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=Connection}" Width="150">Connection</GridViewColumn>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=TargetPath}" Width="150">Path</GridViewColumn>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=Period}" Width="150">Period</GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </DockPanel>
+
+            <DockPanel Grid.Column="2" Grid.Row="2" Background="LightSkyBlue">
+                <TextBlock DockPanel.Dock="Top" Height="25" Margin="5" FontSize="18" Text="Output" TextWrapping="Wrap" />
+                <ListView Name="lvLogOutput" ItemsSource="{DynamicResource ResourceKey=log}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=Time}" Width="150">Time</GridViewColumn>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=Type}" Width="50">Type</GridViewColumn>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=Source}" Width="150">Source</GridViewColumn>
                             <GridViewColumn DisplayMemberBinding="{Binding Path=Message}"
                                             Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}, Converter={StaticResource ResourceKey=starWidthConverter}}">
                                 Message

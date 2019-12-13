@@ -7,13 +7,17 @@ namespace NightKeeper.Helper
 {
     public class Script
     {
-        public PeriodicitySettings Period { get; }
-        public IConnection Connection { get; }
-        public string TargetPath { get; }
+        public PeriodicitySettings Period { get; set; }
+        public IConnection Connection { get; set; }
+        public string TargetPath { get; set; }
 
-        public string BackupFileName { get; }
-        public string Name { get; }
-        public int Id { get; private set; }
+        public string BackupFileName { get; set; }
+        public string Name { get; set; }
+        public int Id { get; set; }
+
+        public Script()
+        {
+        }
 
         public Script(int id,
             IConnection connection,
