@@ -1,4 +1,5 @@
 ﻿using System;
+using Serilog.Events;
 
 namespace NightKeeper.Helper
 {
@@ -7,9 +8,9 @@ namespace NightKeeper.Helper
         public DateTime Time { get; set; }
         public string Source { get; set; }
         public string Message { get; set; }
-        public InfoLogType Type { get; set; }
+        public LogEventLevel Type { get; set; }
 
-        public LogEntry(InfoLogType type, string source, string message)
+        public LogEntry(LogEventLevel type, string source, string message)
         {
             Time = DateTime.Now;
             Source = source;

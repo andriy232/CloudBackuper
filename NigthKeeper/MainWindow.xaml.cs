@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using NightKeeper.Helper;
+using NightKeeper.Helper.Core;
+using System;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Documents;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using NightKeeper.Helper;
-using NightKeeper.Helper.Backups;
-using NightKeeper.Helper.Core;
 
 namespace NigthKeeper
 {

@@ -72,10 +72,10 @@ namespace NightKeeper.ConsoleClient
             else
             {
                 driveConnection =
-                    core.Connections.First(x => x.Provider.Name.Contains("drive", StringComparison.OrdinalIgnoreCase));
+                    core.Connections.First(x => x.StorageProvider.Name.Contains("drive", StringComparison.OrdinalIgnoreCase));
                 dropboxConnection =
                     core.Connections.First(x =>
-                        x.Provider.Name.Contains("dropbox", StringComparison.OrdinalIgnoreCase));
+                        x.StorageProvider.Name.Contains("dropbox", StringComparison.OrdinalIgnoreCase));
             }
 
             if (false)
@@ -93,10 +93,10 @@ namespace NightKeeper.ConsoleClient
             {
                 var backup = remoteBackupsState.Backups[0];
 
-                await remoteBackupsState.Provider.DownloadAsync(backup,
+                await remoteBackupsState.StorageProvider.DownloadBackupAsync(backup,
                     System.IO.Path.Combine("%userprofile%\\Desktop\\Results", backup.BackupName));
 
-                await remoteBackupsState.Provider.DeleteAsync(backup);
+                await remoteBackupsState.StorageProvider.DeleteBackupAsync(backup);
 
                 core.RemoveScript(core.Scripts.First());
 

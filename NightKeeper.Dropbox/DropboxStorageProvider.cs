@@ -15,7 +15,7 @@ using NightKeeper.Helper.Core;
 
 namespace NightKeeper.Dropbox
 {
-    public class DropboxProvider : ProviderBase<DropboxSettings>
+    public class DropboxStorageProvider : StorageProviderBase<DropboxSettings>
     {
         public override string Name => "Dropbox";
 
@@ -202,7 +202,7 @@ namespace NightKeeper.Dropbox
             return folder.Metadata;
         }
 
-        public override async Task<RemoteBackupsState> GetRemoteBackups()
+        public override async Task<RemoteBackupsState> GetBackups()
         {
             using (var client = await GetDropboxClient())
             {
@@ -228,7 +228,7 @@ namespace NightKeeper.Dropbox
                 list?.Entries?.Select(x => (x.AsFile.Id, x.Name, x.AsFile.ClientModified)));
         }
 
-        public override async Task Upload(LocalBackup localBackup)
+        public override async Task UploadBackupAsync(LocalBackup localBackup)
         {
             using (var client = await GetDropboxClient())
             {
@@ -246,7 +246,7 @@ namespace NightKeeper.Dropbox
             }
         }
 
-        public override async Task DownloadAsync(RemoteBackupsState.RemoteBackup backup, string outputPath)
+        public override async Task DownloadBackupAsync(RemoteBackupsState.RemoteBackup backup, string outputPath)
         {
             using (var client = await GetDropboxClient())
             {
@@ -282,7 +282,7 @@ namespace NightKeeper.Dropbox
             }
         }
 
-        public override async Task DeleteAsync(RemoteBackupsState.RemoteBackup backup)
+        public override async Task DeleteBackupAsync(RemoteBackupsState.RemoteBackup backup)
         {
             using (var client = await GetDropboxClient())
             {

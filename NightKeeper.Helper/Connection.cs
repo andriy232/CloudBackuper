@@ -5,30 +5,34 @@ namespace NightKeeper.Helper
 {
     public class Connection : IConnection
     {
-        public IProvider Provider { get; set; }
+        public IStorageProvider StorageProvider { get; set; }
+        
         public object ConnectionSettings { get; set; }
+        
         public string Name { get; set; }
+        
         public int Id { get; set; }
-        public byte[] Logo => Provider?.Logo;
+        
+        public byte[] Logo => StorageProvider?.Logo;
 
         public Task<RemoteBackupsState> GetRemoteBackups()
         {
-            return Provider.GetRemoteBackups();
+            return StorageProvider.GetBackups();
         }
 
         public Task Upload(LocalBackup localBackup)
         {
-            return Provider.Upload(localBackup);
+            return StorageProvider.UploadBackupAsync(localBackup);
         }
 
         public Connection()
         {
         }
 
-        public Connection(int id, string name, IProvider provider, object connectionSettings)
+        public Connection(int id, string name, IStorageProvider storageProvider, object connectionSettings)
         {
             Id = id;
-            Provider = provider;
+            StorageProvider = storageProvider;
             ConnectionSettings = connectionSettings;
             Name = name;
         }
@@ -52,7 +56,7 @@ namespace NightKeeper.Helper
 
         private bool IsSame(Connection conn1, Connection conn2)
         {
-            return conn1?.Provider?.Equals(conn2?.Provider) ?? true &&
+            return conn1?.StorageProvider?.Equals(conn2?.StorageProvider) ?? true &&
                    conn1.Name.Equals(conn2?.Name);
         }
     }

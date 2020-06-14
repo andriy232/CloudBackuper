@@ -5,7 +5,7 @@ namespace NightKeeper.Helper
 {
     public interface IConnection
     {
-        IProvider Provider { get; }
+        IStorageProvider StorageProvider { get; }
 
         int Id { get; }
 

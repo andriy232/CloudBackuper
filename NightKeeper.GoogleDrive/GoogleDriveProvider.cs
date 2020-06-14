@@ -17,11 +17,11 @@ using File = Google.Apis.Drive.v3.Data.File;
 
 namespace NightKeeper.GoogleDrive
 {
-    public class GoogleDriveWrapper : ProviderBase<GoogleDriveSettings>
+    public class GoogleDriveProvider : StorageProviderBase<GoogleDriveSettings>
     {
-        public override Guid Id => Guid.Parse("{3D8C2F96-32C3-44B0-8B4B-7DD4DE3D3AE6}");
+        public override Guid Id => Guid.Parse("3D8C2F96-32C3-44B0-8B4B-7DD4DE3D3AE6");
 
-        public override string Name => "GDriveProvider";
+        public override string Name => "Google Drive";
 
         public override byte[] Logo => Resources.Img_GoogleDrive;
 
@@ -104,19 +104,19 @@ namespace NightKeeper.GoogleDrive
                     x.ModifiedTime ?? x.ModifiedByMeTime ?? x.CreatedTime ?? DateTime.MinValue)));
         }
 
-        public override async Task<RemoteBackupsState> GetRemoteBackups()
+        public override async Task<RemoteBackupsState> GetBackups()
         {
             using (var service = await GetDriveService())
                 return await GetBackupsAsync(service);
         }
 
-        public override async Task Upload(LocalBackup localBackup)
+        public override async Task UploadBackupAsync(LocalBackup localBackup)
         {
             using (var service = await GetDriveService())
                 await Upload(service, localBackup.ResultPath);
         }
 
-        public override async Task DownloadAsync(RemoteBackupsState.RemoteBackup backup, string outputPath)
+        public override async Task DownloadBackupAsync(RemoteBackupsState.RemoteBackup backup, string outputPath)
         {
             using (var service = await GetDriveService())
                 await DownloadToFile(service, backup.UniqueId, outputPath);
@@ -129,7 +129,7 @@ namespace NightKeeper.GoogleDrive
                 await file.DownloadAsync(stream);
         }
 
-        public override async Task DeleteAsync(RemoteBackupsState.RemoteBackup backup)
+        public override async Task DeleteBackupAsync(RemoteBackupsState.RemoteBackup backup)
         {
             using (var service = await GetDriveService())
                 await Delete(service, backup.UniqueId);

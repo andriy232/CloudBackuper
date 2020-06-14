@@ -10,7 +10,7 @@
         Title="MainWindow" Height="450" Width="800">
     <Window.Resources>
         <collections:ArrayList x:Key="log">
-            <helper:LogEntry Time="" Source="Source sample" Type="Info" Message="Log message sample" />
+            <helper:LogEntry Time="" Source="Source sample" Type="Debug" Message="Log message sample" />
         </collections:ArrayList>
         <collections:ArrayList x:Key="connection">
             <helper:Connection Name="Conn" />

@@ -1,14 +1,13 @@
-﻿using System;
+﻿using NightKeeper.Helper.Settings;
+using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Security;
-using Dropbox.Api.TeamLog;
-using NightKeeper.Helper.Settings;
-using Serilog;
+using Serilog.Events;
 
 namespace NightKeeper.Helper.Core
 {
@@ -16,22 +15,22 @@ namespace NightKeeper.Helper.Core
     {
         internal string AppFolder;
 
-        public IEnumerable<IProvider> Providers => _providers;
+        public IEnumerable<IStorageProvider> Providers => _providers;
         public IEnumerable<IConnection> Connections => _connections;
-        public IEnumerable<Script> Scripts => scripts;
+        public IEnumerable<Script> Scripts => _scripts;
 
-        private readonly List<IProvider> _providers = new List<IProvider>();
+        private readonly List<IStorageProvider> _providers = new List<IStorageProvider>();
         private readonly List<IConnection> _connections = new List<IConnection>();
-        private readonly List<Script> scripts = new List<Script>();
+        private readonly List<Script> _scripts = new List<Script>();
 
         public readonly FileSystem FileSystem = FileSystem.GetInstance();
+        public readonly SingleLogger Logger = new SingleLogger();
         public readonly Settings Settings;
 
-        private UnhandledExceptionHandler _handler;
-
         private static readonly object Locker = new object();
-        private static Core _instance;
         private InputRequestDelegate _inputRequestor;
+        private UnhandledExceptionHandler _handler;
+        private static Core _instance;
 
         public delegate string InputRequestDelegate(string message, Func<string,bool> validationFunc);
 
@@ -47,8 +46,6 @@ namespace NightKeeper.Helper.Core
         {
             Settings = Settings.GetInstance(this);
         }
-
-        public ILogger CurrentLog { get; private set; }
 
         public string GetConfiguration()
         {
@@ -75,12 +72,12 @@ namespace NightKeeper.Helper.Core
 
             EnsureProviders();
             _connections.AddRange(Settings.ReadConnections(Providers));
-            scripts.AddRange(Settings.ReadScripts(Connections));
+            _scripts.AddRange(Settings.ReadScripts(Connections));
         }
 
         private void EnsureProviders()
         {
-            var info = typeof(IProvider);
+            var info = typeof(IStorageProvider);
 
             var files = Directory.EnumerateFiles(Environment.CurrentDirectory, "*.dll");
 
@@ -106,7 +103,7 @@ namespace NightKeeper.Helper.Core
                         .Where(x => x.IsPublic && !x.IsAbstract && x.GetInterfaces().Any(i => i == info));
                     foreach (var type in types)
                     {
-                        if (Activator.CreateInstance(type) is IProvider instance)
+                        if (Activator.CreateInstance(type) is IStorageProvider instance)
                         {
                             instance.Init(this);
                             _providers.Add(instance);
@@ -125,16 +122,7 @@ namespace NightKeeper.Helper.Core
 
         private void InitLogs()
         {
-            var logsPath = Path.Combine(AppFolder, "Logs");
-
-            var logFilePath = Path.Combine(logsPath, $"{GetExeName()}_{GetConfiguration()}_.log");
-            Serilog.Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .WriteTo.Console()
-                .WriteTo.File(logFilePath, rollingInterval: RollingInterval.Day)
-                .CreateLogger();
-
-            CurrentLog = Serilog.Log.Logger;
+            Logger.Init();
         }
 
         private void InitAppFolder()
@@ -167,17 +155,16 @@ namespace NightKeeper.Helper.Core
         }
 
         public event EventHandler<LogEntry> NewLog;
-        private const string Default = "Default";
 
         public void Log(string message)
         {
-            NewLog?.Invoke(this, new LogEntry(InfoLogType.Info, Default, message));
+            NewLog?.Invoke(this, new LogEntry(LogEventLevel.Information, LogSources.Default, message));
             Serilog.Log.Information(message);
         }
 
         public void Log(Exception ex)
         {
-            NewLog?.Invoke(this, new LogEntry(InfoLogType.Error, Default, ex.ToString()));
+            NewLog?.Invoke(this, new LogEntry(LogEventLevel.Error, LogSources.Default, ex.ToString()));
             Serilog.Log.Debug(ex, "Error");
         }
 
@@ -204,13 +191,13 @@ namespace NightKeeper.Helper.Core
         {
             var script = new Script(0, connection, targetPath, period);
             Settings.SaveScript(script);
-            scripts.Add(script);
+            _scripts.Add(script);
             return script;
         }
 
-        public IConnection AddConnection(string name, IProvider provider, object connectionSettings)
+        public IConnection AddConnection(string name, IStorageProvider storageProvider, object connectionSettings)
         {
-            var connection = new Connection(0, name, provider, connectionSettings);
+            var connection = new Connection(0, name, storageProvider, connectionSettings);
 
             var exists = _connections.FirstOrDefault(x => x.Equals(connection));
             if (exists != null)
@@ -224,7 +211,7 @@ namespace NightKeeper.Helper.Core
         public void RemoveScript(Script script)
         {
             Settings.RemoveScript(script);
-            scripts.Remove(script);
+            _scripts.Remove(script);
         }
 
         public void RemoveConnection(IConnection connection)

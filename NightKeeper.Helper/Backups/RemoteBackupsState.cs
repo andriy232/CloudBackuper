@@ -8,7 +8,7 @@ namespace NightKeeper.Helper.Backups
     public class RemoteBackupsState
     {
         public readonly List<RemoteBackup> Backups = new List<RemoteBackup>();
-        public IProvider Provider { get; }
+        public IStorageProvider StorageProvider { get; }
 
         public class RemoteBackup
         {
@@ -29,10 +29,10 @@ namespace NightKeeper.Helper.Backups
             }
         }
 
-        public RemoteBackupsState(IProvider provider,
+        public RemoteBackupsState(IStorageProvider storageProvider,
             IEnumerable<(string id, string Name, DateTime ClientModified)> valueTuples)
         {
-            Provider = provider;
+            StorageProvider = storageProvider;
             if (valueTuples != null)
                 Backups.AddRange(valueTuples.Select(x => new RemoteBackup(x.id, x.Name, x.ClientModified)));
         }
@@ -42,7 +42,7 @@ namespace NightKeeper.Helper.Backups
             var sb = new StringBuilder(Backups.Count * 20);
             foreach (var b in Backups)
                 sb.AppendLine(b.ToString());
-            return $"{Provider} - {sb}";
+            return $"{StorageProvider} - {sb}";
         }
     }
 }

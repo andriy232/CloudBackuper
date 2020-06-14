@@ -81,7 +81,7 @@ FOREIGN KEY(`connectionId`) REFERENCES `connnections`(`id`))";
 
         #region Connections
 
-        public IEnumerable<IConnection> ReadConnections(IEnumerable<IProvider> providers)
+        public IEnumerable<IConnection> ReadConnections(IEnumerable<IStorageProvider> providers)
         {
             var enumerable = providers.ToList();
             var list = new List<IConnection>();
@@ -122,7 +122,7 @@ FOREIGN KEY(`connectionId`) REFERENCES `connnections`(`id`))";
                 {
                     command.CommandText =
                         "insert into `connections` (`providerId`, `name`, `values`) values (@guid, @name, @values)";
-                    command.Parameters.AddWithValue("@guid", conn.Provider.Id.ToString());
+                    command.Parameters.AddWithValue("@guid", conn.StorageProvider.Id.ToString());
                     command.Parameters.AddWithValue("@name", conn.Name);
                     command.Parameters.AddWithValue("@values", conn.ConnectionSettings.ToString());
                     command.ExecuteNonQuery();
@@ -133,7 +133,7 @@ FOREIGN KEY(`connectionId`) REFERENCES `connnections`(`id`))";
                     command.CommandText =
                         "update `connections` set `providerId`=@guid, `name`=@name, `values`=@values where `id`=@id";
                     command.Parameters.AddWithValue("@id", conn.Id);
-                    command.Parameters.AddWithValue("@guid", conn.Provider.Id.ToString());
+                    command.Parameters.AddWithValue("@guid", conn.StorageProvider.Id.ToString());
                     command.Parameters.AddWithValue("@name", conn.Name);
                     command.Parameters.AddWithValue("@values", conn.ConnectionSettings.ToString());
                     command.ExecuteNonQuery();
