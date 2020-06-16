@@ -32,19 +32,12 @@ namespace NightKeeper.Helper.Core
         private UnhandledExceptionHandler _handler;
         private static Core _instance;
 
-        public delegate string InputRequestDelegate(string message, Func<string,bool> validationFunc);
+        public delegate string InputRequestDelegate(string message, Func<string, bool> validationFunc);
 
-        public static Core GetInstance()
-        {
-            lock (Locker)
-            {
-                return _instance ?? (_instance = new Core());
-            }
-        }
+        public static Core Instance => _instance ??= new Core();
 
         private Core()
         {
-            Settings = Settings.GetInstance(this);
         }
 
         public string GetConfiguration()
@@ -64,12 +57,9 @@ namespace NightKeeper.Helper.Core
         public void Load()
         {
             _handler = new UnhandledExceptionHandler();
-
             InitAppFolder();
             InitLogs();
-
             Settings.EnsureDatabase();
-
             EnsureProviders();
             _connections.AddRange(Settings.ReadConnections(Providers));
             _scripts.AddRange(Settings.ReadScripts(Connections));
@@ -80,7 +70,6 @@ namespace NightKeeper.Helper.Core
             var info = typeof(IStorageProvider);
 
             var files = Directory.EnumerateFiles(Environment.CurrentDirectory, "*.dll");
-
             foreach (var file in files)
             {
                 try
@@ -89,7 +78,7 @@ namespace NightKeeper.Helper.Core
                 }
                 catch (Exception ex)
                 {
-                    Log(ex);
+                    Logger.Log(ex);
                 }
             }
 
@@ -112,7 +101,7 @@ namespace NightKeeper.Helper.Core
                 }
                 catch (Exception ex)
                 {
-                    Log(ex);
+                    Logger.Log(ex);
                 }
             }
 
@@ -128,16 +117,15 @@ namespace NightKeeper.Helper.Core
         private void InitAppFolder()
         {
             var path = GetAppDataPath();
-
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
-
             AppFolder = path;
         }
 
         public static string GetAppDataPath()
         {
             var exeName = GetExeName();
+
             var path = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 exeName);
@@ -152,20 +140,6 @@ namespace NightKeeper.Helper.Core
         private static string GetExeName()
         {
             return Assembly.GetEntryAssembly()?.GetName().Name;
-        }
-
-        public event EventHandler<LogEntry> NewLog;
-
-        public void Log(string message)
-        {
-            NewLog?.Invoke(this, new LogEntry(LogEventLevel.Information, LogSources.Default, message));
-            Serilog.Log.Information(message);
-        }
-
-        public void Log(Exception ex)
-        {
-            NewLog?.Invoke(this, new LogEntry(LogEventLevel.Error, LogSources.Default, ex.ToString()));
-            Serilog.Log.Debug(ex, "Error");
         }
 
         public static void StartProcess(string uri)
@@ -202,7 +176,6 @@ namespace NightKeeper.Helper.Core
             var exists = _connections.FirstOrDefault(x => x.Equals(connection));
             if (exists != null)
                 return exists;
-
             Settings.SaveConnection(connection);
             _connections.Add(connection);
             return connection;
@@ -226,7 +199,6 @@ namespace NightKeeper.Helper.Core
                 return _inputRequestor(message, validationFunc);
 
             string input = null;
-
             while (string.IsNullOrWhiteSpace(input) || validationFunc != null && !validationFunc(input))
             {
                 Console.WriteLine(message);
@@ -235,11 +207,11 @@ namespace NightKeeper.Helper.Core
 
             return input;
         }
-        
+
         public void RegisterOutput(EventHandler<LogEntry> action, InputRequestDelegate inputRequestDelegate)
         {
             _inputRequestor = inputRequestDelegate;
-            NewLog += action;
+            Logger.NewLog += action;
         }
     }
 }

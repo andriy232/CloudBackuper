@@ -49,15 +49,15 @@ namespace NightKeeper.GoogleDrive
                 }
 
                 var file = request.ResponseBody;
-                Core.Log($"Backup uploaded, file Id: {file.Id}");
+                Core.Logger.Log($"Backup uploaded, file Id: {file.Id}");
             }
             catch (Exception ex)
             {
-                Core.Log(ex.ToString());
+                Core.Logger.Log(ex.ToString());
             }
             finally
             {
-                Core.Log("Clean up garbage");
+                Core.Logger.Log("Clean up garbage");
             }
         }
 
@@ -66,7 +66,7 @@ namespace NightKeeper.GoogleDrive
         {
             var request = service.Files.Delete(backupUniqueId);
             var result = await request.ExecuteAsync();
-            Core.Log($"Removing backup: {result}");
+            Core.Logger.Log($"Removing backup: {result}");
         }
 
         private async Task<RemoteBackupsState> GetBackupsAsync(DriveService service)
@@ -82,7 +82,7 @@ namespace NightKeeper.GoogleDrive
 
             var backups = new List<File>();
             string pageToken;
-            Core.Log("Searching for backups");
+            Core.Logger.Log("Searching for backups");
             do
             {
                 var listRequestResult = await listRequest.ExecuteAsync();
@@ -241,13 +241,13 @@ namespace NightKeeper.GoogleDrive
                             "user",
                             CancellationToken.None,
                             new FileDataStore(authDataDir, true)).Result;
-                        Core.Log($"Credential file saved to: {authDataDir}");
+                        Core.Logger.Log($"Credential file saved to: {authDataDir}");
                         return cred;
                     }
                 }
                 catch (Exception ex)
                 {
-                    Core.Log($"Authorization issue: {ex},{Environment.NewLine}Please, try again");
+                    Core.Logger.Log($"Authorization issue: {ex},{Environment.NewLine}Please, try again");
                 }
             }
         }

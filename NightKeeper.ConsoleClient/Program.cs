@@ -16,36 +16,36 @@ namespace NightKeeper.ConsoleClient
             {
                 new Program().Go().GetAwaiter().GetResult();
 
-                Core.GetInstance().Log("Program returned 0");
+                Core.Instance.Logger.Log("Program returned 0");
             }
             catch (Exception ex)
             {
-                Core.GetInstance().Log(ex);
-                Core.GetInstance().Log("Program returned -1");
+                Core.Instance.Logger.Log(ex);
+                Core.Instance.Logger.Log("Program returned -1");
                 Console.ReadLine();
             }
         }
 
         private async Task Go()
         {
-            var core = Core.GetInstance();
+            var core = Core.Instance;
 
             RemoteBackupsState remoteBackupsState = null;
 
             foreach (var provider in core.Providers)
             {
-                core.Log($"Available provider: {provider}");
+                core.Logger.Log($"Available provider: {provider}");
             }
 
             foreach (var connection in core.Connections)
             {
                 remoteBackupsState = await connection.GetRemoteBackups();
-                core.Log($"{connection}, {remoteBackupsState}");
+                core.Logger.Log($"{connection}, {remoteBackupsState}");
             }
 
             foreach (var script in core.Scripts)
             {
-                core.Log(script.ToString());
+                core.Logger.Log(script.ToString());
             }
 
             IConnection dropboxConnection;

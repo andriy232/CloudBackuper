@@ -259,7 +259,7 @@ namespace NightKeeper.Dropbox
                 if (file != null)
                     await DownloadToFileAsync(client, RemotePath, file, outputPath);
                 else
-                    Core.Log("Remote file not found");
+                    Core.Logger.Log("Remote file not found");
             }
         }
 
@@ -277,7 +277,7 @@ namespace NightKeeper.Dropbox
                 }
                 catch (Exception ex)
                 {
-                    Core.Log(ex);
+                    Core.Logger.Log(ex);
                 }
             }
         }
@@ -295,7 +295,7 @@ namespace NightKeeper.Dropbox
                 if (fileMetadata != null)
                     await client.Files.DeleteV2Async($"{RemotePath}/{fileMetadata.Name}");
                 else
-                    Core.Log("Remote file not found");
+                    Core.Logger.Log("Remote file not found");
             }
         }
 
@@ -367,7 +367,7 @@ namespace NightKeeper.Dropbox
                     WriteMode.Overwrite.Instance,
                     body: stream);
 
-                Core.Log($"Uploaded Id {response.Id} Rev {response.Rev}");
+                Core.Logger.Log($"Uploaded Id {response.Id} Rev {response.Rev}");
             }
         }
 

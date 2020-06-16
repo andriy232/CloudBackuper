@@ -35,7 +35,7 @@ namespace NightKeeper.Helper.Core
             _databasePath = Path.Combine(_core.AppFolder, DbFileName);
 
             if (!File.Exists(_databasePath))
-                _core.Log($"Database '{DbFileName}' not exist!");
+                _core.Logger.Log($"Database '{DbFileName}' not exist!");
 
             InitDatabaseIfNeed();
         }
@@ -72,7 +72,7 @@ FOREIGN KEY(`connectionId`) REFERENCES `connnections`(`id`))";
             }
             catch (Exception ex)
             {
-                _core.Log(ex);
+                _core.Logger.Log(ex);
                 throw;
             }
 

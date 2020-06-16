@@ -15,7 +15,7 @@ namespace NightKeeper.Helper.Backups
 
         public LocalBackup(string path, string backupFileName)
         {
-            _core = Core.Core.GetInstance();
+            _core = Core.Core.Instance;
 
             CreateZip(path, backupFileName);
         }
@@ -53,7 +53,7 @@ namespace NightKeeper.Helper.Backups
                 var entryName = Path.GetFileName(sourcePath);
                 var destinationPath = Path.Combine(_tempDir, entryName);
 
-                _core.Log($"Copying data to temp: {destinationPath}");
+                _core.Logger.Log($"Copying data to temp: {destinationPath}");
                 Directory.CreateDirectory(destinationPath);
 
                 if (FileSystem.IsDirectory(sourcePath))
@@ -67,7 +67,7 @@ namespace NightKeeper.Helper.Backups
 
                 var zipName = $"{backupFileName}_{DateTime.Today:dd-MM-yyyy}_{DateTime.Now:HH-mm-ss}.zip";
                 ResultPath = Path.Combine(_tempDir, zipName);
-                _core.Log($"Creating archive: {ResultPath}");
+                _core.Logger.Log($"Creating archive: {ResultPath}");
 
                 using (var archive = ZipFile.Open(ResultPath, ZipArchiveMode.Create))
                 {
@@ -88,12 +88,12 @@ namespace NightKeeper.Helper.Backups
                     }
                 }
 
-                _core.Log($"Data archived: {ResultPath}");
+                _core.Logger.Log($"Data archived: {ResultPath}");
             }
             catch (Exception ex)
             {
                 ClearTemp();
-                _core.Log(ex);
+                _core.Logger.Log(ex);
             }
         }
 
@@ -111,7 +111,7 @@ namespace NightKeeper.Helper.Backups
             }
             catch (Exception ex)
             {
-                _core.Log(ex);
+                _core.Logger.Log(ex);
             }
         }
     }

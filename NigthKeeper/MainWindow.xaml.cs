@@ -15,7 +15,7 @@ namespace NigthKeeper
 
         public MainWindow()
         {
-            _core = Core.GetInstance();
+            _core = Core.Instance;
             InitializeComponent();
 
             Title = _core.GetTitle();
@@ -37,7 +37,7 @@ namespace NigthKeeper
             _core.Load();
 
             foreach (var provider in _core.Providers)
-                _core.Log($"Available provider: {provider}");
+                _core.Logger.Log($"Available provider: {provider}");
 
             foreach (var connection in _core.Connections)
                 await AddConnection(connection);
@@ -49,14 +49,14 @@ namespace NigthKeeper
         private async Task AddConnection(IConnection connection)
         {
             var remoteBackupsState = await connection.GetRemoteBackups();
-            _core.Log($"{connection}, {remoteBackupsState}");
+            _core.Logger.Log($"{connection}, {remoteBackupsState}");
 
             lvConnections.Items.Add(connection);
         }
 
         private void AddScript(Script script)
         {
-            _core.Log(script.ToString());
+            _core.Logger.Log(script.ToString());
 
             lvScripts.Items.Add(script);
         }
@@ -77,7 +77,7 @@ namespace NigthKeeper
             }
             catch (Exception ex)
             {
-                _core?.Log(ex);
+                _core?.Logger.Log(ex);
             }
         }
     }

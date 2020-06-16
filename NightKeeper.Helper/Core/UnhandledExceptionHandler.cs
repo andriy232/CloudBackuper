@@ -42,7 +42,7 @@ namespace NightKeeper.Helper.Core
 
         private void HandleException(Exception e)
         {
-            _core.Log(e);
+            _core.Logger.Log(e);
         }
     }
 }
