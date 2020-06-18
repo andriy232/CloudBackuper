@@ -1,6 +1,6 @@
-﻿using System;
+﻿using NightKeeper.Helper.Backups;
+using System;
 using System.Threading.Tasks;
-using NightKeeper.Helper.Backups;
 
 namespace NightKeeper.Helper
 {
@@ -16,15 +16,15 @@ namespace NightKeeper.Helper
 
         void Init(Core.Core core);
 
-        object GetConnectionValues();
+        object TryAuth();
 
         bool IsConnected();
 
         EventHandler<ConnectionStatus> ConnectionStatusChanged { get; }
 
-        Task<RemoteBackupsState> GetBackups();
+        Task<RemoteBackupsState> GetBackupState();
 
-        Task UploadBackupAsync(LocalBackup localBackup);
+        Task UploadBackupAsync(LocalArchivedBackup localBackup);
 
         Task DownloadBackupAsync(RemoteBackupsState.RemoteBackup backup, string outputPath);
 

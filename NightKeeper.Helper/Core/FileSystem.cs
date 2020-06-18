@@ -14,7 +14,7 @@ namespace NightKeeper.Helper.Core
 
         public static FileSystem GetInstance()
         {
-            return _instance ?? (_instance = new FileSystem());
+            return _instance ??= new FileSystem();
         }
 
         public static IEnumerable<FileInfo> GetFilesRecursive(string path, List<FileInfo> currentData = null)
@@ -31,7 +31,7 @@ namespace NightKeeper.Helper.Core
             return currentData;
         }
 
-        public static void CopyDirectory(string sourcePath, string destinationPath)
+        public void CopyDirectory(string sourcePath, string destinationPath)
         {
             foreach (var dirPath in Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories))
                 Directory.CreateDirectory(dirPath.Replace(sourcePath, destinationPath));
@@ -40,7 +40,7 @@ namespace NightKeeper.Helper.Core
                 CopyFile(newPath, newPath.Replace(sourcePath, destinationPath));
         }
 
-        public static void CopyFile(string sourcePath, string destinationPath)
+        public void CopyFile(string sourcePath, string destinationPath)
         {
             try
             {
@@ -57,11 +57,12 @@ namespace NightKeeper.Helper.Core
             return File.GetAttributes(path).HasFlag(FileAttributes.Directory);
         }
 
-        public static void DeleteDirectory(string dir)
+        public void DeleteDirectory(string dir)
         {
             try
             {
-                Directory.Delete(dir, true);
+                if (!string.IsNullOrWhiteSpace(dir) && Directory.Exists(dir))
+                    Directory.Delete(dir, true);
             }
             catch (Exception)
             {
@@ -69,15 +70,38 @@ namespace NightKeeper.Helper.Core
             }
         }
 
-        public static long GetFileSize(string file)
+        public long GetFileSize(string file)
         {
             return new FileInfo(file).Length;
         }
 
-        public static bool FileExists(string filePath)
+        public bool Exists(string filePath)
         {
-            return !string.IsNullOrWhiteSpace(filePath) &&
-                   (Path.HasExtension(filePath) && File.Exists(filePath)) || Directory.Exists(filePath);
+            if (string.IsNullOrWhiteSpace(filePath))
+                return false;
+
+            return Path.HasExtension(filePath) && File.Exists(filePath) || Directory.Exists(filePath);
+        }
+
+        public void Delete(string targetPath)
+        {
+            if (string.IsNullOrWhiteSpace(targetPath))
+                return;
+
+            if (File.Exists(targetPath))
+                File.Delete(targetPath);
+            else if (Directory.Exists(targetPath))
+                Directory.Delete(targetPath, true);
+        }
+
+        public string GetTempFilePath(string extension)
+        {
+            var tempFile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
+            if (string.IsNullOrEmpty(extension))
+                return tempFile;
+            if (extension.Contains("."))
+                return tempFile + extension;
+            return tempFile + "." + extension;
         }
     }
 }

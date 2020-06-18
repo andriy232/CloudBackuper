@@ -1,7 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using NightKeeper.Helper.Backups;
+﻿using NightKeeper.Helper.Backups;
 using NightKeeper.Helper.Settings;
+using System;
+using System.Threading.Tasks;
 
 namespace NightKeeper.Helper
 {
@@ -29,7 +29,7 @@ namespace NightKeeper.Helper
             Core.Settings.SaveSettings(Id, settings);
         }
 
-        public abstract object GetConnectionValues();
+        public abstract object TryAuth();
 
         public bool IsConnected()
         {
@@ -41,7 +41,7 @@ namespace NightKeeper.Helper
             get => _connectionStatus;
             set
             {
-                if (_connectionStatus == value) 
+                if (_connectionStatus == value)
                     return;
 
                 _connectionStatus = value;
@@ -51,9 +51,9 @@ namespace NightKeeper.Helper
 
         public EventHandler<ConnectionStatus> ConnectionStatusChanged { get; }
 
-        public abstract Task<RemoteBackupsState> GetBackups();
+        public abstract Task<RemoteBackupsState> GetBackupState();
 
-        public abstract Task UploadBackupAsync(LocalBackup localBackup);
+        public abstract Task UploadBackupAsync(LocalArchivedBackup localBackup);
 
         public abstract Task DownloadBackupAsync(RemoteBackupsState.RemoteBackup backup, string outputPath);
 

@@ -51,7 +51,7 @@ namespace NigthKeeper
 
         private void Windowdef()
         {
-            _windowHost.Height = 100; 
+            _windowHost.Height = 100;
             _windowHost.Width = 250;
             _windowHost.Background = _boxBackgroundColor;
             _windowHost.Title = _title;

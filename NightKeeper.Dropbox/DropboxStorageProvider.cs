@@ -1,4 +1,10 @@
-﻿using System;
+﻿using Dropbox.Api;
+using Dropbox.Api.Files;
+using NightKeeper.Dropbox.Properties;
+using NightKeeper.Helper;
+using NightKeeper.Helper.Backups;
+using NightKeeper.Helper.Core;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,12 +12,6 @@ using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using Dropbox.Api;
-using Dropbox.Api.Files;
-using NightKeeper.Dropbox.Properties;
-using NightKeeper.Helper;
-using NightKeeper.Helper.Backups;
-using NightKeeper.Helper.Core;
 
 namespace NightKeeper.Dropbox
 {
@@ -22,7 +22,7 @@ namespace NightKeeper.Dropbox
         public override byte[] Logo => Resources.Img_Dropbox;
 
         public override Guid Id => Guid.Parse("{D799FFF5-CACC-4E02-ACFD-ED2275F3BE56}");
-        
+
         // Add an ApiKey (from https://www.dropbox.com/developers/apps) here
         // private const string ApiKey = "XXXXXXXXXXXXXXX";
 
@@ -54,7 +54,7 @@ namespace NightKeeper.Dropbox
             DropboxCertHelper.InitializeCertPinning();
 
             var accessSettings = GetSettings();
-            
+
             if (string.IsNullOrEmpty(accessSettings?.AccessToken))
                 accessSettings = await Autorize();
 
@@ -191,7 +191,7 @@ namespace NightKeeper.Dropbox
             var existFolders = await client.Files.ListFolderAsync(basePath);
             var any = existFolders.Entries.FirstOrDefault(x => x.IsFolder && x.PathDisplay.Contains(path));
             if (any != null)
-                return (FolderMetadata) any;
+                return (FolderMetadata)any;
 
             Console.WriteLine("--- Creating Folder ---");
             var folderArg = new CreateFolderArg(path);
@@ -202,7 +202,7 @@ namespace NightKeeper.Dropbox
             return folder.Metadata;
         }
 
-        public override async Task<RemoteBackupsState> GetBackups()
+        public override async Task<RemoteBackupsState> GetBackupState()
         {
             using (var client = await GetDropboxClient())
             {
@@ -210,7 +210,7 @@ namespace NightKeeper.Dropbox
             }
         }
 
-        private  async Task<RemoteBackupsState> ListFolderAsync(DropboxClient client, string path)
+        private async Task<RemoteBackupsState> ListFolderAsync(DropboxClient client, string path)
         {
             var list = await client.Files.ListFolderAsync(path);
             var files = list?.Entries?.Where(i => i.IsFile).Select(x => x.AsFile).ToList() ?? new List<FileMetadata>();
@@ -228,13 +228,13 @@ namespace NightKeeper.Dropbox
                 list?.Entries?.Select(x => (x.AsFile.Id, x.Name, x.AsFile.ClientModified)));
         }
 
-        public override async Task UploadBackupAsync(LocalBackup localBackup)
+        public override async Task UploadBackupAsync(LocalArchivedBackup localBackup)
         {
             using (var client = await GetDropboxClient())
             {
                 await CreateFolderAsync(client, RemotePath);
 
-                var size = FileSystem.GetFileSize(localBackup.ResultPath);
+                var size = Core.FileSystem.GetFileSize(localBackup.ResultPath);
                 if (size > ChunkSize)
                 {
                     await UploadChunkedAsync(client, RemotePath, localBackup.ResultPath);
@@ -269,11 +269,17 @@ namespace NightKeeper.Dropbox
             using (var response = await client.Files.DownloadAsync($"{folder}/{fileMetadata.Name}"))
             {
                 Console.WriteLine($"Downloaded {response.Response.Name} Rev {response.Response.Rev}");
-
                 var content = await response.GetContentAsStringAsync();
                 try
                 {
-                    File.WriteAllText(outputPath, content);
+                    using (var stream = File.OpenWrite(outputPath))
+                    {
+                        var dataToWrite = await response.GetContentAsByteArrayAsync();
+                        stream.Write(dataToWrite, 0, dataToWrite.Length);
+                    }
+
+                    var tempPath = Path.GetTempFileName();
+                    await File.WriteAllTextAsync(tempPath, content);
                 }
                 catch (Exception ex)
                 {
@@ -307,7 +313,7 @@ namespace NightKeeper.Dropbox
             {
                 HttpClient = new HttpClient
                 {
-                    Timeout = TimeSpan.FromMinutes(20)
+                    Timeout = TimeSpan.FromDays(1)
                 }
             };
 
@@ -320,7 +326,7 @@ namespace NightKeeper.Dropbox
 
             using (var stream = new MemoryStream(content))
             {
-                int numChunks = (int) Math.Ceiling((double) stream.Length / ChunkSize);
+                int numChunks = (int)Math.Ceiling((double)stream.Length / ChunkSize);
 
                 byte[] buffer = new byte[ChunkSize];
                 string sessionId = null;
@@ -338,7 +344,7 @@ namespace NightKeeper.Dropbox
                         }
                         else
                         {
-                            var cursor = new UploadSessionCursor(sessionId, (ulong) (ChunkSize * idx));
+                            var cursor = new UploadSessionCursor(sessionId, (ulong)(ChunkSize * idx));
                             if (idx == numChunks - 1)
                             {
                                 await client.Files.UploadSessionFinishAsync(
@@ -371,7 +377,7 @@ namespace NightKeeper.Dropbox
             }
         }
 
-        public override object GetConnectionValues()
+        public override object TryAuth()
         {
             var task = Task.Run(GetAuthSettings);
 

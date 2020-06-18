@@ -1,5 +1,4 @@
 ﻿using NightKeeper.Helper.Settings;
-using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Serilog.Events;
 
 namespace NightKeeper.Helper.Core
 {
@@ -25,7 +23,7 @@ namespace NightKeeper.Helper.Core
 
         public readonly FileSystem FileSystem = FileSystem.GetInstance();
         public readonly SingleLogger Logger = new SingleLogger();
-        public readonly Settings Settings;
+        public Settings Settings;
 
         private static readonly object Locker = new object();
         private InputRequestDelegate _inputRequestor;
@@ -38,6 +36,7 @@ namespace NightKeeper.Helper.Core
 
         private Core()
         {
+            Load();
         }
 
         public string GetConfiguration()
@@ -54,18 +53,18 @@ namespace NightKeeper.Helper.Core
 #endif
         }
 
-        public void Load()
+        private void Load()
         {
             _handler = new UnhandledExceptionHandler();
             InitAppFolder();
             InitLogs();
-            Settings.EnsureDatabase();
-            EnsureProviders();
+            Settings = new Settings(this);
+            InitProviders();
             _connections.AddRange(Settings.ReadConnections(Providers));
             _scripts.AddRange(Settings.ReadScripts(Connections));
         }
 
-        private void EnsureProviders()
+        private void InitProviders()
         {
             var info = typeof(IStorageProvider);
 
@@ -74,7 +73,8 @@ namespace NightKeeper.Helper.Core
             {
                 try
                 {
-                    Assembly.LoadFile(file);
+                    if (!IsAssemblyLoaded(Path.GetFileNameWithoutExtension(file)))
+                        LoadAssembly(file);
                 }
                 catch (Exception ex)
                 {
@@ -82,13 +82,16 @@ namespace NightKeeper.Helper.Core
                 }
             }
 
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies()
+                .Where(x => x.FullName != null && x.FullName.Contains("NightKeeper")).OrderBy(x => x.FullName)
+                .ToList();
             foreach (var assembly in assemblies)
             {
                 try
                 {
-                    var types = assembly
-                        .GetTypes()
+                    var types1 = assembly
+                        .GetTypes();
+                    var types = types1
                         .Where(x => x.IsPublic && !x.IsAbstract && x.GetInterfaces().Any(i => i == info));
                     foreach (var type in types)
                     {
@@ -107,6 +110,24 @@ namespace NightKeeper.Helper.Core
 
             if (_providers.Count == 0)
                 throw new ApplicationException("no providers");
+        }
+
+        private readonly AssemblyLoader _asl = new AssemblyLoader();
+
+        private void LoadAssembly(string file)
+        {
+            _asl.LoadFromAssemblyPath(file);
+        }
+
+        private bool IsAssemblyLoaded(string fullName)
+        {
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+            foreach (var assembly in assemblies)
+                if (assembly.FullName != null && assembly.FullName.StartsWith(fullName))
+                    return true;
+
+            return false;
         }
 
         private void InitLogs()
@@ -161,9 +182,9 @@ namespace NightKeeper.Helper.Core
             }
         }
 
-        public Script AddScript(IConnection connection, string targetPath, PeriodicitySettings period)
+        public Script AddScript(string name, IConnection connection, string targetPath, PeriodicitySettings period)
         {
-            var script = new Script(0, connection, targetPath, period);
+            var script = new Script(0, connection, name, targetPath, period);
             Settings.SaveScript(script);
             _scripts.Add(script);
             return script;

@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using NightKeeper.Helper.Backups;
+﻿using NightKeeper.Helper.Backups;
+using System.Threading.Tasks;
 
 namespace NightKeeper.Helper
 {
@@ -12,6 +12,6 @@ namespace NightKeeper.Helper
         byte[] Logo { get; }
 
         Task<RemoteBackupsState> GetRemoteBackups();
-        Task Upload(LocalBackup localBackup);
+        Task Upload(LocalArchivedBackup localBackup);
     }
 }

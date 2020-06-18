@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Google.Apis.Auth.OAuth2;
+﻿using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
@@ -13,6 +6,13 @@ using NightKeeper.GoogleDrive.Properties;
 using NightKeeper.Helper;
 using NightKeeper.Helper.Backups;
 using NightKeeper.Helper.Core;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using File = Google.Apis.Drive.v3.Data.File;
 
 namespace NightKeeper.GoogleDrive
@@ -35,7 +35,7 @@ namespace NightKeeper.GoogleDrive
                 var fileMetadata = new File
                 {
                     Name = Path.GetFileName(zipPath),
-                    Parents = new List<string> {GetSettings().DriveFolderId}
+                    Parents = new List<string> { GetSettings().DriveFolderId }
                 };
 
                 FilesResource.CreateMediaUpload request;
@@ -104,13 +104,13 @@ namespace NightKeeper.GoogleDrive
                     x.ModifiedTime ?? x.ModifiedByMeTime ?? x.CreatedTime ?? DateTime.MinValue)));
         }
 
-        public override async Task<RemoteBackupsState> GetBackups()
+        public override async Task<RemoteBackupsState> GetBackupState()
         {
             using (var service = await GetDriveService())
                 return await GetBackupsAsync(service);
         }
 
-        public override async Task UploadBackupAsync(LocalBackup localBackup)
+        public override async Task UploadBackupAsync(LocalArchivedBackup localBackup)
         {
             using (var service = await GetDriveService())
                 await Upload(service, localBackup.ResultPath);
@@ -173,7 +173,7 @@ namespace NightKeeper.GoogleDrive
         {
             var driveSettings = GetSettings();
 
-            if (!FileSystem.FileExists(driveSettings?.AuthInfoPath))
+            if (!Core.FileSystem.Exists(driveSettings?.AuthInfoPath))
             {
                 var userCredentialsPath = Core.ReadLine(
                     "Enter path to credentials Json:",
@@ -190,7 +190,7 @@ namespace NightKeeper.GoogleDrive
                     Directory.CreateDirectory(authInfoDir);
 
                 var movedCredentialsPath = Path.Combine(credentialsDir, "credentials.json");
-                FileSystem.CopyFile(userCredentialsPath, movedCredentialsPath);
+                Core.FileSystem.CopyFile(userCredentialsPath, movedCredentialsPath);
 
                 return await DoOAuthGoogle(movedCredentialsPath, authInfoDir, TargetScope);
             }
@@ -237,7 +237,7 @@ namespace NightKeeper.GoogleDrive
                     {
                         var cred = GoogleWebAuthorizationBroker.AuthorizeAsync(
                             GoogleClientSecrets.Load(stream).Secrets,
-                            new[] {scope},
+                            new[] { scope },
                             "user",
                             CancellationToken.None,
                             new FileDataStore(authDataDir, true)).Result;
@@ -252,7 +252,7 @@ namespace NightKeeper.GoogleDrive
             }
         }
 
-        public override object GetConnectionValues()
+        public override object TryAuth()
         {
             var task = Task.Run(GetOAuthSettingsAsync);
 

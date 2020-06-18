@@ -1,26 +1,26 @@
-﻿using System.Threading.Tasks;
-using NightKeeper.Helper.Backups;
+﻿using NightKeeper.Helper.Backups;
+using System.Threading.Tasks;
 
 namespace NightKeeper.Helper
 {
     public class Connection : IConnection
     {
         public IStorageProvider StorageProvider { get; set; }
-        
+
         public object ConnectionSettings { get; set; }
-        
+
         public string Name { get; set; }
-        
+
         public int Id { get; set; }
-        
+
         public byte[] Logo => StorageProvider?.Logo;
 
         public Task<RemoteBackupsState> GetRemoteBackups()
         {
-            return StorageProvider.GetBackups();
+            return StorageProvider.GetBackupState();
         }
 
-        public Task Upload(LocalBackup localBackup)
+        public Task Upload(LocalArchivedBackup localBackup)
         {
             return StorageProvider.UploadBackupAsync(localBackup);
         }

@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using NightKeeper.Helper.Settings;
+using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
-using NightKeeper.Helper.Settings;
 
 namespace NightKeeper.Helper.Core
 {
@@ -14,19 +14,14 @@ namespace NightKeeper.Helper.Core
         private const string DbFileName = "Store.sqlite";
         private readonly Core _core;
         private static string _databasePath;
-        private static Settings _instance;
 
-        private Settings(Core core)
+        internal Settings(Core core)
         {
             _core = core;
+            EnsureDatabase();
         }
 
-        public static Settings GetInstance(Core core)
-        {
-            return _instance ?? (_instance = new Settings(core));
-        }
-
-        internal void EnsureDatabase()
+        private void EnsureDatabase()
         {
             _databasePath = DbFileName;
             if (File.Exists(_databasePath))
@@ -126,7 +121,7 @@ FOREIGN KEY(`connectionId`) REFERENCES `connnections`(`id`))";
                     command.Parameters.AddWithValue("@name", conn.Name);
                     command.Parameters.AddWithValue("@values", conn.ConnectionSettings.ToString());
                     command.ExecuteNonQuery();
-                    conn.SetId((int) connection.LastInsertRowId);
+                    conn.SetId((int)connection.LastInsertRowId);
                 }
                 else
                 {
@@ -182,10 +177,10 @@ FOREIGN KEY(`connectionId`) REFERENCES `connnections`(`id`))";
 
                         var script = new Script(id,
                             enumerable.First(x => x.Id == connectionId),
+                            name,
                             targetPath,
                             PeriodicitySettings.Parse(period),
-                            backupName,
-                            name);
+                            backupName);
 
                         list.Add(script);
                     }
@@ -229,7 +224,7 @@ values (@name, @connectionId, @backupName, @targetPath, @period)";
                     command.Parameters.AddWithValue("@name", script.Name);
                     command.ExecuteNonQuery();
 
-                    script.SetId((int) connection.LastInsertRowId);
+                    script.SetId((int)connection.LastInsertRowId);
                 }
             }
         }

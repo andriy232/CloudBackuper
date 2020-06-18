@@ -1,10 +1,10 @@
-﻿using System;
+﻿using NightKeeper.Helper.Core;
+using NightKeeper.Helper.Settings;
+using System;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using NightKeeper.Helper;
-using NightKeeper.Helper.Backups;
-using NightKeeper.Helper.Core;
-using NightKeeper.Helper.Settings;
 
 namespace NightKeeper.ConsoleClient
 {
@@ -30,17 +30,9 @@ namespace NightKeeper.ConsoleClient
         {
             var core = Core.Instance;
 
-            RemoteBackupsState remoteBackupsState = null;
-
             foreach (var provider in core.Providers)
             {
                 core.Logger.Log($"Available provider: {provider}");
-            }
-
-            foreach (var connection in core.Connections)
-            {
-                remoteBackupsState = await connection.GetRemoteBackups();
-                core.Logger.Log($"{connection}, {remoteBackupsState}");
             }
 
             foreach (var script in core.Scripts)
@@ -48,62 +40,55 @@ namespace NightKeeper.ConsoleClient
                 core.Logger.Log(script.ToString());
             }
 
-            IConnection dropboxConnection;
-            IConnection driveConnection;
-
-            if (true)
+            foreach (var provider in core.Providers)
             {
-                var drive = core.Providers.First(x => x.Name.Contains("drive", StringComparison.OrdinalIgnoreCase));
-                var driveValues = drive.GetConnectionValues();
+                if (core.Connections.All(x => x.StorageProvider != provider))
+                {
+                    var connectionSettings = provider.TryAuth();
+                    core.AddConnection(
+                        $"{provider.Name}-connection",
+                        provider,
+                        connectionSettings);
+                }
 
-                driveConnection = core.AddConnection(
-                    "Google Drive",
-                    drive,
-                    driveValues);
+                var connection = core.Connections.First(
+                    x => x.StorageProvider.Name.Contains(provider.Name, StringComparison.OrdinalIgnoreCase));
 
-                var dropbox = core.Providers.First(x => x.Name.Contains("dropbox", StringComparison.OrdinalIgnoreCase));
-                var dropboxValues = dropbox.GetConnectionValues();
+                Debug.Assert(Directory.Exists("C:\\Users\\andri\\AppData\\Local\\Adobe"));
 
-                dropboxConnection = core.AddConnection(
-                    "Dropbox",
-                    dropbox,
-                    dropboxValues);
-            }
-            else
-            {
-                driveConnection =
-                    core.Connections.First(x => x.StorageProvider.Name.Contains("drive", StringComparison.OrdinalIgnoreCase));
-                dropboxConnection =
-                    core.Connections.First(x =>
-                        x.StorageProvider.Name.Contains("dropbox", StringComparison.OrdinalIgnoreCase));
-            }
+                var script = core.Scripts.FirstOrDefault(x => x.Name == $"Backup Adobe dir to {provider.Name}");
+                if (script == null)
+                {
+                    core.AddScript($"Backup Adobe dir to {provider.Name}",
+                        connection,
+                        "C:\\Users\\andri\\AppData\\Local\\Adobe",
+                        PeriodicitySettings.Manual);
+                }
 
-            if (false)
-            {
-                core.AddScript(driveConnection, "%userprofile%\\Documents\\AgenaTraderData", PeriodicitySettings.Empty);
-                core.AddScript(dropboxConnection, "%userprofile%\\Documents\\AgenaTraderData", PeriodicitySettings.Empty);
-            }
+                script = core.Scripts.First(x => x.Name == $"Backup Adobe dir to {provider.Name}");
+                try
+                {
+                    await script.DoBackup();
+                }
+                catch
+                {
+                    // ignored
+                }
 
-            foreach (var script in core.Scripts)
-            {
-                await script.PerformAsync();
-            }
+                var backupsState = await provider.GetBackupState();
+                core.Logger.Log($"{connection}, {backupsState}");
 
-            if (false)
-            {
-                var backup = remoteBackupsState.Backups[0];
+                var backup = backupsState.Backups;
+                Debug.Assert(backup.Count >= 1);
 
-                await remoteBackupsState.StorageProvider.DownloadBackupAsync(backup,
-                    System.IO.Path.Combine("%userprofile%\\Desktop\\Results", backup.BackupName));
+                core.FileSystem.Delete(script.TargetPath);
+                var lastBackup = backup.OrderByDescending(x => x.ModifiedDate).First();
+                await script.DoRestore(lastBackup);
 
-                await remoteBackupsState.StorageProvider.DeleteBackupAsync(backup);
+                Debug.Assert(Directory.Exists("C:\\Users\\andri\\AppData\\Local\\Adobe"));
 
-                core.RemoveScript(core.Scripts.First());
-
-                var script = core.AddScript(core.Connections.First(), "%userprofile%\\Desktop\\Results",
-                    PeriodicitySettings.Empty);
-
-                await script.PerformAsync();
+                await provider.DeleteBackupAsync(lastBackup);
+                core.RemoveScript(script);
             }
         }
     }

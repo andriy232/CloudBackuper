@@ -34,8 +34,6 @@ namespace NigthKeeper
             lvConnections.ItemsSource = null;
             lvScripts.ItemsSource = null;
 
-            _core.Load();
-
             foreach (var provider in _core.Providers)
                 _core.Logger.Log($"Available provider: {provider}");
 

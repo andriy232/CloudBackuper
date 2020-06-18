@@ -17,7 +17,7 @@ namespace NigthKeeper
                 if (!Double.IsNaN(gv.Columns[i].Width))
                     width -= gv.Columns[i].Width;
             }
-            return width -5;// this is to take care of margin/padding
+            return width - 5;// this is to take care of margin/padding
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

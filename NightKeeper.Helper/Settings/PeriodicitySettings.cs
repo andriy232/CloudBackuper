@@ -5,11 +5,11 @@ namespace NightKeeper.Helper.Settings
 {
     public struct PeriodicitySettings
     {
-        public static PeriodicitySettings Empty = new PeriodicitySettings(Period.None, string.Empty);
+        public static PeriodicitySettings Manual = new PeriodicitySettings(Period.None, string.Empty);
 
         private Period Period { get; }
         private string Parameter { get; }
-        
+
         public PeriodicitySettings(Period period, string parameter)
         {
             Period = period;
@@ -34,7 +34,7 @@ namespace NightKeeper.Helper.Settings
             }
 
             Debug.Assert(false, "value is empty or have incorrect format");
-            return Empty;
+            return Manual;
         }
     }
 }

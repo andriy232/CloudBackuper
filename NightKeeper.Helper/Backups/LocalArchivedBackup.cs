@@ -1,40 +1,25 @@
-﻿using System;
-using System.Diagnostics;
+﻿using NightKeeper.Helper.Core;
+using System;
 using System.IO;
-using System.IO.Compression;
-using NightKeeper.Helper.Core;
 
 namespace NightKeeper.Helper.Backups
 {
-    public class LocalBackup : IDisposable
+    public class LocalArchivedBackup : IDisposable
     {
         public string ResultPath { get; private set; }
 
         private readonly Core.Core _core;
         private string _tempDir;
 
-        public LocalBackup(string path, string backupFileName)
+        public LocalArchivedBackup(string path, string backupFileName)
         {
             _core = Core.Core.Instance;
 
-            CreateZip(path, backupFileName);
+            CreateArchive(path, backupFileName);
         }
 
-        private void CreateZip(string targetPath, string backupFileName)
+        private void CreateArchive(string targetPath, string backupFileName)
         {
-            void CreateArchiveEntry(FileInfo fileInfo, string destinationPath, ZipArchive archive)
-            {
-                var destination = Path.Combine(fileInfo.DirectoryName, fileInfo.Name)
-                    .Substring(destinationPath.Length + 1);
-
-                var fileInfoDirectory = fileInfo.Directory?.ToString();
-                var sourceFileName = Path.Combine(fileInfoDirectory, fileInfo.Name);
-
-                Debug.Assert(!string.IsNullOrWhiteSpace(fileInfoDirectory), "path not valid!");
-
-                archive.CreateEntryFromFile(sourceFileName, destination);
-            }
-
             if (string.IsNullOrWhiteSpace(targetPath))
                 throw new ArgumentException(nameof(targetPath));
 
@@ -58,35 +43,19 @@ namespace NightKeeper.Helper.Backups
 
                 if (FileSystem.IsDirectory(sourcePath))
                 {
-                    FileSystem.CopyDirectory(sourcePath, destinationPath);
+                    _core.FileSystem.CopyDirectory(sourcePath, destinationPath);
                 }
                 else
                 {
-                    FileSystem.CopyFile(sourcePath, destinationPath);
+                    _core.FileSystem.CopyFile(sourcePath, destinationPath);
                 }
 
                 var zipName = $"{backupFileName}_{DateTime.Today:dd-MM-yyyy}_{DateTime.Now:HH-mm-ss}.zip";
                 ResultPath = Path.Combine(_tempDir, zipName);
+
                 _core.Logger.Log($"Creating archive: {ResultPath}");
 
-                using (var archive = ZipFile.Open(ResultPath, ZipArchiveMode.Create))
-                {
-                    if (FileSystem.IsDirectory(destinationPath))
-                    {
-                        var fileList = FileSystem.GetFilesRecursive(destinationPath);
-
-                        foreach (var fileInfo in fileList)
-                        {
-                            CreateArchiveEntry(fileInfo, destinationPath, archive);
-                        }
-                    }
-                    else
-                    {
-                        var fileInfo = new FileInfo(destinationPath);
-
-                        CreateArchiveEntry(fileInfo, Directory.GetParent(destinationPath).FullName, archive);
-                    }
-                }
+                Zipper.CreateZip(ResultPath, destinationPath);
 
                 _core.Logger.Log($"Data archived: {ResultPath}");
             }
@@ -99,8 +68,7 @@ namespace NightKeeper.Helper.Backups
 
         private void ClearTemp()
         {
-            if (!string.IsNullOrWhiteSpace(_tempDir) && Directory.Exists(_tempDir))
-                FileSystem.DeleteDirectory(_tempDir);
+            _core.FileSystem.DeleteDirectory(_tempDir);
         }
 
         public void Dispose()
