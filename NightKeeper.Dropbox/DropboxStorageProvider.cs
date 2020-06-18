@@ -266,19 +266,17 @@ namespace NightKeeper.Dropbox
         private async Task DownloadToFileAsync(DropboxClient client, string folder, FileMetadata fileMetadata,
             string outputPath)
         {
-            using (var response = await client.Files.DownloadAsync($"{folder}/{fileMetadata.Name}"))
+            using var response = await client.Files.DownloadAsync($"{folder}/{fileMetadata.Name}");
+            Console.WriteLine($"Downloaded {response.Response.Name} Rev {response.Response.Rev}");
+            try
             {
-                Console.WriteLine($"Downloaded {response.Response.Name} Rev {response.Response.Rev}");
-                try
-                {
-                    await using var stream = File.OpenWrite(outputPath);
-                    var dataToWrite = await response.GetContentAsByteArrayAsync();
-                    stream.Write(dataToWrite, 0, dataToWrite.Length);
-                }
-                catch (Exception ex)
-                {
-                    Core.Logger.Log(ex);
-                }
+                await using var stream = File.OpenWrite(outputPath);
+                var dataToWrite = await response.GetContentAsByteArrayAsync();
+                stream.Write(dataToWrite, 0, dataToWrite.Length);
+            }
+            catch (Exception ex)
+            {
+                Core.Logger.Log(ex);
             }
         }
 
