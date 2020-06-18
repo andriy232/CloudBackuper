@@ -3,6 +3,7 @@ using NightKeeper.Helper.Core;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
+using NightKeeper;
 
 namespace NigthKeeper
 {
@@ -77,6 +78,12 @@ namespace NigthKeeper
             {
                 _core?.Logger.Log(ex);
             }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var win2 = new CreateScript();
+            win2.Show();
         }
     }
 }

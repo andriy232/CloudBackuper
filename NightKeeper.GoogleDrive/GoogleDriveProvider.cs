@@ -177,7 +177,7 @@ namespace NightKeeper.GoogleDrive
             {
                 var userCredentialsPath = Core.ReadLine(
                     "Enter path to credentials Json:",
-                    str => !System.IO.File.Exists(str));
+                    str => System.IO.File.Exists(str));
 
                 var authDataDir = Path.Combine(Core.GetAppDataPath(), "Auth");
 
@@ -240,7 +240,7 @@ namespace NightKeeper.GoogleDrive
                             new[] { scope },
                             "user",
                             CancellationToken.None,
-                            new FileDataStore(authDataDir, true)).Result;
+                            new FileDataStore(authDataDir, true)).GetAwaiter().GetResult();
                         Core.Logger.Log($"Credential file saved to: {authDataDir}");
                         return cred;
                     }

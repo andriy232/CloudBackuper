@@ -66,14 +66,8 @@ namespace NightKeeper.ConsoleClient
                 }
 
                 script = core.Scripts.First(x => x.Name == $"Backup Adobe dir to {provider.Name}");
-                try
-                {
-                    await script.DoBackup();
-                }
-                catch
-                {
-                    // ignored
-                }
+
+                await script.DoBackup();
 
                 var backupsState = await provider.GetBackupState();
                 core.Logger.Log($"{connection}, {backupsState}");
@@ -87,8 +81,8 @@ namespace NightKeeper.ConsoleClient
 
                 Debug.Assert(Directory.Exists("C:\\Users\\andri\\AppData\\Local\\Adobe"));
 
-                await provider.DeleteBackupAsync(lastBackup);
-                core.RemoveScript(script);
+                //await provider.DeleteBackupAsync(lastBackup);
+                //core.RemoveScript(script);
             }
         }
     }

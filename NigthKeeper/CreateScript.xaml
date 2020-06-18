@@ -1,0 +1,34 @@
+﻿<Window x:Class="NightKeeper.CreateScript"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NightKeeper"
+        mc:Ignorable="d"
+        Title="CreateScript" Height="200" Width="600">
+    <Grid Margin="3">
+        <StackPanel FlowDirection="LeftToRight" HorizontalAlignment="Left" Orientation="Horizontal" Background="#FFECFEFF">
+            <StackPanel VerticalAlignment="Center" Background="#FFCFFFAE" Margin="10,10,10,10">
+                <Label Content="Choose your provider" Margin="0,10,0,10" />
+                <RadioButton Content="My Dropbox" IsChecked="True" />
+                <RadioButton Content="work Google Drive" />
+                <StackPanel VerticalAlignment="Center" Orientation="Horizontal" Margin="0,10,0,10">
+                    <TextBox  DockPanel.Dock="Left" Text="C:\AdobeProjects" TextWrapping="Wrap" Width="150" HorizontalAlignment="Left" Opacity="0.9" />
+                    <Button  Content="Select path" HorizontalAlignment="Right" />
+                </StackPanel>
+            </StackPanel>
+            <StackPanel VerticalAlignment="Center" Background="#FFAEDEFF" Margin="10,10,10,10">
+                <Label Content="Choose your provider" Margin="0,10,0,10" />
+                <RadioButton Content="My Dropbox" IsChecked="True" />
+                <RadioButton Content="work Google Drive" />
+                <StackPanel VerticalAlignment="Center" Orientation="Horizontal" Margin="0,10,0,10">
+                    <TextBox  DockPanel.Dock="Left" Text="C:\Program Files\010 Editor\010Editor.exe" TextWrapping="Wrap" Width="150" HorizontalAlignment="Left" Opacity="0.9" />
+                    <Button  Content="Select path" HorizontalAlignment="Right" />
+                </StackPanel>
+            </StackPanel>
+            <Button VerticalAlignment="Center" Content="Add new backup step" Margin="10,10,10,10" />
+        </StackPanel>
+
+
+    </Grid>
+</Window>

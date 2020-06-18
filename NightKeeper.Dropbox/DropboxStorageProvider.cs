@@ -191,7 +191,7 @@ namespace NightKeeper.Dropbox
             var existFolders = await client.Files.ListFolderAsync(basePath);
             var any = existFolders.Entries.FirstOrDefault(x => x.IsFolder && x.PathDisplay.Contains(path));
             if (any != null)
-                return (FolderMetadata)any;
+                return (FolderMetadata) any;
 
             Console.WriteLine("--- Creating Folder ---");
             var folderArg = new CreateFolderArg(path);
@@ -269,17 +269,11 @@ namespace NightKeeper.Dropbox
             using (var response = await client.Files.DownloadAsync($"{folder}/{fileMetadata.Name}"))
             {
                 Console.WriteLine($"Downloaded {response.Response.Name} Rev {response.Response.Rev}");
-                var content = await response.GetContentAsStringAsync();
                 try
                 {
-                    using (var stream = File.OpenWrite(outputPath))
-                    {
-                        var dataToWrite = await response.GetContentAsByteArrayAsync();
-                        stream.Write(dataToWrite, 0, dataToWrite.Length);
-                    }
-
-                    var tempPath = Path.GetTempFileName();
-                    await File.WriteAllTextAsync(tempPath, content);
+                    await using var stream = File.OpenWrite(outputPath);
+                    var dataToWrite = await response.GetContentAsByteArrayAsync();
+                    stream.Write(dataToWrite, 0, dataToWrite.Length);
                 }
                 catch (Exception ex)
                 {
@@ -326,7 +320,7 @@ namespace NightKeeper.Dropbox
 
             using (var stream = new MemoryStream(content))
             {
-                int numChunks = (int)Math.Ceiling((double)stream.Length / ChunkSize);
+                int numChunks = (int) Math.Ceiling((double) stream.Length / ChunkSize);
 
                 byte[] buffer = new byte[ChunkSize];
                 string sessionId = null;
@@ -344,7 +338,7 @@ namespace NightKeeper.Dropbox
                         }
                         else
                         {
-                            var cursor = new UploadSessionCursor(sessionId, (ulong)(ChunkSize * idx));
+                            var cursor = new UploadSessionCursor(sessionId, (ulong) (ChunkSize * idx));
                             if (idx == numChunks - 1)
                             {
                                 await client.Files.UploadSessionFinishAsync(

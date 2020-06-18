@@ -68,7 +68,8 @@ namespace NightKeeper.Helper.Core
         {
             var info = typeof(IStorageProvider);
 
-            var files = Directory.EnumerateFiles(Environment.CurrentDirectory, "*.dll");
+            var files = Directory.EnumerateFiles(Environment.CurrentDirectory, "*.dll")
+                .OrderBy(x => x);
             foreach (var file in files)
             {
                 try
@@ -124,7 +125,7 @@ namespace NightKeeper.Helper.Core
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
             foreach (var assembly in assemblies)
-                if (assembly.FullName != null && assembly.FullName.StartsWith(fullName))
+                if (assembly.GetName()!= null && assembly.GetName().Name.Equals(fullName))
                     return true;
 
             return false;

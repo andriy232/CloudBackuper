@@ -16,7 +16,7 @@
             <helper:Connection Name="Conn" />
         </collections:ArrayList>
         <collections:ArrayList x:Key="script">
-            <helper:Script Name="Backup data" Id="0" TargetPath="%userdir%\\Desktop" BackupFileName="Backup" />
+            <helper:Script Name="Backup data" Id="0" TargetPath="%userdir%\\Desktop" BackupFileName="Backup" State="success"/>
         </collections:ArrayList>
         <local:StarWidthConverter x:Key="starWidthConverter" />
         <local:BitmapConverter x:Key="converter" />
@@ -58,14 +58,19 @@
             </DockPanel>
 
             <DockPanel Grid.Column="2" Grid.Row="0" Background="LightSkyBlue">
-                <TextBlock DockPanel.Dock="Top" Height="25" Margin="5" FontSize="18">Scripts</TextBlock>
+                <DockPanel DockPanel.Dock="Top" LastChildFill="False" >
+                    <Button DockPanel.Dock="Right" Margin="5" Content="Add new script" Width="Auto" Click="Button_Click" ></Button>
+                    <TextBlock DockPanel.Dock="Left" Height="25" Margin="5" FontSize="18" Width="78">Scripts</TextBlock>
+                </DockPanel>
+
                 <ListView Name="lvScripts" ItemsSource="{DynamicResource ResourceKey=script}">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn DisplayMemberBinding="{Binding Path=Name}" Width="150">Name</GridViewColumn>
                             <GridViewColumn DisplayMemberBinding="{Binding Path=Connection}" Width="150">Connection</GridViewColumn>
                             <GridViewColumn DisplayMemberBinding="{Binding Path=TargetPath}" Width="150">Path</GridViewColumn>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=Period}" Width="150">Period</GridViewColumn>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=Period}" Width="80">Period</GridViewColumn>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=State}" Width="50">State</GridViewColumn>
                         </GridView>
                     </ListView.View>
                 </ListView>

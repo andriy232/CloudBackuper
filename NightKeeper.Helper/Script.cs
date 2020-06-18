@@ -19,6 +19,8 @@ namespace NightKeeper.Helper
         public string Name { get; set; }
         public int Id { get; set; }
 
+        public string State { get; set; } = "success";
+
         public Script()
         {
         }
