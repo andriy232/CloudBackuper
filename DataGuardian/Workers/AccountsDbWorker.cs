@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using DataGuardian.DbLevel;
 using DataGuardian.Plugins;
 using DataGuardian.Plugins.Plugins;
@@ -24,6 +26,11 @@ namespace DataGuardian.Workers
         {
             _context.Accounts.Remove((CloudProviderAccount) cloudProviderAccount);
             _context.SaveChanges();
+        }
+
+        public IEnumerable<CloudProviderAccount> ReadAccounts()
+        {
+            return _context.Accounts.ToList();
         }
     }
 }

@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using DataGuardian.Controls;
 using DataGuardian.Impl;
 using DataGuardian.Plugins;
+using DataGuardian.Plugins.Core;
 using DataGuardian.Properties;
 
 namespace DataGuardian.Windows
@@ -112,7 +113,7 @@ namespace DataGuardian.Windows
 
         private void AddNewStep(IBackupStep step)
         {
-            var stepCtrl = new CtlBackupStep
+            var stepCtrl = new CtlBackupStep(CoreStatic.Instance.CloudAccountsManager.Accounts)
             {
                 Dock = DockStyle.Fill,
                 Name = $"stepCtrl{tlpRoot.RowCount}",

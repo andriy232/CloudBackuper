@@ -1,29 +1,32 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Threading.Tasks;
 using DataGuardian.Plugins.Backups;
+using DataGuardian.Plugins.Core;
 using DataGuardian.Plugins.Plugins;
 
 namespace DataGuardian.Plugins
 {
+    [Table("Accounts")]
     public class CloudProviderAccount : ICloudProviderAccount
     {
-        [NotMapped]
         public ICloudStorageProvider CloudStorageProvider { get; set; }
-        
-        [Column("cloudId")]
-        public Guid CloudStorageProviderId { get; set; }
-        
-        [Column("connectionSettings")]
-        public string ConnectionSettings { get; set; }
 
-        [Column("name")]
-        public string Name { get; set; }
+        [Column("CloudId")]
+        public Guid CloudStorageProviderId
+        {
+            get => CloudStorageProvider.Id;
+            set => CloudStorageProvider = CoreStatic.Instance.CloudStorageProviders.FirstOrDefault(x => x.Id == value);
+        }
 
-        [Column("id")]
-        public int Id { get; set; }
+        [Column("ConnectionSettings")] public string ConnectionSettings { get; set; }
 
-        [NotMapped]
+        [Column("Name")] public string Name { get; set; }
+
+        [Key, Column("Id")] public int Id { get; set; }
+
         public byte[] Logo => CloudStorageProvider?.Logo;
 
         public Task<RemoteBackupsState> GetRemoteBackups()

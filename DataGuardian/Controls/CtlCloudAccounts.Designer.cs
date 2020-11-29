@@ -29,6 +29,7 @@ namespace DataGuardian.Controls
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tlpRoot = new System.Windows.Forms.TableLayoutPanel();
             this.tlpButtons = new System.Windows.Forms.FlowLayoutPanel();
             this.btnCreate = new System.Windows.Forms.Button();
@@ -108,6 +109,14 @@ namespace DataGuardian.Controls
             this.clmName,
             this.clmType});
             this.tlpRoot.SetColumnSpan(this.dgvData, 2);
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.LightGray;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvData.DefaultCellStyle = dataGridViewCellStyle1;
             this.dgvData.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvData.Location = new System.Drawing.Point(3, 43);
             this.dgvData.Name = "dgvData";
@@ -133,6 +142,7 @@ namespace DataGuardian.Controls
             // 
             this.clmImage.FillWeight = 50F;
             this.clmImage.HeaderText = "Image";
+            this.clmImage.ImageLayout = System.Windows.Forms.DataGridViewImageCellLayout.Zoom;
             this.clmImage.MinimumWidth = 8;
             this.clmImage.Name = "clmImage";
             this.clmImage.ReadOnly = true;

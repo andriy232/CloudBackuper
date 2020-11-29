@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using DataGuardian.GUI;
 using DataGuardian.Plugins;
@@ -21,6 +22,8 @@ namespace DataGuardian.Impl
         {
             base.Init(core);
             _dbWorker = new AccountsDbWorker(Core.Settings.ConnectionString);
+            
+            _accounts.AddRange(_dbWorker.ReadAccounts());
         }
 
         public void AddAccount(object form = null)

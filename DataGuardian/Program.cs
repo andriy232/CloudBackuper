@@ -16,7 +16,7 @@ namespace DataGuardian
         [STAThread]
         static void Main()
         {
-            CoreStatic.SetCore(new Core());
+            _ = new Core();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new WndMain());

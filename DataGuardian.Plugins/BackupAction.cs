@@ -2,8 +2,7 @@
 {
     public enum BackupAction
     {
-        BackupToDropbox,
-        BackupToGoogleDrive,
+        BackupTo,
         Copy,
         SendToEmail,
         Archive

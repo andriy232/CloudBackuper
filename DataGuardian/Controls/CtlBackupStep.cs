@@ -25,7 +25,7 @@ namespace DataGuardian.Controls
             get => Enum.TryParse<BackupAction>(cmbAction.SelectedValue.ToString(), out var action)
                 ? action
                 : BackupAction.Copy;
-            set => cmbAction.SelectedValue = value;
+            set => cmbAction.SelectedItem = value;
         }
 
         public string SelectedActionParameter
@@ -52,6 +52,12 @@ namespace DataGuardian.Controls
         {
             get => dtpStartTime.Value;
             set => dtpStartTime.Value = value;
+        }
+
+        public ICloudProviderAccount CloudAccount
+        {
+            get => cmbAccount.SelectedItem as ICloudProviderAccount;
+            set => cmbAccount.SelectedItem = value;
         }
 
         public IEnumerable<string> SelectedPeriodParameters
@@ -88,7 +94,7 @@ namespace DataGuardian.Controls
 
                     st.Action = SelectedBackupAction;
                     st.ActionParameter = SelectedActionParameter;
-                    
+
                     st.Period = SelectedBackupPeriod;
                     st.PeriodParameters = SelectedPeriodParameters;
                     st.StartDate = SelectedStartDate;
@@ -103,7 +109,7 @@ namespace DataGuardian.Controls
 
                     Action = SelectedBackupAction,
                     ActionParameter = SelectedActionParameter,
-                    
+
                     Period = SelectedBackupPeriod,
                     PeriodParameters = SelectedPeriodParameters,
                     RecurEvery = SelectedRecurEvery,
@@ -128,12 +134,13 @@ namespace DataGuardian.Controls
 
         public ICloudProviderAccount SelectedAccount { get; set; }
 
-        public CtlBackupStep()
+        public CtlBackupStep(IEnumerable<ICloudProviderAccount> accounts)
         {
             InitializeComponent();
 
             cmbAction.DataSource = Enum.GetValues(typeof(BackupAction));
             cmbPeriod.DataSource = Enum.GetValues(typeof(BackupPeriod));
+            cmbAccount.DataSource = accounts?.ToList();
 
             foreach (var label in tlpRoot.Controls.OfType<Label>())
                 label.BackColor = Color.Transparent;
@@ -144,12 +151,37 @@ namespace DataGuardian.Controls
             var r = new Random();
             BackColor = Color.FromArgb(100, r.Next(0, 255), r.Next(0, 255), r.Next(0, 255));
 
+            dtpStartTime.Value = DateTime.Today.AddDays(1);
+            dtpStartTime.MinDate = DateTime.Today;
+
             base.OnLoad(e);
         }
 
         private void cmbAction_SelectedIndexChanged(object sender, EventArgs e)
         {
             SelectedActionParameter = string.Empty;
+
+            switch (SelectedBackupAction)
+            {
+                case BackupAction.BackupTo:
+                    ShowCtrs(lblSelectAccount, cmbAccount);
+                    HideCtrs(lblActionParameter, txtActionParameter);
+                    break;
+                case BackupAction.Copy:
+                    HideCtrs(lblSelectAccount, cmbAccount);
+                    ShowCtrs(lblActionParameter, txtActionParameter);
+                    break;
+                case BackupAction.SendToEmail:
+                    HideCtrs(lblSelectAccount, cmbAccount);
+                    ShowCtrs(lblActionParameter, txtActionParameter);
+                    break;
+                case BackupAction.Archive:
+                    HideCtrs(lblSelectAccount, cmbAccount);
+                    ShowCtrs(lblActionParameter, txtActionParameter);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         private void cmbPeriod_SelectedIndexChanged(object sender, EventArgs e)
@@ -157,17 +189,33 @@ namespace DataGuardian.Controls
             switch (SelectedBackupPeriod)
             {
                 case BackupPeriod.OneTime:
-                    lsbPeriodParameters.Visible = false;
+                    HideCtrs(lsbPeriodParameters, nudRecurEvery, lblRecurEvery, lblPeriodParameters);
                     break;
                 case BackupPeriod.Daily:
+                    ShowCtrs(lsbPeriodParameters, nudRecurEvery, lblRecurEvery, lblPeriodParameters);
                     break;
                 case BackupPeriod.Weekly:
+                    ShowCtrs(nudRecurEvery, lblRecurEvery);
+                    HideCtrs(lsbPeriodParameters, lblPeriodParameters);
                     break;
                 case BackupPeriod.Monthly:
+                    ShowCtrs(lsbPeriodParameters, nudRecurEvery, lblRecurEvery, lblPeriodParameters);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+
+        private void HideCtrs(params Control[] controls)
+        {
+            foreach (var ctrl in controls)
+                ctrl.Visible = false;
+        }
+
+        private void ShowCtrs(params Control[] controls)
+        {
+            foreach (var ctrl in controls)
+                ctrl.Visible = true;
         }
     }
 }

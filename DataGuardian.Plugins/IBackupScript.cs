@@ -43,7 +43,9 @@ namespace DataGuardian.Plugins
         /// </summary>
         IEnumerable<string> PeriodParameters { get; }
 
-        string LastState { get; }
+        BackupScriptState LastState { get; }
+
+        DateTime PerformTime { get; }
     }
 
     public enum BackupScriptState

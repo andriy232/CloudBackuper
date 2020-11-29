@@ -19,7 +19,7 @@ namespace DataGuardian.Impl
 
             FileSystem.CreateDirectoryIfNotExists(DataDirectory);
 
-            ConnectionString = $"Filename={Path.Combine(DataDirectory, "DataGuardian.sqlite")}";
+            ConnectionString = $"Data Source={Path.Combine(DataDirectory, "DataGuardian.sqlite")};";
         }
     }
 }

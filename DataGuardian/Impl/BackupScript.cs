@@ -1,26 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
-using DataGuardian.Controls;
 using DataGuardian.Plugins;
 using DataGuardian.Plugins.Backups;
 using DataGuardian.Plugins.Core;
-using DataGuardian.Plugins.Plugins;
 
 namespace DataGuardian.Impl
 {
+    [Table("BackupScripts")]
     public class BackupScript : IBackupScript
     {
-        public string BackupFileName { get; set; }
-        public DateTime CreateTime { get; }
-        public bool Enabled { get; }
-        public DateTime LastPerformTime { get; }
-        public BackupScriptState LastPerformState { get; }
-        public string Name { get; set; }
-        public string TargetPath { get; set; }
+        [Column("BackupFileName")] public string BackupFileName { get; set; }
+
+        [Column("CreateTime")] public DateTime CreateTime { get; set; }
+
+        [Column("Enabled")] public bool Enabled { get; }
+
+        [Column("Name")] public string Name { get; set; }
+
+        [Column("TargetPath")] public string TargetPath { get; set; }
+
+        [Key, Column("Id")] public int Id { get; set; }
+
+        public DateTime LastPerformTime => Steps.Any() ? Steps.Max(x => x.PerformTime) : DateTime.MinValue;
+
+        public BackupScriptState LastPerformState => Steps.Any(x => x.LastState == BackupScriptState.Failed)
+            ? BackupScriptState.Failed
+            : BackupScriptState.Success;
+
         public List<IBackupStep> Steps { get; }
-        public int Id { get; }
 
         public BackupScript()
         {
@@ -64,35 +75,6 @@ namespace DataGuardian.Impl
         public override string ToString()
         {
             return $"Script: {Name}, {TargetPath}";
-        }
-    }
-
-    public class BackupStep : IBackupStep
-    {
-        public int Id { get; set; }
-        public ICloudProviderAccount Account { get; set; }
-        public string TargetPath { get; set; }
-        public BackupAction Action { get; set; }
-        public string ActionParameter { get; set; }
-        public BackupPeriod Period { get; set; }
-        public int RecurEvery { get; set; }
-        public DateTime StartDate { get; set; }
-        public IEnumerable<string> PeriodParameters { get; set; }
-        public string LastState { get; set; } = "Not performed yet";
-
-        public object Clone()
-        {
-            return new BackupStep
-            {
-                Account = Account,
-                TargetPath = TargetPath,
-                Action = Action,
-                ActionParameter = ActionParameter,
-                Period = Period,
-                RecurEvery = RecurEvery,
-                StartDate = StartDate,
-                PeriodParameters = PeriodParameters
-            };
         }
     }
 }

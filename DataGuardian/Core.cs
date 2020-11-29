@@ -25,7 +25,9 @@ namespace DataGuardian
             Logger = new SingleLogger();
             BackupManager = new BackupManager();
             CloudAccountsManager = new CloudAccountsManager();
-            
+
+            CoreStatic.SetCore(this);
+
             Start();
         }
 
