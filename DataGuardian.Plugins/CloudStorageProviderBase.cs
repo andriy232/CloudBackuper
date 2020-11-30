@@ -12,16 +12,16 @@ namespace DataGuardian.Plugins
         public virtual byte[] Logo { get; }
         public virtual Guid Id { get; }
 
-        protected T GetSettings(ICloudProviderAccount account)
+        protected T GetSettings(IAccount account)
         {
             return Core.CloudAccountsManager.GetSettings<T>(account);
         }
 
         public abstract object TryAuth();
-        public abstract Task<RemoteBackupsState> GetBackupState();
-        public abstract Task UploadBackupAsync(LocalArchivedBackup localBackup);
-        public abstract Task DownloadBackupAsync(RemoteBackupsState.RemoteBackup backup, string outputPath);
-        public abstract Task DeleteBackupAsync(RemoteBackupsState.RemoteBackup backup);
+        public abstract Task<RemoteBackupsState> GetBackupState(IAccount fileName, string backupFileName);
+        public abstract Task UploadBackupAsync(IAccount account, LocalArchivedBackup localBackup);
+        public abstract Task DownloadBackupAsync(IAccount account, RemoteBackupsState.RemoteBackup backup, string outputPath);
+        public abstract Task DeleteBackupAsync(IAccount account, RemoteBackupsState.RemoteBackup backup);
     }
 
     public class SettingsBase

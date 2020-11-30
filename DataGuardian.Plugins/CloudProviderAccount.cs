@@ -10,7 +10,7 @@ using DataGuardian.Plugins.Plugins;
 namespace DataGuardian.Plugins
 {
     [Table("Accounts")]
-    public class CloudProviderAccount : ICloudProviderAccount
+    public class CloudProviderAccount : IAccount
     {
         public ICloudStorageProvider CloudStorageProvider { get; set; }
 
@@ -27,18 +27,6 @@ namespace DataGuardian.Plugins
 
         [Key, Column("Id")] public int Id { get; set; }
 
-        public byte[] Logo => CloudStorageProvider?.Logo;
-
-        public Task<RemoteBackupsState> GetRemoteBackups()
-        {
-            return CloudStorageProvider.GetBackupState();
-        }
-
-        public Task UploadBackup(LocalArchivedBackup localBackup)
-        {
-            return CloudStorageProvider.UploadBackupAsync(localBackup);
-        }
-
         public CloudProviderAccount()
         {
         }
@@ -48,11 +36,6 @@ namespace DataGuardian.Plugins
             CloudStorageProvider = cloudStorageProvider;
             ConnectionSettings = connectionSettings;
             Name = name;
-        }
-
-        public void SetId(int id)
-        {
-            Id = id;
         }
 
         public override string ToString()
@@ -67,7 +50,7 @@ namespace DataGuardian.Plugins
             return false;
         }
 
-        private bool IsSame(ICloudProviderAccount conn1, ICloudProviderAccount conn2)
+        private bool IsSame(IAccount conn1, IAccount conn2)
         {
             return conn1.Id.Equals(conn2.Id);
         }

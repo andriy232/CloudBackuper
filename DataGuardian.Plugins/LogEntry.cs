@@ -28,12 +28,13 @@ namespace DataGuardian.Plugins
             // for Dapper
         }
 
-        public LogEntry(InfoLogLevel level, string source, string message)
+        public LogEntry(InfoLogLevel level, string source, string message, Exception exception = null)
         {
             Level = level;
             Timestamp = DateTime.Now;
             Source = source;
             RenderedMessage = message ?? throw new ArgumentException(nameof(message));
+            Exception = exception?.ToString();
         }
 
         public override string ToString()

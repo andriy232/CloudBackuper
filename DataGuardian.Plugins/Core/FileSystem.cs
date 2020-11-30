@@ -46,6 +46,14 @@ namespace DataGuardian.Plugins.Core
             }
         }
 
+        public static void Copy(string sourcePath, string destinationPath)
+        {
+            if (IsDirectory(sourcePath))
+                CopyDirectory(sourcePath, destinationPath);
+            else
+                CopyFile(sourcePath, destinationPath);
+        }
+
         public static bool IsDirectory(string path)
         {
             return File.GetAttributes(path).HasFlag(FileAttributes.Directory);

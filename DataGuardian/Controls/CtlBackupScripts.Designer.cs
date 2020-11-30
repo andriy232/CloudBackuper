@@ -29,22 +29,32 @@ namespace DataGuardian.Controls
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tlpRoot = new System.Windows.Forms.TableLayoutPanel();
             this.tlpButtons = new System.Windows.Forms.FlowLayoutPanel();
             this.btnCreate = new System.Windows.Forms.Button();
             this.btnEdit = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.dgvData = new DataGuardian.GUI.Controls.GuardianDataGridView();
+            this.clmCurrentState = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.clmEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.clmCreateTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.clmTarget = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.clmName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.clmTarget = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.clmCreateTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.clmLastPerform = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.clmNextPerformTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.clmLastState = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ctlFilter1 = new DataGuardian.Controls.CtlFilter();
+            this.ctxScript = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.cmdEdit = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmdToggleDisable = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmdPerformNow = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmdDelete = new System.Windows.Forms.ToolStripMenuItem();
             this.tlpRoot.SuspendLayout();
             this.tlpButtons.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvData)).BeginInit();
+            this.ctxScript.SuspendLayout();
             this.SuspendLayout();
             // 
             // tlpRoot
@@ -99,7 +109,7 @@ namespace DataGuardian.Controls
             this.btnEdit.Size = new System.Drawing.Size(75, 34);
             this.btnEdit.TabIndex = 1;
             this.btnEdit.UseVisualStyleBackColor = true;
-            this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
+            this.btnEdit.Click += new System.EventHandler(this.OnBtnEditClick);
             // 
             // btnDelete
             // 
@@ -121,21 +131,44 @@ namespace DataGuardian.Controls
             this.dgvData.AllowUserToResizeRows = false;
             this.dgvData.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvData.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.clmCurrentState,
             this.clmEnabled,
-            this.clmCreateTime,
-            this.clmTarget,
             this.clmName,
+            this.clmTarget,
+            this.clmCreateTime,
             this.clmLastPerform,
+            this.clmNextPerformTime,
             this.clmLastState});
             this.tlpRoot.SetColumnSpan(this.dgvData, 2);
+            this.dgvData.ContextMenuStrip = this.ctxScript;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.LightGray;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvData.DefaultCellStyle = dataGridViewCellStyle1;
             this.dgvData.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvData.Location = new System.Drawing.Point(3, 43);
             this.dgvData.Name = "dgvData";
             this.dgvData.ReadOnly = true;
+            this.dgvData.RowHeadersVisible = false;
             this.dgvData.RowHeadersWidth = 62;
             this.dgvData.RowTemplate.Height = 28;
             this.dgvData.Size = new System.Drawing.Size(933, 400);
             this.dgvData.TabIndex = 1;
+            this.dgvData.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvData_CellClick);
+            this.dgvData.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvData_CellContentDoubleClick);
+            // 
+            // clmCurrentState
+            // 
+            this.clmCurrentState.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.clmCurrentState.FillWeight = 50F;
+            this.clmCurrentState.HeaderText = "Current State";
+            this.clmCurrentState.MinimumWidth = 8;
+            this.clmCurrentState.Name = "clmCurrentState";
+            this.clmCurrentState.ReadOnly = true;
             // 
             // clmEnabled
             // 
@@ -148,14 +181,13 @@ namespace DataGuardian.Controls
             this.clmEnabled.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.clmEnabled.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             // 
-            // clmCreateTime
+            // clmName
             // 
-            this.clmCreateTime.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.clmCreateTime.FillWeight = 50F;
-            this.clmCreateTime.HeaderText = "Create Time";
-            this.clmCreateTime.MinimumWidth = 8;
-            this.clmCreateTime.Name = "clmCreateTime";
-            this.clmCreateTime.ReadOnly = true;
+            this.clmName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.clmName.HeaderText = "Name";
+            this.clmName.MinimumWidth = 8;
+            this.clmName.Name = "clmName";
+            this.clmName.ReadOnly = true;
             // 
             // clmTarget
             // 
@@ -166,13 +198,14 @@ namespace DataGuardian.Controls
             this.clmTarget.Name = "clmTarget";
             this.clmTarget.ReadOnly = true;
             // 
-            // clmName
+            // clmCreateTime
             // 
-            this.clmName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.clmName.HeaderText = "Name";
-            this.clmName.MinimumWidth = 8;
-            this.clmName.Name = "clmName";
-            this.clmName.ReadOnly = true;
+            this.clmCreateTime.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.clmCreateTime.FillWeight = 50F;
+            this.clmCreateTime.HeaderText = "Created Time";
+            this.clmCreateTime.MinimumWidth = 8;
+            this.clmCreateTime.Name = "clmCreateTime";
+            this.clmCreateTime.ReadOnly = true;
             // 
             // clmLastPerform
             // 
@@ -182,6 +215,15 @@ namespace DataGuardian.Controls
             this.clmLastPerform.MinimumWidth = 8;
             this.clmLastPerform.Name = "clmLastPerform";
             this.clmLastPerform.ReadOnly = true;
+            // 
+            // clmNextPerformTime
+            // 
+            this.clmNextPerformTime.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.clmNextPerformTime.FillWeight = 80F;
+            this.clmNextPerformTime.HeaderText = "Next Perform Time";
+            this.clmNextPerformTime.MinimumWidth = 8;
+            this.clmNextPerformTime.Name = "clmNextPerformTime";
+            this.clmNextPerformTime.ReadOnly = true;
             // 
             // clmLastState
             // 
@@ -203,6 +245,41 @@ namespace DataGuardian.Controls
             this.ctlFilter1.Size = new System.Drawing.Size(469, 40);
             this.ctlFilter1.TabIndex = 2;
             // 
+            // ctxScript
+            // 
+            this.ctxScript.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this.ctxScript.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.cmdEdit,
+            this.cmdToggleDisable,
+            this.cmdPerformNow,
+            this.cmdDelete});
+            this.ctxScript.Name = "ctxScript";
+            this.ctxScript.Size = new System.Drawing.Size(202, 132);
+            // 
+            // cmdEdit
+            // 
+            this.cmdEdit.Name = "cmdEdit";
+            this.cmdEdit.Size = new System.Drawing.Size(201, 32);
+            this.cmdEdit.Text = "Edit";
+            // 
+            // cmdToggleDisable
+            // 
+            this.cmdToggleDisable.Name = "cmdToggleDisable";
+            this.cmdToggleDisable.Size = new System.Drawing.Size(201, 32);
+            this.cmdToggleDisable.Text = "Enable/Disable";
+            // 
+            // cmdPerformNow
+            // 
+            this.cmdPerformNow.Name = "cmdPerformNow";
+            this.cmdPerformNow.Size = new System.Drawing.Size(201, 32);
+            this.cmdPerformNow.Text = "Perform now";
+            // 
+            // cmdDelete
+            // 
+            this.cmdDelete.Name = "cmdDelete";
+            this.cmdDelete.Size = new System.Drawing.Size(201, 32);
+            this.cmdDelete.Text = "Delete";
+            // 
             // CtlBackupScripts
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -213,6 +290,7 @@ namespace DataGuardian.Controls
             this.tlpRoot.ResumeLayout(false);
             this.tlpButtons.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvData)).EndInit();
+            this.ctxScript.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -221,16 +299,23 @@ namespace DataGuardian.Controls
 
         private System.Windows.Forms.TableLayoutPanel tlpRoot;
         private DataGuardian.GUI.Controls.GuardianDataGridView dgvData;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn clmEnabled;
-        private System.Windows.Forms.DataGridViewTextBoxColumn clmCreateTime;
-        private System.Windows.Forms.DataGridViewTextBoxColumn clmTarget;
-        private System.Windows.Forms.DataGridViewTextBoxColumn clmName;
-        private System.Windows.Forms.DataGridViewTextBoxColumn clmLastPerform;
-        private System.Windows.Forms.DataGridViewTextBoxColumn clmLastState;
         private System.Windows.Forms.FlowLayoutPanel tlpButtons;
         private System.Windows.Forms.Button btnCreate;
         private System.Windows.Forms.Button btnEdit;
         private System.Windows.Forms.Button btnDelete;
         private CtlFilter ctlFilter1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn clmCurrentState;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn clmEnabled;
+        private System.Windows.Forms.DataGridViewTextBoxColumn clmName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn clmTarget;
+        private System.Windows.Forms.DataGridViewTextBoxColumn clmCreateTime;
+        private System.Windows.Forms.DataGridViewTextBoxColumn clmLastPerform;
+        private System.Windows.Forms.DataGridViewTextBoxColumn clmNextPerformTime;
+        private System.Windows.Forms.DataGridViewTextBoxColumn clmLastState;
+        private System.Windows.Forms.ContextMenuStrip ctxScript;
+        private System.Windows.Forms.ToolStripMenuItem cmdEdit;
+        private System.Windows.Forms.ToolStripMenuItem cmdToggleDisable;
+        private System.Windows.Forms.ToolStripMenuItem cmdPerformNow;
+        private System.Windows.Forms.ToolStripMenuItem cmdDelete;
     }
 }

@@ -1,14 +1,15 @@
-﻿using System;
+﻿using DataGuardian.GUI.UserControls;
+using DataGuardian.Plugins;
+using DataGuardian.Plugins.Core;
+using DataGuardian.Plugins.Plugins;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using DataGuardian.Plugins.Core;
-using DataGuardian.Plugins.Plugins;
-using DataGuardian.Windows;
 
 namespace DataGuardian.Controls
 {
-    public partial class CtlCloudAccounts : UserControl
+    public partial class CtlCloudAccounts : UserControlBase
     {
         public CtlCloudAccounts()
         {
@@ -20,31 +21,49 @@ namespace DataGuardian.Controls
             base.OnLoad(e);
 
             if (!DesignMode)
-                FillData(CoreStatic.Instance.CloudAccountsManager.Accounts);
-        }
-
-        private void FillData(IEnumerable<ICloudProviderAccount> accounts)
-        {
-            dgvData.Rows.Clear();
-
-            foreach (var account in accounts)
             {
-                var row = dgvData.Rows[dgvData.Rows.Add()];
-                row.Cells[clmName.Index].Value = account.Name;
-                row.Cells[clmImage.Index].Value = account.CloudStorageProvider.Logo;
-                row.Cells[clmType.Index].Value = account.CloudStorageProvider.Name;
+                FillData(Core.CloudAccountsManager.Accounts);
+                Core.CloudAccountsManager.AccountsChanged += OnAccountsChanged;
             }
         }
 
-        public ICloudProviderAccount SelectedCloudProvider
+        private void OnAccountsChanged(object sender, AccountsChangedEventArgs e)
         {
-            get => dgvData.SelectedRows.Cast<DataGridViewRow>()?.FirstOrDefault()?.Tag as ICloudProviderAccount;
+            FillData(e.Accounts);
+        }
+
+        private void FillData(IEnumerable<IAccount> accounts)
+        {
+            try
+            {
+                dgvData.Rows.Clear();
+
+                foreach (var account in accounts)
+                {
+                    var row = dgvData.Rows[dgvData.Rows.Add()];
+                    row.Cells[clmName.Index].Value = account.Name;
+                    row.Cells[clmImage.Index].Value = account.CloudStorageProvider.Logo;
+                    row.Cells[clmType.Index].Value = account.CloudStorageProvider.Name;
+                    row.Tag = account;
+                }
+            }
+            catch (Exception ex)
+            {
+                Core.Logger.Log("FillData", ex);
+            }
+        }
+
+        public IAccount SelectedCloudProvider
+        {
+            get =>
+                dgvData.SelectedCells.Cast<DataGridViewCell>()?.FirstOrDefault()?.OwningRow.Tag as IAccount
+            ;
             set
             {
                 if (value != null)
                 {
                     var row = dgvData.Rows.Cast<DataGridViewRow>()
-                        .FirstOrDefault(x => x.Tag is ICloudProviderAccount bs && bs == value);
+                        .FirstOrDefault(x => x.Tag is IAccount bs && bs == value);
 
                     dgvData.ClearSelection();
                     if (row != null)

@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
 using DataGuardian.DbLevel;
 using DataGuardian.Impl;
@@ -17,12 +19,17 @@ namespace DataGuardian.Workers
 
         public void Save(IBackupScript newScript)
         {
-            _dbContext.BackupScripts.Add((BackupScript) newScript);
+            var backupScript = (BackupScript) newScript;
+            backupScript.SetSerializedState();
+
+            _dbContext.BackupScripts.Add(backupScript);
             _dbContext.SaveChanges();
         }
 
         public void Edit(IBackupScript newScript)
         {
+            newScript.SetSerializedState();
+
             var entity = _dbContext.BackupScripts.FirstOrDefault(item => item.Id == newScript.Id);
             if (entity == null)
             {
@@ -36,8 +43,15 @@ namespace DataGuardian.Workers
 
         public void Delete(IBackupScript newScript)
         {
-            _dbContext.BackupScripts.Remove((BackupScript) newScript);
+            var backupScript = (BackupScript) newScript;
+
+            _dbContext.BackupScripts.Remove(backupScript);
             _dbContext.SaveChanges();
+        }
+
+        public IEnumerable<IBackupScript> Read()
+        {
+            return _dbContext.BackupScripts.ToList();
         }
     }
 }

@@ -8,20 +8,20 @@ namespace DataGuardian.Plugins
     {
         void AddAccount(object parentForm = null);
 
-        void RemoveAccount(ICloudProviderAccount selectedCloudProvider);
+        void RemoveAccount(IAccount selectedCloudProvider);
 
-        T GetSettings<T>(ICloudProviderAccount id) where T : SettingsBase;
+        T GetSettings<T>(IAccount id) where T : SettingsBase;
 
-        IEnumerable<ICloudProviderAccount> Accounts { get; }
+        IEnumerable<IAccount> Accounts { get; }
 
         event EventHandler<AccountsChangedEventArgs> AccountsChanged;
     }
 
     public class AccountsChangedEventArgs : EventArgs
     {
-        public IEnumerable<ICloudProviderAccount> Accounts { get; }
+        public IEnumerable<IAccount> Accounts { get; }
 
-        public AccountsChangedEventArgs(IEnumerable<ICloudProviderAccount> accounts)
+        public AccountsChangedEventArgs(IEnumerable<IAccount> accounts)
         {
             Accounts = accounts ?? throw new ArgumentException(nameof(accounts));
         }

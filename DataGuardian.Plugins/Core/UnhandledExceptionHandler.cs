@@ -3,13 +3,12 @@ using System.Runtime.ExceptionServices;
 
 namespace DataGuardian.Plugins.Core
 {
-    internal sealed class UnhandledExceptionHandler
+    public sealed class UnhandledExceptionHandler : PluginBase
     {
-        private ICore _core;
-
-        public void Init(ICore core)
+        public override void Init(ICore core)
         {
-            _core = core;
+            base.Init(core);
+
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
             AppDomain.CurrentDomain.FirstChanceException += OnFirstChanceException;
         }
@@ -19,6 +18,9 @@ namespace DataGuardian.Plugins.Core
             try
             {
                 var ex = e.Exception;
+                if (ex.Source == "EntityFramework" || ex.Message.Contains("no such table: __MigrationHistory") || ex.Message.Contains("no such table: EdmMetadata"))
+                    return;
+
                 HandleException(ex);
             }
             catch
@@ -42,7 +44,7 @@ namespace DataGuardian.Plugins.Core
 
         private void HandleException(Exception e)
         {
-            _core.Logger.Log(e);
+            Core.Logger.Log(e);
         }
     }
 }

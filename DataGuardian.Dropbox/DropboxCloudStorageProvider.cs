@@ -53,7 +53,7 @@ namespace DataGuardian.Dropbox
 
         private const string RemotePath = "/Backup";
 
-        private async Task<DropboxSettings> GetAuthSettings(ICloudProviderAccount account = null)
+        private async Task<DropboxSettings> GetAuthSettings(IAccount account = null)
         {
             DropboxCertHelper.InitializeCertPinning();
 
@@ -197,24 +197,23 @@ namespace DataGuardian.Dropbox
             if (any != null)
                 return (FolderMetadata) any;
 
-            Console.WriteLine("--- Creating Folder ---");
             var folderArg = new CreateFolderArg(path);
             var folder = await client.Files.CreateFolderV2Async(folderArg);
-
-            Console.WriteLine("Folder: " + path + " created!");
 
             return folder.Metadata;
         }
 
-        public override async Task<RemoteBackupsState> GetBackupState()
+        public override async Task<RemoteBackupsState> GetBackupState(
+            IAccount account,
+            string backupFileName)
         {
-            using (var client = await GetDropboxClient())
+            using (var client = await GetDropboxClient(account))
             {
-                return await ListFolderAsync(client, RemotePath);
+                return await ListFolderAsync(client, backupFileName, RemotePath);
             }
         }
 
-        private async Task<RemoteBackupsState> ListFolderAsync(DropboxClient client, string path)
+        private async Task<RemoteBackupsState> ListFolderAsync(DropboxClient client, string backupFileName, string path)
         {
             var list = await client.Files.ListFolderAsync(path);
             var files = list?.Entries?.Where(i => i.IsFile).Select(x => x.AsFile).ToList() ?? new List<FileMetadata>();
@@ -223,18 +222,19 @@ namespace DataGuardian.Dropbox
             {
                 list = await client.Files.ListFolderContinueAsync(list.Cursor);
 
-                var fileMetadatas = list.Entries.Where(i => i.IsFile).Select(x => x.AsFile);
+                var filesMetadata = list.Entries.Where(m => m.IsFile && m.Name.Contains(backupFileName))
+                    .Select(x => x.AsFile);
 
-                files.AddRange(fileMetadatas);
+                files.AddRange(filesMetadata);
             }
 
             return new RemoteBackupsState(this,
                 list?.Entries?.Select(x => (x.AsFile.Id, x.Name, x.AsFile.ClientModified)));
         }
 
-        public override async Task UploadBackupAsync(LocalArchivedBackup localBackup)
+        public override async Task UploadBackupAsync(IAccount account, LocalArchivedBackup localBackup)
         {
-            using (var client = await GetDropboxClient())
+            using (var client = await GetDropboxClient(account))
             {
                 await CreateFolderAsync(client, RemotePath);
 
@@ -250,9 +250,9 @@ namespace DataGuardian.Dropbox
             }
         }
 
-        public override async Task DownloadBackupAsync(RemoteBackupsState.RemoteBackup backup, string outputPath)
+        public override async Task DownloadBackupAsync(IAccount account, RemoteBackupsState.RemoteBackup backup, string outputPath)
         {
-            using (var client = await GetDropboxClient())
+            using (var client = await GetDropboxClient(account))
             {
                 var list = await client.Files.ListFolderAsync(RemotePath);
 
@@ -288,9 +288,9 @@ namespace DataGuardian.Dropbox
             }
         }
 
-        public override async Task DeleteBackupAsync(RemoteBackupsState.RemoteBackup backup)
+        public override async Task DeleteBackupAsync(IAccount account, RemoteBackupsState.RemoteBackup backup)
         {
-            using (var client = await GetDropboxClient())
+            using (var client = await GetDropboxClient(account))
             {
                 var list = await client.Files.ListFolderAsync(RemotePath);
 
@@ -305,9 +305,9 @@ namespace DataGuardian.Dropbox
             }
         }
 
-        private async Task<DropboxClient> GetDropboxClient()
+        private async Task<DropboxClient> GetDropboxClient(IAccount account)
         {
-            var accessToken = await GetAuthSettings();
+            var accessToken = await GetAuthSettings(account);
 
             var config = new DropboxClientConfig(Name)
             {

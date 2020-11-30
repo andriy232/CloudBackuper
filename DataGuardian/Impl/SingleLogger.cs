@@ -16,6 +16,25 @@ namespace DataGuardian.Impl
         private string _logFilePath;
         private string _logFileDir;
 
+        public override void Init(ICore core)
+        {
+            base.Init(core);
+
+            _logFileDir = Path.Combine(core.Settings.DataDirectory, "Logs");
+            _logFilePath = Path.Combine(_logFileDir, "DataGuardian_log.sqlite");
+
+            var directory = Path.GetDirectoryName(_logFilePath);
+            FileSystem.CreateDirectoryIfNotExists(directory);
+
+            Serilog.Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                .WriteTo.Console()
+                .WriteTo.SQLite(_logFilePath)
+                .CreateLogger();
+
+            CurrentLog = Serilog.Log.Logger;
+        }
+
         public IEnumerable<LogEntry> ReadLogs()
         {
             try
@@ -35,23 +54,6 @@ namespace DataGuardian.Impl
 
         private ILogger CurrentLog { get; set; }
 
-        public void Log(string source, string message)
-        {
-            Serilog.Log.Warning(message, source);
-            FireNewLog(new LogEntry(InfoLogLevel.Info, source, message));
-        }
-
-        private void FireNewLog(LogEntry logEntry)
-        {
-            NewLog?.Invoke(this, new NewLogEventArgs(logEntry));
-        }
-
-        public void Log(string source, Exception ex)
-        {
-            Serilog.Log.Error(ex, "Error in {Source}", source);
-            FireNewLog(new LogEntry(InfoLogLevel.Error, source, ex.ToString()));
-        }
-
         public void Log(string message)
         {
             Log("Default", message);
@@ -62,23 +64,27 @@ namespace DataGuardian.Impl
             Log($"An error occured -> {ex}");
         }
 
-        public override void Init(ICore core)
+        public void Log(string source, string message)
         {
-            base.Init(core);
+            Serilog.Log.Warning(message, source);
+            FireNewLog(new LogEntry(InfoLogLevel.Info, source, message));
+        }
 
-            _logFileDir = Path.Combine(core.Settings.DataDirectory, "Logs");
-            _logFilePath = Path.Combine(_logFileDir, "DataGuardian_log.sqlite");
+        public void Log(string source, Exception ex)
+        {
+            Serilog.Log.Error(ex, "Error in {Source}", source);
+            FireNewLog(new LogEntry(InfoLogLevel.Error, source, ex.ToString()));
+        }
 
-            var directory = Path.GetDirectoryName(_logFilePath);
-            FileSystem.CreateDirectoryIfNotExists(directory);
+        public void Log(InfoLogLevel level, string source, string message, Exception ex)
+        {
+            Serilog.Log.Error(ex, "Error in {Source}", source);
+            FireNewLog(new LogEntry(level, source, message, ex));
+        }
 
-            Serilog.Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .WriteTo.Console()
-                .WriteTo.SQLite(_logFilePath)
-                .CreateLogger();
-
-            CurrentLog = Serilog.Log.Logger;
+        private void FireNewLog(LogEntry logEntry)
+        {
+            NewLog?.Invoke(this, new NewLogEventArgs(logEntry));
         }
     }
 }

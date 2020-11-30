@@ -5,12 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
+using DataGuardian.GUI.UserControls;
 
 namespace DataGuardian.Controls
 {
-    public partial class CtlBackupStep : UserControl
+    public partial class CtlBackupStep : UserControlBase
     {
         private IBackupStep _originalStep;
 
@@ -24,14 +26,20 @@ namespace DataGuardian.Controls
         {
             get => Enum.TryParse<BackupAction>(cmbAction.SelectedValue.ToString(), out var action)
                 ? action
-                : BackupAction.Copy;
+                : BackupAction.CopyTo;
             set => cmbAction.SelectedItem = value;
+        }
+
+        public string SelectedBackupFileName
+        {
+            get => txtBackupFileName.Text?.Trim();
+            set => txtBackupFileName.Text = value?.Trim();
         }
 
         public string SelectedActionParameter
         {
-            get => txtActionParameter.Text?.Trim();
-            set => txtActionParameter.Text = value?.Trim();
+            get => ctlBackupPath.Text?.Trim();
+            set => ctlBackupPath.Text = value?.Trim();
         }
 
         public BackupPeriod SelectedBackupPeriod
@@ -54,9 +62,9 @@ namespace DataGuardian.Controls
             set => dtpStartTime.Value = value;
         }
 
-        public ICloudProviderAccount CloudAccount
+        public IAccount CloudAccount
         {
-            get => cmbAccount.SelectedItem as ICloudProviderAccount;
+            get => cmbAccount.SelectedItem as IAccount;
             set => cmbAccount.SelectedItem = value;
         }
 
@@ -90,10 +98,11 @@ namespace DataGuardian.Controls
                 if (_originalStep is BackupStep st)
                 {
                     st.TargetPath = SelectedPath;
-                    st.Account = SelectedAccount;
+                    st.Account = (CloudProviderAccount) SelectedAccount;
 
                     st.Action = SelectedBackupAction;
                     st.ActionParameter = SelectedActionParameter;
+                    st.BackupFileName = SelectedBackupFileName;
 
                     st.Period = SelectedBackupPeriod;
                     st.PeriodParameters = SelectedPeriodParameters;
@@ -105,10 +114,11 @@ namespace DataGuardian.Controls
                 return new BackupStep
                 {
                     TargetPath = SelectedPath,
-                    Account = SelectedAccount,
+                    Account = (CloudProviderAccount)SelectedAccount,
 
                     Action = SelectedBackupAction,
                     ActionParameter = SelectedActionParameter,
+                    BackupFileName = SelectedBackupFileName,
 
                     Period = SelectedBackupPeriod,
                     PeriodParameters = SelectedPeriodParameters,
@@ -124,17 +134,23 @@ namespace DataGuardian.Controls
 
                 SelectedBackupAction = value.Action;
                 SelectedActionParameter = value.ActionParameter;
+                SelectedBackupFileName = value.BackupFileName;
 
                 SelectedBackupPeriod = value.Period;
-                SelectedActionParameter = value.ActionParameter;
+                SelectedPeriodParameters = value.PeriodParameters;
                 SelectedRecurEvery = value.RecurEvery;
                 SelectedStartDate = value.StartDate;
+                State = string.IsNullOrWhiteSpace(value.LastState) ? "Not performed yet" : value.LastState;
             }
         }
 
-        public ICloudProviderAccount SelectedAccount { get; set; }
+        public IAccount SelectedAccount
+        {
+            get => cmbAccount.SelectedItem as IAccount;
+            set => cmbAccount.SelectedItem = value;
+        }
 
-        public CtlBackupStep(IEnumerable<ICloudProviderAccount> accounts)
+        public CtlBackupStep(IEnumerable<IAccount> accounts)
         {
             InitializeComponent();
 
@@ -159,25 +175,34 @@ namespace DataGuardian.Controls
 
         private void cmbAction_SelectedIndexChanged(object sender, EventArgs e)
         {
-            SelectedActionParameter = string.Empty;
-
             switch (SelectedBackupAction)
             {
                 case BackupAction.BackupTo:
-                    ShowCtrs(lblSelectAccount, cmbAccount);
-                    HideCtrs(lblActionParameter, txtActionParameter);
+                    lblActionParameter.Text = "Enter backup FileName";
+
+                    HideCtrs(lblEnterPath, ctlBackupPath);
+                    ShowCtrs(lblSelectAccount, cmbAccount, lblActionParameter, txtBackupFileName);
+
+                    cmbAccount.DataSource = Core.CloudAccountsManager.Accounts.ToList();
                     break;
-                case BackupAction.Copy:
-                    HideCtrs(lblSelectAccount, cmbAccount);
-                    ShowCtrs(lblActionParameter, txtActionParameter);
+                case BackupAction.RestoreTo:
+                    lblActionParameter.Text = "Enter backup FileName";
+
+                    ShowCtrs(lblSelectAccount, cmbAccount, lblActionParameter, txtBackupFileName, lblEnterPath, ctlBackupPath);
+
+                    cmbAccount.DataSource = Core.CloudAccountsManager.Accounts.ToList();
+                    break;
+                case BackupAction.CopyTo:
+                    HideCtrs(lblSelectAccount, cmbAccount, lblActionParameter, txtBackupFileName);
+                    ShowCtrs(lblEnterPath, ctlBackupPath);
                     break;
                 case BackupAction.SendToEmail:
-                    HideCtrs(lblSelectAccount, cmbAccount);
-                    ShowCtrs(lblActionParameter, txtActionParameter);
+                    HideCtrs(lblSelectAccount, cmbAccount, lblEnterPath, ctlBackupPath);
+                    ShowCtrs(lblActionParameter, txtBackupFileName);
                     break;
                 case BackupAction.Archive:
-                    HideCtrs(lblSelectAccount, cmbAccount);
-                    ShowCtrs(lblActionParameter, txtActionParameter);
+                    HideCtrs(lblSelectAccount, cmbAccount, lblActionParameter, txtBackupFileName);
+                    ShowCtrs(lblEnterPath, ctlBackupPath);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -190,16 +215,20 @@ namespace DataGuardian.Controls
             {
                 case BackupPeriod.OneTime:
                     HideCtrs(lsbPeriodParameters, nudRecurEvery, lblRecurEvery, lblPeriodParameters);
+                    lsbPeriodParameters.DataSource = null;
                     break;
                 case BackupPeriod.Daily:
-                    ShowCtrs(lsbPeriodParameters, nudRecurEvery, lblRecurEvery, lblPeriodParameters);
+                    HideCtrs(lsbPeriodParameters, lblPeriodParameters);
+                    ShowCtrs(nudRecurEvery, lblRecurEvery);
+                    lsbPeriodParameters.DataSource = null;
                     break;
                 case BackupPeriod.Weekly:
-                    ShowCtrs(nudRecurEvery, lblRecurEvery);
-                    HideCtrs(lsbPeriodParameters, lblPeriodParameters);
+                    ShowCtrs(nudRecurEvery, lblRecurEvery, lsbPeriodParameters, lblPeriodParameters);
+                    lsbPeriodParameters.DataSource = Enum.GetNames(typeof(DayOfWeek)).ToList();
                     break;
                 case BackupPeriod.Monthly:
                     ShowCtrs(lsbPeriodParameters, nudRecurEvery, lblRecurEvery, lblPeriodParameters);
+                    lsbPeriodParameters.DataSource = Enum.GetNames(typeof(Month)).ToList();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

@@ -1,4 +1,6 @@
 ﻿
+using DataGuardian.Plugins.Core;
+
 namespace DataGuardian.Controls
 {
     partial class CtlCloudAccounts
@@ -19,6 +21,8 @@ namespace DataGuardian.Controls
                 components.Dispose();
             }
             base.Dispose(disposing);
+
+            CoreStatic.Instance.CloudAccountsManager.AccountsChanged -= OnAccountsChanged;
         }
 
         #region Component Designer generated code

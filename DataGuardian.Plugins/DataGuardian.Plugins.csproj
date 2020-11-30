@@ -267,12 +267,13 @@
     <Compile Include="ICore.cs" />
     <Compile Include="InfoLogLevel.cs" />
     <Compile Include="ICloudAccountsManager.cs" />
+    <Compile Include="IPlugin.cs" />
     <Compile Include="ISettings.cs" />
     <Compile Include="ISingleLogger.cs" />
     <Compile Include="LogEntry.cs" />
     <Compile Include="NewLogEventArgs.cs" />
     <Compile Include="PluginBase.cs" />
-    <Compile Include="Plugins\ICloudProviderAccount.cs" />
+    <Compile Include="Plugins\IAccount.cs" />
     <Compile Include="Plugins\ICloudStorageProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CloudStorageProviderBase.cs" />

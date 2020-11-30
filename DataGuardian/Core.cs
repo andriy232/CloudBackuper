@@ -13,14 +13,21 @@ namespace DataGuardian
     public class Core : ICore
     {
         private readonly List<ICloudStorageProvider> _cloudProviders = new List<ICloudStorageProvider>(2);
+        private readonly UnhandledExceptionHandler _handler;
+
         public IBackupManager BackupManager { get; }
+
         public ICloudAccountsManager CloudAccountsManager { get; }
+
         public IEnumerable<ICloudStorageProvider> CloudStorageProviders => _cloudProviders;
+
         public ISettings Settings { get; }
+
         public ISingleLogger Logger { get; }
 
         public Core()
         {
+            _handler = new UnhandledExceptionHandler();
             Settings = new UserSettings();
             Logger = new SingleLogger();
             BackupManager = new BackupManager();
@@ -31,11 +38,27 @@ namespace DataGuardian
             Start();
         }
 
-        public void Start()
+        private void Start()
         {
             _cloudProviders.Clear();
 
-            var files = FileSystem.GetAllFiles(Directory.GetCurrentDirectory())
+            var files = GetAssembliesToLoadPlugins();
+            foreach (var file in files)
+            {
+                var assembly = Assembly.LoadFrom(file);
+                _cloudProviders.AddRange(GetObjectsFromAssembly<ICloudStorageProvider>(assembly));
+            }
+
+            var pluginsToInit = GetPluginsToInit();
+            foreach (var plugin in pluginsToInit)
+            {
+                plugin.Init(this);
+            }
+        }
+
+        private static IEnumerable<string> GetAssembliesToLoadPlugins()
+        {
+            return FileSystem.GetAllFiles(Directory.GetCurrentDirectory())
                 .Where(x =>
                 {
                     var fileName = Path.GetFileNameWithoutExtension(x);
@@ -43,17 +66,12 @@ namespace DataGuardian
                     return !x.Contains("netcoreapp") && fileName.Contains("DataGuardian") &&
                            new[] {".dll", ".exe"}.Contains(extension);
                 });
-            foreach (var file in files)
-            {
-                var assembly = Assembly.LoadFrom(file);
-                _cloudProviders.AddRange(GetObjectsFromAssembly<ICloudStorageProvider>(assembly));
-            }
+        }
 
-            foreach (var plugin in new IPlugin[] {Settings, Logger, BackupManager, CloudAccountsManager}.Union(
-                _cloudProviders))
-            {
-                plugin.Init(this);
-            }
+        private IEnumerable<IPlugin> GetPluginsToInit()
+        {
+            return new IPlugin[] {_handler, Settings, Logger, BackupManager, CloudAccountsManager}
+                .Union(_cloudProviders);
         }
 
         private IEnumerable<T> GetObjectsFromAssembly<T>(Assembly assembly) where T : class

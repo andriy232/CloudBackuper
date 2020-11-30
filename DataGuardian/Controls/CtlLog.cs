@@ -20,7 +20,7 @@ namespace DataGuardian.Controls
         {
             base.OnLoad(e);
 
-            if (DesignMode) 
+            if (DesignMode)
                 return;
 
             CoreStatic.Instance.Logger.NewLog += OnNewLog;
@@ -50,11 +50,18 @@ namespace DataGuardian.Controls
 
         private void AddLogToDgv(LogEntry log)
         {
-            var row = dgvData.Rows[dgvData.Rows.Add()];
-            row.Cells[clmTime.Index].Value = log.Timestamp;
-            row.Cells[clmMessage.Index].Value = log.Message;
-            row.Cells[clmSource.Index].Value = log.PropertiesSource ?? log.Source;
-            row.DefaultCellStyle.BackColor = GetColor(log.Level);
+            try
+            {
+                var row = dgvData.Rows[dgvData.Rows.Add()];
+                row.Cells[clmTime.Index].Value = log.Timestamp;
+                row.Cells[clmMessage.Index].Value = log.Message;
+                row.Cells[clmSource.Index].Value = log.PropertiesSource ?? log.Source;
+                row.DefaultCellStyle.BackColor = GetColor(log.Level);
+            }
+            catch
+            {
+                // ignored
+            }
         }
 
         private static Color GetColor(InfoLogLevel logType)
@@ -78,7 +85,14 @@ namespace DataGuardian.Controls
 
         private void OnNewLog(object sender, NewLogEventArgs e)
         {
-            AddLogToDgv(e.Log);
+            if (InvokeRequired)
+            {
+                BeginInvoke((Action<LogEntry>) AddLogToDgv, e.Log);
+            }
+            else
+            {
+                AddLogToDgv(e.Log);
+            }
         }
     }
 }

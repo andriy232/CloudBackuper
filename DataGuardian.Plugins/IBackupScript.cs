@@ -2,31 +2,40 @@
 using DataGuardian.Plugins.Plugins;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace DataGuardian.Plugins
 {
     public interface IBackupScript : IDbModel
     {
-        DateTime CreateTime { get; }
+        DateTime CreateTimestamp { get; }
 
         bool Enabled { get; }
 
         DateTime LastPerformTime { get; }
+        DateTime NextPerformTime { get; }
 
-        BackupScriptState LastPerformState { get; }
+        BackupResultState LastPerformState { get; }
 
         string Name { get; }
 
         string TargetPath { get; }
 
         List<IBackupStep> Steps { get; }
+
+        BackupCurrentState CurrentState { get; set; }
+
+        event EventHandler<BackupCurrentState> CurrentStateChanged;
+        void SetSerializedState();
     }
 
-    public interface IBackupStep : IDbModel, ICloneable
+    public interface IBackupStep : ICloneable
     {
-        ICloudProviderAccount Account { get; }
+        IAccount Account { get; }
 
         string TargetPath { get; }
+
+        string BackupFileName { get; }
         
         BackupAction Action { get; }
 
@@ -43,15 +52,26 @@ namespace DataGuardian.Plugins
         /// </summary>
         IEnumerable<string> PeriodParameters { get; }
 
-        BackupScriptState LastState { get; }
+        string LastState { get; }
 
-        DateTime PerformTime { get; }
+        DateTime NextPerformDate { get; }
+
+        DateTime LastPerformTime { get; }
+
+        Task Perform();
     }
 
-    public enum BackupScriptState
+    public enum BackupResultState
     {
         Success,
         Failed
+    }
+
+    public enum BackupCurrentState
+    {
+        NotStarted,
+        Processing,
+        Finished,
     }
 
     public interface IDbModel

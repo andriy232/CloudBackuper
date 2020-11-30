@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataGuardian.Console", "Dat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataGuardian.GUI", "DataGuardian.GUI\DataGuardian.GUI.csproj", "{C93363CE-CA24-4385-AAB8-8A74ED3E99A7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataGuardian.Tests", "DataGuardian.Tests\DataGuardian.Tests.csproj", "{0A94EF83-3B1A-46F7-B5D1-7FCE9D7C930A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -97,6 +99,14 @@ Global
 		{C93363CE-CA24-4385-AAB8-8A74ED3E99A7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C93363CE-CA24-4385-AAB8-8A74ED3E99A7}.Release|x86.ActiveCfg = Release|Any CPU
 		{C93363CE-CA24-4385-AAB8-8A74ED3E99A7}.Release|x86.Build.0 = Release|Any CPU
+		{0A94EF83-3B1A-46F7-B5D1-7FCE9D7C930A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A94EF83-3B1A-46F7-B5D1-7FCE9D7C930A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A94EF83-3B1A-46F7-B5D1-7FCE9D7C930A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0A94EF83-3B1A-46F7-B5D1-7FCE9D7C930A}.Debug|x86.Build.0 = Debug|Any CPU
+		{0A94EF83-3B1A-46F7-B5D1-7FCE9D7C930A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A94EF83-3B1A-46F7-B5D1-7FCE9D7C930A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A94EF83-3B1A-46F7-B5D1-7FCE9D7C930A}.Release|x86.ActiveCfg = Release|Any CPU
+		{0A94EF83-3B1A-46F7-B5D1-7FCE9D7C930A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -109,6 +119,7 @@ Global
 		{FC0D11A3-032D-4269-8B93-7DAB6DA31A23} = {E9888041-AF43-41B1-ADE5-140876F4AF50}
 		{213B5527-9F39-43CD-A49A-93B1C4E8E8CC} = {0343C56F-6BB8-4F76-8E63-C5CCAF1C8DF8}
 		{C93363CE-CA24-4385-AAB8-8A74ED3E99A7} = {E9888041-AF43-41B1-ADE5-140876F4AF50}
+		{0A94EF83-3B1A-46F7-B5D1-7FCE9D7C930A} = {0343C56F-6BB8-4F76-8E63-C5CCAF1C8DF8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {04EE51AD-4728-45BE-9DE6-7B21E3118740}

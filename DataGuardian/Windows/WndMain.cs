@@ -31,14 +31,14 @@ namespace DataGuardian.Windows
 
         private void createBackupScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CoreStatic.Instance.BackupManager.RequestNewBackupScriptDialog();
+            CoreStatic.Instance.BackupManager.CreateBackupScriptGui();
         }
 
         private void editBackupScriptToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             var selectedBackupScript = ctlBackupScripts.SelectedBackupScript;
             if (selectedBackupScript != null)
-                CoreStatic.Instance.BackupManager.EditBackupScript(selectedBackupScript);
+                CoreStatic.Instance.BackupManager.EditBackupScriptGui(selectedBackupScript);
         }
 
         private void removeBackupScriptToolStripMenuItem1_Click(object sender, EventArgs e)

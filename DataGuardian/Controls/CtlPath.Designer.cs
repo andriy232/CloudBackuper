@@ -39,7 +39,7 @@ namespace DataGuardian.Controls
             this.txtPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPath.Location = new System.Drawing.Point(3, 5);
             this.txtPath.Name = "txtPath";
-            this.txtPath.Size = new System.Drawing.Size(482, 26);
+            this.txtPath.Size = new System.Drawing.Size(157, 26);
             this.txtPath.TabIndex = 8;
             this.txtPath.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -48,7 +48,7 @@ namespace DataGuardian.Controls
             this.btnSelect.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.btnSelect.BackgroundImage = global::DataGuardian.Properties.Resources.Img_Select;
             this.btnSelect.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btnSelect.Location = new System.Drawing.Point(559, 3);
+            this.btnSelect.Location = new System.Drawing.Point(234, 3);
             this.btnSelect.Name = "btnSelect";
             this.btnSelect.Size = new System.Drawing.Size(62, 30);
             this.btnSelect.TabIndex = 9;
@@ -60,7 +60,7 @@ namespace DataGuardian.Controls
             this.btnOpen.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.btnOpen.BackgroundImage = global::DataGuardian.Properties.Resources.Img_Open;
             this.btnOpen.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btnOpen.Location = new System.Drawing.Point(491, 3);
+            this.btnOpen.Location = new System.Drawing.Point(166, 3);
             this.btnOpen.Name = "btnOpen";
             this.btnOpen.Size = new System.Drawing.Size(62, 30);
             this.btnOpen.TabIndex = 9;
@@ -75,9 +75,9 @@ namespace DataGuardian.Controls
             this.Controls.Add(this.btnOpen);
             this.Controls.Add(this.btnSelect);
             this.MaximumSize = new System.Drawing.Size(9999, 36);
-            this.MinimumSize = new System.Drawing.Size(625, 36);
+            this.MinimumSize = new System.Drawing.Size(300, 36);
             this.Name = "CtlPath";
-            this.Size = new System.Drawing.Size(625, 36);
+            this.Size = new System.Drawing.Size(300, 36);
             this.ResumeLayout(false);
             this.PerformLayout();
 

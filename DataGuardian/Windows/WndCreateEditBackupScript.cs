@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DataGuardian.Controls;
+using DataGuardian.GUI;
 using DataGuardian.Impl;
 using DataGuardian.Plugins;
 using DataGuardian.Plugins.Core;
@@ -29,11 +30,9 @@ namespace DataGuardian.Windows
             {
                 if (_editScript is BackupScript bs)
                 {
-                    bs.Name = Text;
-                    bs.BackupFileName = Path.GetFileName(bs.TargetPath);
-                    bs.TargetPath = Text;
-                    bs.Steps.Clear();
-                    bs.Steps.AddRange(CurrentStepsControl.Select(x => x.Step));
+                    bs.Name = BackupName;
+                    bs.TargetPath = TargetPath;
+                    bs.Steps = CurrentStepsControl.Select(x => x.Step).ToList();
                     return _editScript;
                 }
 
@@ -47,7 +46,7 @@ namespace DataGuardian.Windows
             {
                 BackupName = value.Name;
                 TargetPath = value.TargetPath;
-                foreach(var step in value.Steps)
+                foreach (var step in value.Steps)
                     AddNewStep(step);
             }
         }
@@ -60,8 +59,8 @@ namespace DataGuardian.Windows
 
         public string TargetPath
         {
-            get => ctlPath1.SelectedPath;
-            set => ctlPath1.SelectedPath = value;
+            get => ctlPath.SelectedPath;
+            set => ctlPath.SelectedPath = value;
         }
 
         public WndCreateEditBackupScript(IBackupScript backupScript, CreateScriptParameters createScriptParameters)
@@ -82,8 +81,14 @@ namespace DataGuardian.Windows
                 Text = "Edit script";
                 _editScript = backupScript;
                 NewBackupScript = backupScript;
-                InitControlsForScript();
             }
+        }
+
+        private void TryApplyNewWindowSize()
+        {
+            var workingArea = Screen.PrimaryScreen.WorkingArea;
+
+            Height = Math.Min(workingArea.Bottom - Top, tlpRoot.PreferredSize.Height + tlpRoot.Margin.Vertical + Margin.Vertical + 50);
         }
 
         private void InitFirstStep()
@@ -95,20 +100,24 @@ namespace DataGuardian.Windows
 
         private void SetName(string name, string path)
         {
-            Text = _createScript != null ? $"Create backup '{name}', [{path}]" : $"Edit backup '{name}', [{path}]";
-        }
-
-        private void InitControlsForScript()
-        {
+            BackupName = name;
+            TargetPath = path;
         }
 
         private void btnAddStep_Click(object sender, EventArgs e)
         {
-            var count = CurrentStepsControl.Count();
-            if (count > 0)
-                AddNewStep(CurrentStepsControl[count - 1].Step.Clone() as IBackupStep);
-            else
-                AddNewStep(new BackupStep {TargetPath = _createScript.TargetPath});
+            try
+            {
+                var count = CurrentStepsControl.Count;
+                if (count > 0)
+                    AddNewStep(CurrentStepsControl[count - 1].Step.Clone() as IBackupStep);
+                else
+                    AddNewStep(new BackupStep {TargetPath = _createScript.TargetPath});
+            }
+            catch (Exception ex)
+            {
+                GuiHelper.ShowMessage(ex);
+            }
         }
 
         private void AddNewStep(IBackupStep step)
@@ -135,26 +144,70 @@ namespace DataGuardian.Windows
                 Anchor = AnchorStyles.Left | AnchorStyles.Right,
                 Name = $"btn{tlpRoot.RowCount}"
             };
+            btn.Click += OnBtnRemoveClick;
 
             tlpRoot.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
             tlpRoot.RowCount += 1;
             var lastRowIndex = tlpRoot.RowCount - 1;
-            var generalRowHeight = stepCtrl.MinimumSize.Height + stepCtrl.Margin.Horizontal;
+            var generalRowHeight = GetCtrlHeight(stepCtrl) + 10;
 
+            // set row styles
             if (tlpRoot.RowStyles.Count < lastRowIndex + 1)
                 tlpRoot.RowStyles.Add(new RowStyle(SizeType.Absolute, generalRowHeight));
-            else
-                tlpRoot.RowStyles[lastRowIndex] = new RowStyle(SizeType.Absolute, generalRowHeight);
+            for (var index = 2; index < tlpRoot.RowStyles.Count; index++)
+            {
+                if (tlpRoot.GetControlFromPosition(1, index) != null)
+                    tlpRoot.RowStyles[index].Height = generalRowHeight;
+            }
 
-            if (Bottom + generalRowHeight < Screen.PrimaryScreen.WorkingArea.Bottom)
-                Height += (int) generalRowHeight;
-
+            // move control buttons to the bottom
+            tlpRoot.Controls.Remove(btnCancel);
             tlpRoot.Controls.Remove(btnAddStep);
+            tlpRoot.Controls.Remove(btnSave);
+            tlpRoot.Controls.Add(btnCancel, 0, lastRowIndex);
             tlpRoot.Controls.Add(btnAddStep, 1, lastRowIndex);
+            tlpRoot.Controls.Add(btnSave, 2, lastRowIndex);
 
+            // add new step controls
             tlpRoot.Controls.Add(lblNumber, 0, tlpRoot.RowCount - 2);
             tlpRoot.Controls.Add(stepCtrl, 1, tlpRoot.RowCount - 2);
             tlpRoot.Controls.Add(btn, 2, tlpRoot.RowCount - 2);
+
+            TryApplyNewWindowSize();
+        }
+
+        private static int GetCtrlHeight(Control stepCtrl)
+        {
+            return stepCtrl.MinimumSize.Height + stepCtrl.Margin.Horizontal;
+        }
+
+        private void OnBtnRemoveClick(object sender, EventArgs e)
+        {
+            try
+            {
+                if (sender is Button btn)
+                {
+                    var cellPosition = tlpRoot.GetCellPosition(btn);
+
+                    var lbl = tlpRoot.GetControlFromPosition(0, cellPosition.Row);
+                    var ctlStep = tlpRoot.GetControlFromPosition(1, cellPosition.Row);
+
+                    btn.Dispose();
+                    tlpRoot.Controls.Remove(btn);
+                    lbl.Dispose();
+                    tlpRoot.Controls.Remove(lbl);
+                    ctlStep.Dispose();
+                    tlpRoot.Controls.Remove(ctlStep);
+
+                    tlpRoot.RowStyles[cellPosition.Row].Height = 0;
+
+                    TryApplyNewWindowSize();
+                }
+            }
+            catch (Exception ex)
+            {
+                GuiHelper.ShowMessage(ex);
+            }
         }
     }
 }

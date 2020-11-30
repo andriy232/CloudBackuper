@@ -3,7 +3,8 @@
     public enum BackupAction
     {
         BackupTo,
-        Copy,
+        RestoreTo,
+        CopyTo,
         SendToEmail,
         Archive
     }

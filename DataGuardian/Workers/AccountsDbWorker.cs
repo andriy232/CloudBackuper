@@ -16,16 +16,22 @@ namespace DataGuardian.Workers
             _context = new AccountsDbContext(dbConnection);
         }
 
-        public void SaveProvider(ICloudProviderAccount cloudProviderAccount)
+        public void SaveProvider(IAccount cloudProviderAccount)
         {
-            _context.Accounts.Add((CloudProviderAccount) cloudProviderAccount);
-            _context.SaveChanges();
+            if (!_context.Accounts.Contains(cloudProviderAccount))
+            {
+                _context.Accounts.Add((CloudProviderAccount) cloudProviderAccount);
+                _context.SaveChanges();
+            }
         }
 
-        public void DeleteProvider(ICloudProviderAccount cloudProviderAccount)
+        public void DeleteProvider(IAccount cloudProviderAccount)
         {
-            _context.Accounts.Remove((CloudProviderAccount) cloudProviderAccount);
-            _context.SaveChanges();
+            if (cloudProviderAccount is CloudProviderAccount account && _context.Accounts.Contains(account))
+            {
+                _context.Accounts.Remove(account);
+                _context.SaveChanges();
+            }
         }
 
         public IEnumerable<CloudProviderAccount> ReadAccounts()

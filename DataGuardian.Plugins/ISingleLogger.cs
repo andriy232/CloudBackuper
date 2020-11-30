@@ -11,6 +11,8 @@ namespace DataGuardian.Plugins
 
         void Log(string source, Exception ex);
 
+        void Log(InfoLogLevel level, string source, string message, Exception ex);
+     
         event EventHandler<NewLogEventArgs> NewLog;
 
         IEnumerable<LogEntry> ReadLogs();

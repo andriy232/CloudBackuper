@@ -13,16 +13,16 @@ namespace DataGuardian.Impl
 {
     public class CloudAccountsManager : PluginBase, ICloudAccountsManager
     {
-        private readonly List<ICloudProviderAccount> _accounts = new List<ICloudProviderAccount>();
+        private readonly List<IAccount> _accounts = new List<IAccount>();
         public event EventHandler<AccountsChangedEventArgs> AccountsChanged;
         private AccountsDbWorker _dbWorker;
-        public IEnumerable<ICloudProviderAccount> Accounts => _accounts;
+        public IEnumerable<IAccount> Accounts => _accounts;
 
         public override void Init(ICore core)
         {
             base.Init(core);
+
             _dbWorker = new AccountsDbWorker(Core.Settings.ConnectionString);
-            
             _accounts.AddRange(_dbWorker.ReadAccounts());
         }
 
@@ -52,15 +52,25 @@ namespace DataGuardian.Impl
             }
             catch (Exception ex)
             {
-                Core?.Logger?.Log(ex);
+                Core?.Logger?.Log("AddAccount", ex);
             }
         }
 
-        public void RemoveAccount(ICloudProviderAccount selectedCloudProvider)
+        public void RemoveAccount(IAccount selectedCloudProvider)
         {
-            _dbWorker.DeleteProvider(selectedCloudProvider);
-            _accounts.Remove(selectedCloudProvider);
-            FireAccountsChanged();
+            try
+            {
+                if (selectedCloudProvider == null)
+                    return;
+
+                _dbWorker.DeleteProvider(selectedCloudProvider);
+                _accounts.Remove(selectedCloudProvider);
+                FireAccountsChanged();
+            }
+            catch (Exception ex)
+            {
+                Core?.Logger?.Log("RemoveAccount", ex);
+            }
         }
 
         private void FireAccountsChanged()
@@ -68,7 +78,7 @@ namespace DataGuardian.Impl
             AccountsChanged?.Invoke(this, new AccountsChangedEventArgs(_accounts));
         }
 
-        public T GetSettings<T>(ICloudProviderAccount account) where T : SettingsBase
+        public T GetSettings<T>(IAccount account) where T : SettingsBase
         {
             var settingsState = account.ConnectionSettings.ToString();
             return JsonConvert.DeserializeObject<T>(settingsState);
