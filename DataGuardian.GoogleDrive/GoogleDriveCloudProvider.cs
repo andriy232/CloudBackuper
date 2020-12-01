@@ -6,9 +6,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using DataGuardian.GoogleDrive.Properties;
-using DataGuardian.Helper;
-using DataGuardian.Helper.Backups;
-using DataGuardian.Helper.Core;
+using DataGuardian.GUI;
+using DataGuardian.Plugins;
+using DataGuardian.Plugins.Backups;
+using DataGuardian.Plugins.Core;
+using DataGuardian.Plugins.Plugins;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
@@ -17,25 +19,27 @@ using File = Google.Apis.Drive.v3.Data.File;
 
 namespace DataGuardian.GoogleDrive
 {
-    public class GoogleDriveProvider : StorageProviderBase<GoogleDriveSettings>
+    public class GoogleDriveCloudProvider : CloudStorageProviderBase<GoogleDriveSettings>
     {
         public override Guid Id => Guid.Parse("3D8C2F96-32C3-44B0-8B4B-7DD4DE3D3AE6");
 
         public override string Name => "Google Drive";
 
+        public override string Description => Resources.Str_GoogleDriveProvider_Description;
+        
         public override byte[] Logo => Resources.Img_GoogleDrive;
 
         private static readonly string TargetScope = DriveService.Scope.Drive;
         private const int EntriesPerPage = 100;
 
-        private async Task Upload(DriveService service, string zipPath)
+        private async Task Upload(IAccount account, DriveService service, string zipPath)
         {
             try
             {
                 var fileMetadata = new File
                 {
                     Name = Path.GetFileName(zipPath),
-                    Parents = new List<string> { GetSettings().DriveFolderId }
+                    Parents = new List<string> { GetSettings(account).DriveFolderId }
                 };
 
                 FilesResource.CreateMediaUpload request;
@@ -69,9 +73,9 @@ namespace DataGuardian.GoogleDrive
             Core.Logger.Log($"Removing backup: {result}");
         }
 
-        private async Task<RemoteBackupsState> GetBackupsAsync(DriveService service)
+        private async Task<RemoteBackupsState> GetBackupsAsync(IAccount account, DriveService service)
         {
-            var settings = GetSettings();
+            var settings = GetSettings(account);
             var folderGet = service.Files.Get(settings.DriveFolderId).SetFields();
             var folderResult = await folderGet.ExecuteAsync();
 
@@ -104,21 +108,21 @@ namespace DataGuardian.GoogleDrive
                     x.ModifiedTime ?? x.ModifiedByMeTime ?? x.CreatedTime ?? DateTime.MinValue)));
         }
 
-        public override async Task<RemoteBackupsState> GetBackupState()
+        public override async Task<RemoteBackupsState> GetBackupState(IAccount account, string backupFileName)
         {
-            using (var service = await GetDriveService())
-                return await GetBackupsAsync(service);
+            using (var service = await GetDriveServiceClient(account))
+                return await GetBackupsAsync(account, service);
         }
 
-        public override async Task UploadBackupAsync(LocalArchivedBackup localBackup)
+        public override async Task UploadBackupAsync(IAccount account, LocalArchivedBackup localBackup)
         {
-            using (var service = await GetDriveService())
-                await Upload(service, localBackup.ResultPath);
+            using (var service = await GetDriveServiceClient(account))
+                await Upload(account, service, localBackup.ResultPath);
         }
 
-        public override async Task DownloadBackupAsync(RemoteBackupsState.RemoteBackup backup, string outputPath)
+        public override async Task DownloadBackupAsync(IAccount account, RemoteBackupsState.RemoteBackup backup, string outputPath)
         {
-            using (var service = await GetDriveService())
+            using (var service = await GetDriveServiceClient(account))
                 await DownloadToFile(service, backup.UniqueId, outputPath);
         }
 
@@ -129,15 +133,15 @@ namespace DataGuardian.GoogleDrive
                 await file.DownloadAsync(stream);
         }
 
-        public override async Task DeleteBackupAsync(RemoteBackupsState.RemoteBackup backup)
+        public override async Task DeleteBackupAsync(IAccount account, RemoteBackupsState.RemoteBackup backup)
         {
-            using (var service = await GetDriveService())
+            using (var service = await GetDriveServiceClient(account))
                 await Delete(service, backup.UniqueId);
         }
 
-        private async Task<DriveService> GetDriveService()
+        private async Task<DriveService> GetDriveServiceClient(IAccount account)
         {
-            var credential = await GetAuthCredentialsAsync();
+            var credential = await GetAuthCredentialsAsync(account);
             var initializer = new BaseClientService.Initializer
             {
                 HttpClientInitializer = credential,
@@ -147,9 +151,9 @@ namespace DataGuardian.GoogleDrive
             return new DriveService(initializer);
         }
 
-        private async Task<UserCredential> GetAuthCredentialsAsync()
+        private async Task<UserCredential> GetAuthCredentialsAsync(IAccount account)
         {
-            return await GetCredentials()
+            return await GetCredentialsStateAsync(null, account)
                 .ContinueWith(x =>
                 {
                     var valueTuple = x.GetAwaiter().GetResult();
@@ -158,28 +162,24 @@ namespace DataGuardian.GoogleDrive
                 .ConfigureAwait(false);
         }
 
-        private async Task<GoogleDriveSettings> GetOAuthSettingsAsync()
+        private async Task<GoogleDriveSettings> GetOAuthSettingsAsync(string userCredentialsPath)
         {
-            return await GetCredentials()
+            // no account yet
+            return await GetCredentialsStateAsync(userCredentialsPath, null)
                 .ContinueWith(x =>
                 {
                     var valueTuple = x.GetAwaiter().GetResult();
                     return valueTuple.Item2;
-                })
-                .ConfigureAwait(false);
+                }).ConfigureAwait(true);
         }
 
-        private async Task<(UserCredential, GoogleDriveSettings)> GetCredentials()
+        private async Task<(UserCredential, GoogleDriveSettings)> GetCredentialsStateAsync(string userCredentialsPath, IAccount account)
         {
-            var driveSettings = GetSettings();
+            var driveSettings = GetSettings(account);
 
-            if (!Core.FileSystem.Exists(driveSettings?.AuthInfoPath))
+            if (!FileSystem.Exists(driveSettings?.AuthInfoPath))
             {
-                var userCredentialsPath = Core.ReadLine(
-                    "Enter path to credentials Json:",
-                    str => System.IO.File.Exists(str));
-
-                var authDataDir = Path.Combine(Core.GetAppDataPath(), "Auth");
+                var authDataDir = Path.Combine(Core.Settings.DataDirectory, "Auth");
 
                 var credentialsDir = Path.Combine(authDataDir, "Credentials");
                 if (!Directory.Exists(credentialsDir))
@@ -190,15 +190,15 @@ namespace DataGuardian.GoogleDrive
                     Directory.CreateDirectory(authInfoDir);
 
                 var movedCredentialsPath = Path.Combine(credentialsDir, "credentials.json");
-                Core.FileSystem.CopyFile(userCredentialsPath, movedCredentialsPath);
+                FileSystem.CopyFile(userCredentialsPath, movedCredentialsPath);
 
-                return await DoOAuthGoogle(movedCredentialsPath, authInfoDir, TargetScope);
+                return await DoGoogleOAuth(account, movedCredentialsPath, authInfoDir, TargetScope);
             }
 
-            return await DoOAuthGoogle(driveSettings.CredentialsPath, driveSettings.AuthInfoPath, TargetScope);
+            return await DoGoogleOAuth(account, driveSettings.CredentialsPath, driveSettings.AuthInfoPath, TargetScope);
         }
 
-        private async Task<(UserCredential, GoogleDriveSettings)> DoOAuthGoogle(
+        private async Task<(UserCredential, GoogleDriveSettings)> DoGoogleOAuth(IAccount account,
             string credentialsPath,
             string authDataDir,
             string scope)
@@ -208,7 +208,7 @@ namespace DataGuardian.GoogleDrive
 
             var credential = HandleGoogleAuthorizationBroker(credentialsPath, authDataDir, scope);
 
-            var settings = GetSettings();
+            var settings = GetSettings(account);
             if (settings != null
                 && settings.AuthInfoPath.Equals(authDataDir, StringComparison.OrdinalIgnoreCase)
                 && settings.CredentialsPath.Equals(credentialsPath, StringComparison.OrdinalIgnoreCase))
@@ -218,10 +218,9 @@ namespace DataGuardian.GoogleDrive
                 settings = new GoogleDriveSettings();
             settings.CredentialsPath = credentialsPath;
             settings.AuthInfoPath = authDataDir;
-            if (string.IsNullOrWhiteSpace(settings.DriveFolderId))
-                settings.DriveFolderId = Core.ReadLine("Enter folder id");
 
-            Core.Settings.SaveSettings(Id, settings);
+            if (string.IsNullOrWhiteSpace(settings.DriveFolderId))
+                settings.DriveFolderId = GuiHelper.ReadLine("Enter folder id:");
 
             return (credential, settings);
         }
@@ -254,7 +253,12 @@ namespace DataGuardian.GoogleDrive
 
         public override object TryAuth()
         {
-            var task = Task.Run(GetOAuthSettingsAsync);
+            var userCredentialsPath = GuiHelper.ReadPath(
+                "Enter path to credentials Json:");
+            if (!FileSystem.Exists(userCredentialsPath))
+                throw new ApplicationException(nameof(userCredentialsPath));
+
+            var task = Task.Run(()=>GetOAuthSettingsAsync(userCredentialsPath));
 
             task.Wait();
 

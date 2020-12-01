@@ -70,7 +70,7 @@ namespace DataGuardian.Windows
             // pictureBox1
             // 
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox1.Image = global::DataGuardian.Properties.Resources.Img_Logo;
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
             this.pictureBox1.Location = new System.Drawing.Point(15, 15);
             this.pictureBox1.Margin = new System.Windows.Forms.Padding(15);
             this.pictureBox1.Name = "pictureBox1";
@@ -158,6 +158,7 @@ namespace DataGuardian.Windows
             this.ClientSize = new System.Drawing.Size(798, 444);
             this.Controls.Add(this.tlpRoot);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(820, 500);
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(820, 500);

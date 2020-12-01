@@ -121,4 +121,7 @@
   <data name="Img_GoogleDrive" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\gdrive.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="Str_GoogleDriveProvider_Description" xml:space="preserve">
+    <value>a file storage and synchronization service developed by Google. Launched on April 24, 2012, Google Drive allows users to store files on their servers, synchronize files across devices, and share files</value>
+  </data>
 </root>

@@ -155,6 +155,7 @@ namespace DataGuardian.Windows
             this.Controls.Add(this.tlpRoot);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximumSize = new System.Drawing.Size(1300, 80000);
+            this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(1300, 400);
             this.Name = "WndCreateEditBackupScript";
             this.Text = "Create/Edit script";

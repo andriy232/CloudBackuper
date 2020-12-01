@@ -54,8 +54,7 @@ namespace DataGuardian.Windows
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(776, 103);
             this.lblTitle.TabIndex = 1;
-            this.lblTitle.Text = "Please enter name and path for your backup script, you will be able to copy, arch" +
-    "ive, upload your data into cloud storage ";
+            this.lblTitle.Text = "Please enter name and path for your backup script";
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btnContinue

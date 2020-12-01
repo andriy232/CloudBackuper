@@ -24,6 +24,8 @@ namespace DataGuardian.Windows
             base.OnLoad(e);
 
             FillData(CoreStatic.Instance.CloudStorageProviders);
+
+            clmDescription.DefaultCellStyle.Font = new Font(Font.Name, 10);
         }
 
         private void FillData(IEnumerable<ICloudStorageProvider> cloudProviders)

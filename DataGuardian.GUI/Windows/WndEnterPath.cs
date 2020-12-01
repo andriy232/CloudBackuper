@@ -11,17 +11,30 @@ namespace DataGuardian.Windows
 {
     public partial class WndEnterPath : Form
     {
-        public CreateScriptParameters Params
+        public CreateScriptParameters Params => new CreateScriptParameters(txtName.Text, ctlPath.SelectedPath);
+
+        public bool EnterNameVisible
         {
-            get => new CreateScriptParameters(txtName.Text, ctlPath.SelectedPath);
+            get => txtName.Visible;
+            set => txtName.Visible = value;
         }
 
-        public WndEnterPath()
+        public WndEnterPath(string message, string name = "", string path = "")
         {
             InitializeComponent();
 
-            txtName.Text = $"New_backup_{Guid.NewGuid()}";
-            ctlPath.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            lblTitle.Text = message;
+            txtName.Text = name;
+            ctlPath.SelectedPath = path;
+
+            EnterNameVisible = !string.IsNullOrWhiteSpace(name);
+
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                ctlPath.SetMode(FileSystemObject.File);
+                ctlPath.SelectDialog();
+            }
+
             txtName.Focus();
         }
 
@@ -41,5 +54,11 @@ namespace DataGuardian.Windows
 
             DialogResult = DialogResult.OK;
         }
+    }
+
+    public enum FileSystemObject
+    {
+        File,
+        Folder
     }
 }

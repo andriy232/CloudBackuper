@@ -138,7 +138,7 @@ namespace DataGuardian.Windows
             };
             var btn = new Button
             {
-                BackgroundImage = Resources.Img_Close,
+                BackgroundImage = Plugins.Properties.Resources.Img_Close,
                 BackgroundImageLayout = ImageLayout.Zoom,
                 Size = new Size(50, 50),
                 Anchor = AnchorStyles.Left | AnchorStyles.Right,

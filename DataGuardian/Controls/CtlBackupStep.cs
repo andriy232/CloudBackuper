@@ -1,14 +1,13 @@
-﻿using DataGuardian.Impl;
+﻿using DataGuardian.GUI.UserControls;
+using DataGuardian.Impl;
 using DataGuardian.Plugins;
 using DataGuardian.Plugins.Plugins;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
-using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
-using DataGuardian.GUI.UserControls;
 
 namespace DataGuardian.Controls
 {
@@ -60,12 +59,6 @@ namespace DataGuardian.Controls
         {
             get => dtpStartTime.Value;
             set => dtpStartTime.Value = value;
-        }
-
-        public IAccount CloudAccount
-        {
-            get => cmbAccount.SelectedItem as IAccount;
-            set => cmbAccount.SelectedItem = value;
         }
 
         public IEnumerable<string> SelectedPeriodParameters

@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using DataGuardian.DbLevel;
+﻿using DataGuardian.DbLevel;
 using DataGuardian.Plugins;
 using DataGuardian.Plugins.Plugins;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DataGuardian.Workers
 {
@@ -16,20 +15,25 @@ namespace DataGuardian.Workers
             _context = new AccountsDbContext(dbConnection);
         }
 
-        public void SaveProvider(IAccount cloudProviderAccount)
+        public void SaveProvider(IAccount account)
         {
-            if (!_context.Accounts.Contains(cloudProviderAccount))
+            if (!Contains(account))
             {
-                _context.Accounts.Add((CloudProviderAccount) cloudProviderAccount);
+                _context.Accounts.Add((CloudProviderAccount) account);
                 _context.SaveChanges();
             }
         }
 
-        public void DeleteProvider(IAccount cloudProviderAccount)
+        private bool Contains(IAccount cloudProviderAccount)
         {
-            if (cloudProviderAccount is CloudProviderAccount account && _context.Accounts.Contains(account))
+            return _context.Accounts.ToList().Contains(cloudProviderAccount);
+        }
+
+        public void DeleteProvider(IAccount account)
+        {
+            if (Contains(account))
             {
-                _context.Accounts.Remove(account);
+                _context.Accounts.Remove((CloudProviderAccount) account);
                 _context.SaveChanges();
             }
         }

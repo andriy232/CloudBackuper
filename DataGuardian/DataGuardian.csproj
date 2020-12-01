@@ -260,6 +260,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GuiManager.cs" />
     <Compile Include="Impl\BackupScript.cs" />
     <Compile Include="Controls\CtlBackupScripts.cs">
       <SubType>UserControl</SubType>
@@ -291,19 +292,13 @@
     <Compile Include="Controls\CtlLog.Designer.cs">
       <DependentUpon>CtlLog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\CtlPath.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\CtlPath.Designer.cs">
-      <DependentUpon>CtlPath.cs</DependentUpon>
-    </Compile>
     <Compile Include="Core.cs" />
     <Compile Include="Impl\BackupStep.cs" />
     <Compile Include="Impl\SingleLogger.cs" />
+    <Compile Include="MyApplicationContext.cs" />
     <Compile Include="Workers\BackupDbWorker.cs" />
     <Compile Include="Impl\BackupManager.cs" />
     <Compile Include="DbLevel\BackupsDbContext.cs" />
-    <Compile Include="Impl\CreateScriptParameters.cs" />
     <Compile Include="Workers\AccountsDbWorker.cs" />
     <Compile Include="Impl\CloudAccountsManager.cs" />
     <Compile Include="DbLevel\AccountsDbContext.cs" />
@@ -313,12 +308,6 @@
     </Compile>
     <Compile Include="Windows\WndCreateEditBackupScript.Designer.cs">
       <DependentUpon>WndCreateEditBackupScript.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Windows\WndEnterPath.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Windows\WndEnterPath.Designer.cs">
-      <DependentUpon>WndEnterPath.cs</DependentUpon>
     </Compile>
     <Compile Include="Windows\WndMain.cs">
       <SubType>Form</SubType>
@@ -357,17 +346,11 @@
     <EmbeddedResource Include="Controls\CtlLog.resx">
       <DependentUpon>CtlLog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\CtlPath.resx">
-      <DependentUpon>CtlPath.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Windows\WndAbout.resx">
       <DependentUpon>WndAbout.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Windows\WndCreateEditBackupScript.resx">
       <DependentUpon>WndCreateEditBackupScript.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Windows\WndEnterPath.resx">
-      <DependentUpon>WndEnterPath.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Windows\WndMain.resx">
       <DependentUpon>WndMain.cs</DependentUpon>
@@ -433,7 +416,9 @@
   <ItemGroup>
     <None Include="Resources\Img_Logo.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Application.ico" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataGuardian.GUI\DataGuardian.GUI.csproj">
       <Project>{c93363ce-ca24-4385-aab8-8a74ed3e99a7}</Project>

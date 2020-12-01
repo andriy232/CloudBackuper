@@ -80,7 +80,7 @@ namespace DataGuardian.Controls
             // btnCreate
             // 
             this.btnCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCreate.BackgroundImage = global::DataGuardian.Properties.Resources.Img_Plus;
+            this.btnCreate.BackgroundImage = global::DataGuardian.Plugins.Properties.Resources.Img_Plus;
             this.btnCreate.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.btnCreate.Location = new System.Drawing.Point(92, 3);
             this.btnCreate.Name = "btnCreate";
@@ -92,7 +92,7 @@ namespace DataGuardian.Controls
             // btnDelete
             // 
             this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDelete.BackgroundImage = global::DataGuardian.Properties.Resources.Img_Close;
+            this.btnDelete.BackgroundImage = global::DataGuardian.Plugins.Properties.Resources.Img_Close;
             this.btnDelete.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.btnDelete.Location = new System.Drawing.Point(11, 3);
             this.btnDelete.Name = "btnDelete";

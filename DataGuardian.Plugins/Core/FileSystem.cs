@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using DataGuardian.Plugins.Properties;
+using File = System.IO.File;
 
 namespace DataGuardian.Plugins.Core
 {
@@ -85,7 +88,7 @@ namespace DataGuardian.Plugins.Core
             return Path.HasExtension(filePath) && File.Exists(filePath) || Directory.Exists(filePath);
         }
 
-        public void Delete(string targetPath)
+        public static void Delete(string targetPath)
         {
             if (string.IsNullOrWhiteSpace(targetPath))
                 return;

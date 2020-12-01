@@ -10,6 +10,22 @@ namespace DataGuardian.Windows
         public WndMain()
         {
             InitializeComponent();
+
+            if (!DesignMode)
+                CoreStatic.Instance.GuiManager.SetWindow(this);
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            SetStartupState();
+        }
+
+        private void SetStartupState()
+        {
+            addToAutoStartToolStripMenuItem.CheckState = ShortcutHelper.CheckIfShortcutExist()
+                ? CheckState.Checked
+                : CheckState.Unchecked;
         }
 
         private void addProviderToolStripMenuItem_Click(object sender, EventArgs e)
@@ -52,6 +68,12 @@ namespace DataGuardian.Windows
         {
             using (var wnd = new WndAbout())
                 wnd.ShowDialog(this);
+        }
+
+        private void addToAutoStartToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShortcutHelper.ToggleAutoStartShortcut(Resources.ApplicationIcon);
+            SetStartupState();
         }
     }
 }

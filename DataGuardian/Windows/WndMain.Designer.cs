@@ -33,7 +33,6 @@ namespace DataGuardian.Windows
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WndMain));
             this.splRoot = new System.Windows.Forms.SplitContainer();
-            this.ctlCloudAccounts = new DataGuardian.Controls.CtlCloudAccounts();
             this.splChild = new System.Windows.Forms.SplitContainer();
             this.ctlBackupScripts = new DataGuardian.Controls.CtlBackupScripts();
             this.ctlLog = new DataGuardian.Controls.CtlLog();
@@ -46,7 +45,10 @@ namespace DataGuardian.Windows
             this.createBackupScriptToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editBackupScriptToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.removeBackupScriptToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.preferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addToAutoStartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctlCloudAccounts1 = new DataGuardian.Controls.CtlCloudAccounts();
             ((System.ComponentModel.ISupportInitialize)(this.splRoot)).BeginInit();
             this.splRoot.Panel1.SuspendLayout();
             this.splRoot.Panel2.SuspendLayout();
@@ -66,7 +68,7 @@ namespace DataGuardian.Windows
             // 
             // splRoot.Panel1
             // 
-            this.splRoot.Panel1.Controls.Add(this.ctlCloudAccounts);
+            this.splRoot.Panel1.Controls.Add(this.ctlCloudAccounts1);
             // 
             // splRoot.Panel2
             // 
@@ -74,15 +76,6 @@ namespace DataGuardian.Windows
             this.splRoot.Size = new System.Drawing.Size(1233, 700);
             this.splRoot.SplitterDistance = 410;
             this.splRoot.TabIndex = 0;
-            // 
-            // ctlCloudAccounts
-            // 
-            this.ctlCloudAccounts.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ctlCloudAccounts.Location = new System.Drawing.Point(0, 0);
-            this.ctlCloudAccounts.Name = "ctlCloudAccounts";
-            this.ctlCloudAccounts.SelectedCloudProvider = null;
-            this.ctlCloudAccounts.Size = new System.Drawing.Size(410, 700);
-            this.ctlCloudAccounts.TabIndex = 0;
             // 
             // splChild
             // 
@@ -126,6 +119,7 @@ namespace DataGuardian.Windows
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mainToolStripMenuItem,
             this.backupToolStripMenuItem,
+            this.preferencesToolStripMenuItem,
             this.aboutToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -195,12 +189,36 @@ namespace DataGuardian.Windows
             this.removeBackupScriptToolStripMenuItem1.Text = "Remove backup script";
             this.removeBackupScriptToolStripMenuItem1.Click += new System.EventHandler(this.removeBackupScriptToolStripMenuItem1_Click);
             // 
+            // preferencesToolStripMenuItem
+            // 
+            this.preferencesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addToAutoStartToolStripMenuItem});
+            this.preferencesToolStripMenuItem.Name = "preferencesToolStripMenuItem";
+            this.preferencesToolStripMenuItem.Size = new System.Drawing.Size(118, 29);
+            this.preferencesToolStripMenuItem.Text = "Preferences";
+            // 
+            // addToAutoStartToolStripMenuItem
+            // 
+            this.addToAutoStartToolStripMenuItem.Name = "addToAutoStartToolStripMenuItem";
+            this.addToAutoStartToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
+            this.addToAutoStartToolStripMenuItem.Text = "Add to AutoStart";
+            this.addToAutoStartToolStripMenuItem.Click += new System.EventHandler(this.addToAutoStartToolStripMenuItem_Click);
+            // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(78, 29);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // ctlCloudAccounts1
+            // 
+            this.ctlCloudAccounts1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ctlCloudAccounts1.Location = new System.Drawing.Point(0, 0);
+            this.ctlCloudAccounts1.Name = "ctlCloudAccounts1";
+            this.ctlCloudAccounts1.SelectedCloudProvider = null;
+            this.ctlCloudAccounts1.Size = new System.Drawing.Size(410, 700);
+            this.ctlCloudAccounts1.TabIndex = 0;
             // 
             // WndMain
             // 
@@ -246,6 +264,9 @@ namespace DataGuardian.Windows
         private CtlBackupScripts ctlBackupScripts;
         private CtlCloudAccounts ctlCloudAccounts;
         private CtlLog ctlLog;
+        private System.Windows.Forms.ToolStripMenuItem preferencesToolStripMenuItem;
+        internal System.Windows.Forms.ToolStripMenuItem addToAutoStartToolStripMenuItem;
+        private CtlCloudAccounts ctlCloudAccounts1;
     }
 }
 

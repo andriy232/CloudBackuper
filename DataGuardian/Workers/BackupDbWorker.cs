@@ -22,8 +22,16 @@ namespace DataGuardian.Workers
             var backupScript = (BackupScript) newScript;
             backupScript.SetSerializedState();
 
-            _dbContext.BackupScripts.Add(backupScript);
-            _dbContext.SaveChanges();
+            if (!Contains(backupScript))
+            {
+                _dbContext.BackupScripts.Add(backupScript);
+                _dbContext.SaveChanges();
+            }
+        }
+
+        private bool Contains(BackupScript backupScript)
+        {
+            return _dbContext.BackupScripts.ToList().Contains(backupScript);
         }
 
         public void Edit(IBackupScript newScript)
@@ -44,9 +52,11 @@ namespace DataGuardian.Workers
         public void Delete(IBackupScript newScript)
         {
             var backupScript = (BackupScript) newScript;
-
-            _dbContext.BackupScripts.Remove(backupScript);
-            _dbContext.SaveChanges();
+            if (Contains(backupScript))
+            {
+                _dbContext.BackupScripts.Remove(backupScript);
+                _dbContext.SaveChanges();
+            }
         }
 
         public IEnumerable<IBackupScript> Read()

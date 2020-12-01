@@ -14,11 +14,13 @@ namespace DataGuardian.Plugins
 
         protected T GetSettings(IAccount account)
         {
+            if (account == null)
+                return null;
             return Core.CloudAccountsManager.GetSettings<T>(account);
         }
 
         public abstract object TryAuth();
-        public abstract Task<RemoteBackupsState> GetBackupState(IAccount fileName, string backupFileName);
+        public abstract Task<RemoteBackupsState> GetBackupState(IAccount account, string backupFileName);
         public abstract Task UploadBackupAsync(IAccount account, LocalArchivedBackup localBackup);
         public abstract Task DownloadBackupAsync(IAccount account, RemoteBackupsState.RemoteBackup backup, string outputPath);
         public abstract Task DeleteBackupAsync(IAccount account, RemoteBackupsState.RemoteBackup backup);

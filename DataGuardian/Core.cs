@@ -20,6 +20,8 @@ namespace DataGuardian
         public ICloudAccountsManager CloudAccountsManager { get; }
 
         public IEnumerable<ICloudStorageProvider> CloudStorageProviders => _cloudProviders;
+        
+        public IGuiManager GuiManager { get; }
 
         public ISettings Settings { get; }
 
@@ -32,6 +34,7 @@ namespace DataGuardian
             Logger = new SingleLogger();
             BackupManager = new BackupManager();
             CloudAccountsManager = new CloudAccountsManager();
+            GuiManager = new GuiManager();
 
             CoreStatic.SetCore(this);
 
@@ -81,7 +84,7 @@ namespace DataGuardian
             var types = assembly.GetTypes();
 
             var list = new List<T>();
-            foreach (Type type in types)
+            foreach (var type in types)
             {
                 if (!type.IsPublic || (type.Attributes & TypeAttributes.Abstract) == TypeAttributes.Abstract)
                     continue;

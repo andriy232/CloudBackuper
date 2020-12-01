@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net47;netcoreapp3.0</TargetFramework>
+    <TargetFrameworks>net47;netcoreapp3.0</TargetFrameworks>
     <ApplicationIcon />
     <StartupObject />
   </PropertyGroup>
@@ -21,6 +21,11 @@
   <ItemGroup>
     <PackageReference Include="Google.Apis.Discovery.v1" Version="1.46.0" />
     <PackageReference Include="Google.Apis.Drive.v3" Version="1.46.0.1975" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DataGuardian.GUI\DataGuardian.GUI.csproj" />
+    <ProjectReference Include="..\DataGuardian.Plugins\DataGuardian.Plugins.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -47,7 +47,6 @@ namespace DataGuardian.Controls
             }
         }
 
-
         private void AddLogToDgv(LogEntry log)
         {
             try
@@ -57,6 +56,8 @@ namespace DataGuardian.Controls
                 row.Cells[clmMessage.Index].Value = log.Message;
                 row.Cells[clmSource.Index].Value = log.PropertiesSource ?? log.Source;
                 row.DefaultCellStyle.BackColor = GetColor(log.Level);
+
+                dgvData.FirstDisplayedScrollingRowIndex = dgvData.RowCount - 1;
             }
             catch
             {

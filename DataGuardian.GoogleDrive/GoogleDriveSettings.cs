@@ -1,4 +1,4 @@
-﻿using DataGuardian.Helper.Settings;
+﻿using DataGuardian.Plugins;
 
 namespace DataGuardian.GoogleDrive
 {

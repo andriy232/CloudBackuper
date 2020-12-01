@@ -1,13 +1,12 @@
 ﻿using DataGuardian.GUI;
 using DataGuardian.GUI.UserControls;
+using DataGuardian.Impl;
 using DataGuardian.Plugins;
 using DataGuardian.Plugins.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using DataGuardian.Impl;
 
 namespace DataGuardian.Controls
 {

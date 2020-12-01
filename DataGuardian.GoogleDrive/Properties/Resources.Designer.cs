@@ -69,5 +69,14 @@ namespace DataGuardian.GoogleDrive.Properties {
                 return ((byte[])(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to a file storage and synchronization service developed by Google. Launched on April 24, 2012, Google Drive allows users to store files on their servers, synchronize files across devices, and share files.
+        /// </summary>
+        internal static string Str_GoogleDriveProvider_Description {
+            get {
+                return ResourceManager.GetString("Str_GoogleDriveProvider_Description", resourceCulture);
+            }
+        }
     }
 }

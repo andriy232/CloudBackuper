@@ -18,7 +18,7 @@ namespace DataGuardian.Plugins.Plugins
 
         object TryAuth();
 
-        Task<RemoteBackupsState> GetBackupState(IAccount fileName, string backupFileName);
+        Task<RemoteBackupsState> GetBackupState(IAccount account, string backupFileName);
 
         Task UploadBackupAsync(IAccount account, LocalArchivedBackup localBackup);
 

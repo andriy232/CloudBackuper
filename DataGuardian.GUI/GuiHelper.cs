@@ -71,5 +71,26 @@ namespace DataGuardian.GUI
 
             return result;
         }
+
+        public static string ReadPath(string message)
+        {
+            string result = null;
+            var f = CoreStatic.Instance.GuiManager.MainWindow;
+            f.Invoke(((Action) (() =>
+            {
+                do
+                {
+                    using var wnd = new WndEnterPath(message);
+
+                    if (wnd.ShowDialog() == DialogResult.OK)
+                        result = wnd.Params.TargetPath;
+                    else
+                        throw new ApplicationException("canceled by user");
+                } while (string.IsNullOrWhiteSpace(result));
+
+            })), null);
+
+            return result;
+        }
     }
 }

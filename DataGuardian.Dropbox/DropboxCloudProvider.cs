@@ -17,7 +17,7 @@ using Dropbox.Api.Files;
 
 namespace DataGuardian.Dropbox
 {
-    public class DropboxCloudStorageProvider : CloudStorageProviderBase<DropboxSettings>
+    public class DropboxCloudProvider : CloudStorageProviderBase<DropboxSettings>
     {
         public override string Name => "Dropbox";
 

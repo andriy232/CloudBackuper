@@ -29,6 +29,7 @@ namespace DataGuardian.Controls
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CtlPath));
             this.txtPath = new System.Windows.Forms.TextBox();
             this.btnSelect = new System.Windows.Forms.Button();
             this.btnOpen = new System.Windows.Forms.Button();
@@ -46,7 +47,7 @@ namespace DataGuardian.Controls
             // btnSelect
             // 
             this.btnSelect.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.btnSelect.BackgroundImage = global::DataGuardian.Properties.Resources.Img_Select;
+            this.btnSelect.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnSelect.BackgroundImage")));
             this.btnSelect.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.btnSelect.Location = new System.Drawing.Point(234, 3);
             this.btnSelect.Name = "btnSelect";
@@ -58,7 +59,7 @@ namespace DataGuardian.Controls
             // btnOpen
             // 
             this.btnOpen.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.btnOpen.BackgroundImage = global::DataGuardian.Properties.Resources.Img_Open;
+            this.btnOpen.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnOpen.BackgroundImage")));
             this.btnOpen.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.btnOpen.Location = new System.Drawing.Point(166, 3);
             this.btnOpen.Name = "btnOpen";

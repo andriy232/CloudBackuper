@@ -17,9 +17,14 @@ namespace DataGuardian
         static void Main()
         {
             _ = new Core();
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new WndMain());
+
+            if (true)
+                Application.Run(new WndMain());
+            else
+                Application.Run(new MyApplicationContext());
         }
     }
 }

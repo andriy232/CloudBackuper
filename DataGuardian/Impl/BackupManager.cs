@@ -1,12 +1,12 @@
-﻿using System;
+﻿using DataGuardian.GUI;
+using DataGuardian.Plugins;
+using DataGuardian.Windows;
+using DataGuardian.Workers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using DataGuardian.GUI;
-using DataGuardian.Plugins;
-using DataGuardian.Windows;
-using DataGuardian.Workers;
 
 namespace DataGuardian.Impl
 {
@@ -122,7 +122,10 @@ namespace DataGuardian.Impl
         {
             try
             {
-                using (var selectPathWnd = new WndEnterPath())
+                using (var selectPathWnd = new WndEnterPath(
+                    "Please enter name and path for your backup script", 
+                    $"New_backup_{Guid.NewGuid()}", 
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)))
                 {
                     if (selectPathWnd.ShowDialog() != DialogResult.OK)
                         return;
