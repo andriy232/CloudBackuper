@@ -2,7 +2,7 @@
 using System.IO;
 using Microsoft.Net.Http.Headers;
 
-namespace DataGuardian.Server.Controllers
+namespace DataGuardian.Server.Plugins
 {
     public static class MultipartRequestHelper
     {

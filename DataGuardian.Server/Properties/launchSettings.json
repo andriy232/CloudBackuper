@@ -20,7 +20,7 @@
     "DataGuardian.Server": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "weatherforecast",
+      "launchUrl": "dataguardian",
       "applicationUrl": "https://localhost:4445;http://localhost:4444",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

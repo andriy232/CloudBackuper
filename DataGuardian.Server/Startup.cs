@@ -1,3 +1,9 @@
+using System.ComponentModel;
+using DataGuardian.Server.Controllers;
+using DataGuardian.Server.Impl;
+using DataGuardian.Server.Models;
+using DataGuardian.Server.Plugins;
+using DataGuardian.Server.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -18,6 +24,9 @@ namespace DataGuardian.Server
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddOptions<Settings>("Settings");
+            services.AddHostedService<PingService>();
+            services.AddScoped<IStorageManager, StorageManager>();
             services.AddControllers();
         }
 

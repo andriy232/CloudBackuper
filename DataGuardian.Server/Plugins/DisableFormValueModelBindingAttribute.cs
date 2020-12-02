@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace DataGuardian.Server.Controllers
+namespace DataGuardian.Server.Plugins
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class DisableFormValueModelBindingAttribute : Attribute, IResourceFilter

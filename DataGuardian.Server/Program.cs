@@ -19,7 +19,7 @@ namespace DataGuardian.Server
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();
 
-            logger.Information("Hello, world!");
+            logger.Information("Server started!");
             CreateHostBuilder(args).Build().Run();
         }
 
