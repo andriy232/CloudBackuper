@@ -286,6 +286,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="StringExt.cs" />
+    <Compile Include="Unmanaged.cs" />
     <Compile Include="Zipper.cs" />
   </ItemGroup>
   <ItemGroup>

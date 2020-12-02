@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using DataGuardian.Dropbox.Properties;
 using DataGuardian.GUI;
@@ -27,28 +26,16 @@ namespace DataGuardian.Dropbox
 
         public override Guid Id => Guid.Parse("{D799FFF5-CACC-4E02-ACFD-ED2275F3BE56}");
 
-        // Add an ApiKey (from https://www.dropbox.com/developers/apps) here
-        // private const string ApiKey = "XXXXXXXXXXXXXXX";
-
-        // This loopback host is for demo purpose. If this port is not
-        // available on your machine you need to update this URL with an unused port.
+        // loopback address for login process
         private const string LoopbackHost = "http://127.0.0.1:52475/";
 
-        // URL to receive OAuth 2 redirect from Dropbox server.
-        // You also need to register this redirect URL on https://www.dropbox.com/developers/apps.
+        // also need to register this redirect on https://www.dropbox.com/developers/apps.
         private readonly Uri RedirectUri = new Uri(LoopbackHost + "authorize");
 
-        // URL to receive access token from JS.
+        // url to receive access token
         private readonly Uri JSRedirectUri = new Uri(LoopbackHost + "token");
 
-        [DllImport("kernel32.dll", ExactSpelling = true)]
-        private static extern IntPtr GetConsoleWindow();
-
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool SetForegroundWindow(IntPtr hWnd);
-
-        // Chunk size is 128KB.
+        // 128KB
         private const int ChunkSize = 128 * 1024;
 
         private const string RemotePath = "/Backup";
@@ -69,7 +56,8 @@ namespace DataGuardian.Dropbox
         }
 
         /// <summary>
-        /// Handles the redirect from Dropbox server. Because we are using token flow, the local
+        /// Handles the redirect from Dropbox server.
+        /// Because we are using token flow, the local
         /// http server cannot directly receive the URL fragment. We need to return a HTML page with
         /// inline JS which can send URL fragment to local server as URL parameter.
         /// </summary>
@@ -122,11 +110,8 @@ namespace DataGuardian.Dropbox
 
         /// <summary>
         /// Gets the dropbox access token.
-        /// <para>
-        /// This fetches the access token from the applications settings, if it is not found there
         /// (or if the user chooses to reset the settings) then the UI in <see cref="LoginForm"/> is
         /// displayed to authorize the user.
-        /// </para>
         /// </summary>
         /// <returns>A valid access token or null.</returns>
         private async Task<DropboxSettings> Autorize()
@@ -136,6 +121,7 @@ namespace DataGuardian.Dropbox
             try
             {
                 Console.WriteLine("Waiting for credentials.");
+
                 var state = Guid.NewGuid().ToString("N");
                 var authorizeUri =
                     DropboxOAuth2Helper.GetAuthorizeUri(OAuthResponseType.Token, apiKey, RedirectUri, state: state);
@@ -146,22 +132,20 @@ namespace DataGuardian.Dropbox
 
                 GuiHelper.StartProcess(authorizeUri.ToString());
 
-                // Handle OAuth redirect and send URL fragment to local server using JS.
+                // send url to local server using JS
                 await HandleOAuth2Redirect(http);
 
-                // Handle redirect from JS and process OAuth response.
+                // handle JS redirect
                 var result = await HandleJSRedirect(http);
 
                 if (result.State != state)
                 {
-                    // The state in the response doesn't match the state in the request.
                     return null;
                 }
 
                 Console.WriteLine("and back...");
 
-                // Bring console window to the front.
-                SetForegroundWindow(GetConsoleWindow());
+                Unmanaged.SetForegroundWindow(Unmanaged.GetConsoleWindow());
 
                 var accessToken = result.AccessToken;
                 var uid = result.Uid;
@@ -180,13 +164,6 @@ namespace DataGuardian.Dropbox
             }
         }
 
-        /// <summary>
-        /// Creates the specified folder.
-        /// </summary>
-        /// <remarks>This demonstrates calling an rpc style api in the Files namespace.</remarks>
-        /// <param name="path">The path of the folder to create.</param>
-        /// <param name="client">The Dropbox client.</param>
-        /// <returns>The result from the ListFolderAsync call.</returns>
         private async Task<FolderMetadata> CreateFolderAsync(DropboxClient client, string path)
         {
             var lastIndexOf = path.LastIndexOf("/", StringComparison.OrdinalIgnoreCase);
