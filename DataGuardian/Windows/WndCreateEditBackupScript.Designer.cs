@@ -1,4 +1,6 @@
 ﻿
+using DataGuardian.GUI.UserControls;
+
 namespace DataGuardian.Windows
 {
     partial class WndCreateEditBackupScript
@@ -35,7 +37,7 @@ namespace DataGuardian.Windows
             this.lblName = new System.Windows.Forms.Label();
             this.lblTargetPath = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.TextBox();
-            this.ctlPath = new DataGuardian.Controls.CtlPath();
+            this.ctlPath = new CtlPath();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.tlpRoot.SuspendLayout();
@@ -172,7 +174,7 @@ namespace DataGuardian.Windows
         private System.Windows.Forms.Label lblName;
         private System.Windows.Forms.Label lblTargetPath;
         private System.Windows.Forms.TextBox txtName;
-        private Controls.CtlPath ctlPath;
+        private CtlPath ctlPath;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnSave;
     }

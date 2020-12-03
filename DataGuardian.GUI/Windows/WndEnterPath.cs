@@ -1,13 +1,10 @@
-﻿using DataGuardian.Controls;
-using System;
+﻿using System;
 using System.Linq;
 using System.Windows.Forms;
-using DataGuardian.GUI;
 using DataGuardian.Impl;
-using DataGuardian.Plugins;
 using DataGuardian.Plugins.Core;
 
-namespace DataGuardian.Windows
+namespace DataGuardian.GUI.Windows
 {
     public partial class WndEnterPath : Form
     {

@@ -77,9 +77,20 @@ namespace DataGuardian.Dropbox
 
             // Respond with a page which runs JS and sends URL fragment as query string
             // to TokenRedirectUri.
-            using (var file = File.OpenRead("index.html"))
+            var path = Directory.EnumerateFiles(
+                Directory.GetCurrentDirectory(),
+                "index.html",
+                SearchOption.AllDirectories);
+            var firstOrDefault = path.FirstOrDefault();
+
+            if (firstOrDefault != null)
             {
-                file.CopyTo(context.Response.OutputStream);
+                using (var file = File.OpenRead(firstOrDefault))
+                    file.CopyTo(context.Response.OutputStream);
+            }
+            else
+            {
+                Core.Logger.Log("Cannot find 'index.html'");
             }
 
             context.Response.OutputStream.Close();

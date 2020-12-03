@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace DataGuardian.GUI
+namespace DataGuardian.GUI.Windows
 {
     public partial class WndConfirmation : Form
     {

@@ -19,6 +19,14 @@ namespace DataGuardian.Controls
                 components.Dispose();
             }
             base.Dispose(disposing);
+
+            cmdDelete.Click -= OnCmdDelete;
+            cmdEdit.Click -= OnCmdEdit;
+            cmdToggleDisable.Click -= OnCmdDisable;
+            cmdPerformNow.Click -= OnCmdPerform;
+            ctlFilter.FilterChanged -= OnFilterChanged;
+            if(Core?.BackupManager!=null)
+            Core.BackupManager.BackupScriptsChanged -= OnBackupScriptsChanged;
         }
 
         #region Component Designer generated code
@@ -30,6 +38,7 @@ namespace DataGuardian.Controls
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CtlBackupScripts));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tlpRoot = new System.Windows.Forms.TableLayoutPanel();
             this.tlpButtons = new System.Windows.Forms.FlowLayoutPanel();
@@ -45,16 +54,18 @@ namespace DataGuardian.Controls
             this.clmLastPerform = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.clmNextPerformTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.clmLastState = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ctlFilter1 = new DataGuardian.Controls.CtlFilter();
             this.ctxScript = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cmdEdit = new System.Windows.Forms.ToolStripMenuItem();
             this.cmdToggleDisable = new System.Windows.Forms.ToolStripMenuItem();
             this.cmdPerformNow = new System.Windows.Forms.ToolStripMenuItem();
             this.cmdDelete = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctlFilter = new DataGuardian.Controls.CtlFilter();
+            this.gtbRoot = new System.Windows.Forms.GroupBox();
             this.tlpRoot.SuspendLayout();
             this.tlpButtons.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvData)).BeginInit();
             this.ctxScript.SuspendLayout();
+            this.gtbRoot.SuspendLayout();
             this.SuspendLayout();
             // 
             // tlpRoot
@@ -64,35 +75,35 @@ namespace DataGuardian.Controls
             this.tlpRoot.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tlpRoot.Controls.Add(this.tlpButtons, 1, 0);
             this.tlpRoot.Controls.Add(this.dgvData, 0, 1);
-            this.tlpRoot.Controls.Add(this.ctlFilter1, 0, 0);
+            this.tlpRoot.Controls.Add(this.ctlFilter, 0, 0);
             this.tlpRoot.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlpRoot.Location = new System.Drawing.Point(0, 0);
+            this.tlpRoot.Location = new System.Drawing.Point(3, 22);
             this.tlpRoot.Name = "tlpRoot";
             this.tlpRoot.RowCount = 2;
             this.tlpRoot.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tlpRoot.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpRoot.Size = new System.Drawing.Size(939, 446);
+            this.tlpRoot.Size = new System.Drawing.Size(978, 452);
             this.tlpRoot.TabIndex = 0;
             // 
             // tlpButtons
             // 
-            this.tlpButtons.Controls.Add(this.btnCreate);
-            this.tlpButtons.Controls.Add(this.btnEdit);
             this.tlpButtons.Controls.Add(this.btnDelete);
+            this.tlpButtons.Controls.Add(this.btnEdit);
+            this.tlpButtons.Controls.Add(this.btnCreate);
             this.tlpButtons.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpButtons.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.tlpButtons.Location = new System.Drawing.Point(469, 0);
+            this.tlpButtons.Location = new System.Drawing.Point(489, 0);
             this.tlpButtons.Margin = new System.Windows.Forms.Padding(0);
             this.tlpButtons.Name = "tlpButtons";
-            this.tlpButtons.Size = new System.Drawing.Size(470, 40);
+            this.tlpButtons.Size = new System.Drawing.Size(489, 40);
             this.tlpButtons.TabIndex = 0;
             // 
             // btnCreate
             // 
             this.btnCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCreate.BackgroundImage = global::DataGuardian.Plugins.Properties.Resources.Img_Plus;
+            this.btnCreate.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnCreate.BackgroundImage")));
             this.btnCreate.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btnCreate.Location = new System.Drawing.Point(392, 3);
+            this.btnCreate.Location = new System.Drawing.Point(249, 3);
             this.btnCreate.Name = "btnCreate";
             this.btnCreate.Size = new System.Drawing.Size(75, 34);
             this.btnCreate.TabIndex = 0;
@@ -102,9 +113,9 @@ namespace DataGuardian.Controls
             // btnEdit
             // 
             this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnEdit.BackgroundImage = global::DataGuardian.Plugins.Properties.Resources.Img_Edit;
+            this.btnEdit.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnEdit.BackgroundImage")));
             this.btnEdit.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btnEdit.Location = new System.Drawing.Point(311, 3);
+            this.btnEdit.Location = new System.Drawing.Point(330, 3);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(75, 34);
             this.btnEdit.TabIndex = 1;
@@ -114,9 +125,9 @@ namespace DataGuardian.Controls
             // btnDelete
             // 
             this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDelete.BackgroundImage = global::DataGuardian.Plugins.Properties.Resources.Img_Close;
+            this.btnDelete.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnDelete.BackgroundImage")));
             this.btnDelete.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btnDelete.Location = new System.Drawing.Point(230, 3);
+            this.btnDelete.Location = new System.Drawing.Point(411, 3);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(75, 34);
             this.btnDelete.TabIndex = 1;
@@ -156,7 +167,7 @@ namespace DataGuardian.Controls
             this.dgvData.RowHeadersVisible = false;
             this.dgvData.RowHeadersWidth = 62;
             this.dgvData.RowTemplate.Height = 28;
-            this.dgvData.Size = new System.Drawing.Size(933, 400);
+            this.dgvData.Size = new System.Drawing.Size(972, 406);
             this.dgvData.TabIndex = 1;
             this.dgvData.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvData_CellClick);
             this.dgvData.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvData_CellContentDoubleClick);
@@ -234,17 +245,6 @@ namespace DataGuardian.Controls
             this.clmLastState.Name = "clmLastState";
             this.clmLastState.ReadOnly = true;
             // 
-            // ctlFilter1
-            // 
-            this.ctlFilter1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ctlFilter1.Location = new System.Drawing.Point(0, 0);
-            this.ctlFilter1.Margin = new System.Windows.Forms.Padding(0);
-            this.ctlFilter1.MaximumSize = new System.Drawing.Size(500, 40);
-            this.ctlFilter1.MinimumSize = new System.Drawing.Size(200, 40);
-            this.ctlFilter1.Name = "ctlFilter1";
-            this.ctlFilter1.Size = new System.Drawing.Size(469, 40);
-            this.ctlFilter1.TabIndex = 2;
-            // 
             // ctxScript
             // 
             this.ctxScript.ImageScalingSize = new System.Drawing.Size(24, 24);
@@ -280,17 +280,41 @@ namespace DataGuardian.Controls
             this.cmdDelete.Size = new System.Drawing.Size(201, 32);
             this.cmdDelete.Text = "Delete";
             // 
+            // ctlFilter
+            // 
+            this.ctlFilter.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ctlFilter.Location = new System.Drawing.Point(0, 0);
+            this.ctlFilter.Margin = new System.Windows.Forms.Padding(0);
+            this.ctlFilter.MaximumSize = new System.Drawing.Size(500, 40);
+            this.ctlFilter.MinimumSize = new System.Drawing.Size(200, 40);
+            this.ctlFilter.Name = "ctlFilter";
+            this.ctlFilter.Size = new System.Drawing.Size(489, 40);
+            this.ctlFilter.TabIndex = 2;
+            // 
+            // gtbRoot
+            // 
+            this.gtbRoot.Controls.Add(this.tlpRoot);
+            this.gtbRoot.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gtbRoot.Location = new System.Drawing.Point(1, 5);
+            this.gtbRoot.Name = "gtbRoot";
+            this.gtbRoot.Size = new System.Drawing.Size(984, 477);
+            this.gtbRoot.TabIndex = 1;
+            this.gtbRoot.TabStop = false;
+            this.gtbRoot.Text = "Your backup Scripts";
+            // 
             // CtlBackupScripts
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.tlpRoot);
+            this.Controls.Add(this.gtbRoot);
             this.Name = "CtlBackupScripts";
-            this.Size = new System.Drawing.Size(939, 446);
+            this.Padding = new System.Windows.Forms.Padding(1, 5, 1, 1);
+            this.Size = new System.Drawing.Size(986, 483);
             this.tlpRoot.ResumeLayout(false);
             this.tlpButtons.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvData)).EndInit();
             this.ctxScript.ResumeLayout(false);
+            this.gtbRoot.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -303,7 +327,7 @@ namespace DataGuardian.Controls
         private System.Windows.Forms.Button btnCreate;
         private System.Windows.Forms.Button btnEdit;
         private System.Windows.Forms.Button btnDelete;
-        private CtlFilter ctlFilter1;
+        private CtlFilter ctlFilter;
         private System.Windows.Forms.DataGridViewTextBoxColumn clmCurrentState;
         private System.Windows.Forms.DataGridViewCheckBoxColumn clmEnabled;
         private System.Windows.Forms.DataGridViewTextBoxColumn clmName;
@@ -317,5 +341,6 @@ namespace DataGuardian.Controls
         private System.Windows.Forms.ToolStripMenuItem cmdToggleDisable;
         private System.Windows.Forms.ToolStripMenuItem cmdPerformNow;
         private System.Windows.Forms.ToolStripMenuItem cmdDelete;
+        private System.Windows.Forms.GroupBox gtbRoot;
     }
 }

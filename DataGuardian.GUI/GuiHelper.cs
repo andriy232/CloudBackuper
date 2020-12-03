@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
+using DataGuardian.GUI.Controls;
+using DataGuardian.GUI.Windows;
 using DataGuardian.Plugins.Core;
-using DataGuardian.Windows;
 
 namespace DataGuardian.GUI
 {
@@ -106,6 +108,24 @@ namespace DataGuardian.GUI
             })), null);
 
             return result;
+        }
+
+        public static void FilterChanged(DataGridView dgvData, string filter)
+        {
+            try
+            {
+                for (var index = 0; index < dgvData.RowCount; index++)
+                {
+                    var row = dgvData.Rows[index];
+                    var cells = row.Cells.OfType<DataGridViewCell>();
+                    row.Visible = cells.Any(x =>
+                        x.Value is string str && str.IndexOf(filter, StringComparison.InvariantCultureIgnoreCase) >= 0);
+                }
+            }
+            catch (Exception ex)
+            {
+                CoreStatic.Instance.Logger.Log(nameof(FilterChanged), ex);
+            }
         }
     }
 }

@@ -31,6 +31,7 @@ namespace DataGuardian.Controls
         {
             this.lblFilter = new System.Windows.Forms.Label();
             this.txtFilter = new System.Windows.Forms.TextBox();
+            this.btnClear = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lblFilter
@@ -45,22 +46,34 @@ namespace DataGuardian.Controls
             // txtFilter
             // 
             this.txtFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtFilter.Location = new System.Drawing.Point(57, 8);
+            this.txtFilter.Location = new System.Drawing.Point(48, 8);
             this.txtFilter.Name = "txtFilter";
-            this.txtFilter.Size = new System.Drawing.Size(223, 26);
+            this.txtFilter.Size = new System.Drawing.Size(65, 26);
             this.txtFilter.TabIndex = 1;
             this.txtFilter.TextChanged += new System.EventHandler(this.txtFilter_TextChanged);
+            // 
+            // btnClear
+            // 
+            this.btnClear.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.btnClear.Location = new System.Drawing.Point(119, 7);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(28, 27);
+            this.btnClear.TabIndex = 2;
+            this.btnClear.Text = "X";
+            this.btnClear.UseVisualStyleBackColor = true;
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             // 
             // CtlFilter
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.btnClear);
             this.Controls.Add(this.txtFilter);
             this.Controls.Add(this.lblFilter);
             this.MaximumSize = new System.Drawing.Size(5000, 40);
-            this.MinimumSize = new System.Drawing.Size(200, 40);
+            this.MinimumSize = new System.Drawing.Size(150, 40);
             this.Name = "CtlFilter";
-            this.Size = new System.Drawing.Size(283, 40);
+            this.Size = new System.Drawing.Size(150, 40);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -70,5 +83,6 @@ namespace DataGuardian.Controls
 
         private System.Windows.Forms.Label lblFilter;
         private System.Windows.Forms.TextBox txtFilter;
+        private System.Windows.Forms.Button btnClear;
     }
 }

@@ -1,5 +1,4 @@
 ﻿using DataGuardian.GUI;
-using DataGuardian.GUI.UserControls;
 using DataGuardian.Impl;
 using DataGuardian.Plugins;
 using DataGuardian.Plugins.Core;
@@ -7,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using DataGuardian.GUI.Controls;
 
 namespace DataGuardian.Controls
 {
@@ -25,13 +25,19 @@ namespace DataGuardian.Controls
             cmdEdit.Click += OnCmdEdit;
             cmdToggleDisable.Click += OnCmdDisable;
             cmdPerformNow.Click += OnCmdPerform;
-
+            ctlFilter.FilterChanged += OnFilterChanged;
+            
             if (DesignMode)
                 return;
 
             FillData(Core.BackupManager.BackupScripts);
 
             Core.BackupManager.BackupScriptsChanged += OnBackupScriptsChanged;
+        }
+
+        private void OnFilterChanged(object sender, string e)
+        {
+            GuiHelper.FilterChanged(dgvData, e);
         }
 
         private async void OnCmdPerform(object sender, EventArgs e)

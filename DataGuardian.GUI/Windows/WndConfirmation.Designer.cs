@@ -1,5 +1,5 @@
 ﻿
-namespace DataGuardian.GUI
+namespace DataGuardian.GUI.Windows
 {
     partial class WndConfirmation
     {

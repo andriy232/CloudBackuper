@@ -1,8 +1,8 @@
-﻿using DataGuardian.Plugins;
+﻿using System.Windows.Forms;
+using DataGuardian.Plugins;
 using DataGuardian.Plugins.Core;
-using System.Windows.Forms;
 
-namespace DataGuardian.GUI.UserControls
+namespace DataGuardian.GUI.Controls
 {
     public class UserControlBase : UserControl
     {

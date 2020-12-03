@@ -1,5 +1,5 @@
 ﻿
-namespace DataGuardian.Windows
+namespace DataGuardian.GUI.Windows
 {
     partial class WndEnterText
     {

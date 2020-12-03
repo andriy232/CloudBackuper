@@ -1,5 +1,4 @@
-﻿using DataGuardian.GUI.UserControls;
-using DataGuardian.Impl;
+﻿using DataGuardian.Impl;
 using DataGuardian.Plugins;
 using DataGuardian.Plugins.Plugins;
 using System;
@@ -8,6 +7,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using DataGuardian.GUI.Controls;
 
 namespace DataGuardian.Controls
 {
@@ -149,10 +149,25 @@ namespace DataGuardian.Controls
 
             cmbAction.DataSource = Enum.GetValues(typeof(BackupAction));
             cmbPeriod.DataSource = Enum.GetValues(typeof(BackupPeriod));
-            cmbAccount.DataSource = accounts?.ToList();
+            SetAccounts(accounts);
 
             foreach (var label in tlpRoot.Controls.OfType<Label>())
                 label.BackColor = Color.Transparent;
+
+            cmbAccount.SelectedIndexChanged += (o, e) =>
+            {
+
+            };
+        }
+
+        private void SetAccounts(IEnumerable<IAccount> accounts)
+        {
+            //cmbAccount.Items.Clear();
+            //
+            //foreach (var account in accounts.ToArray())
+            //    cmbAccount.Items.Add(account);
+
+            cmbAccount.DataSource = accounts.Cast<CloudProviderAccount>().ToArray();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -175,14 +190,14 @@ namespace DataGuardian.Controls
                     HideCtrs(lblEnterPath, ctlBackupPath);
                     ShowCtrs(lblSelectAccount, cmbAccount, lblActionParameter, txtBackupFileName);
 
-                    cmbAccount.DataSource = Core.CloudAccountsManager.Accounts.ToList();
+                    SetAccounts(Core.CloudAccountsManager.Accounts);
                     break;
                 case BackupAction.RestoreTo:
                     lblActionParameter.Text = "Enter backup FileName";
 
                     ShowCtrs(lblSelectAccount, cmbAccount, lblActionParameter, txtBackupFileName, lblEnterPath, ctlBackupPath);
 
-                    cmbAccount.DataSource = Core.CloudAccountsManager.Accounts.ToList();
+                    SetAccounts(Core.CloudAccountsManager.Accounts);
                     break;
                 case BackupAction.CopyTo:
                     HideCtrs(lblSelectAccount, cmbAccount, lblActionParameter, txtBackupFileName);

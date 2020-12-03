@@ -16,5 +16,10 @@ namespace DataGuardian.Controls
         {
             FilterChanged?.Invoke(this, txtFilter.Text?.Trim());
         }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            txtFilter.Text = string.Empty;
+        }
     }
 }

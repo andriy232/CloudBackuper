@@ -234,6 +234,8 @@ namespace DataGuardian.Impl
 
             var newLocalBackup = new LocalArchivedBackup(TargetPath, BackupFileName);
             await Account.CloudStorageProvider.UploadBackupAsync(Account, newLocalBackup);
+
+            CoreStatic.Instance.Logger.Log(InfoLogLevel.Info, nameof(PerformBackup), "Backup successfully uploaded");
         }
 
         public object Clone()

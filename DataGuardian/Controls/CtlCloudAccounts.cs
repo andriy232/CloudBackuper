@@ -1,11 +1,12 @@
-﻿using DataGuardian.GUI.UserControls;
-using DataGuardian.Plugins;
+﻿using DataGuardian.Plugins;
 using DataGuardian.Plugins.Core;
 using DataGuardian.Plugins.Plugins;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using DataGuardian.GUI;
+using DataGuardian.GUI.Controls;
 
 namespace DataGuardian.Controls
 {
@@ -24,7 +25,13 @@ namespace DataGuardian.Controls
             {
                 FillData(Core.CloudAccountsManager.Accounts);
                 Core.CloudAccountsManager.AccountsChanged += OnAccountsChanged;
+                ctlFilter.FilterChanged += OnFilterChanged;
             }
+        }
+
+        private void OnFilterChanged(object sender, string filter)
+        {
+            GuiHelper.FilterChanged(dgvData, filter);
         }
 
         private void OnAccountsChanged(object sender, AccountsChangedEventArgs e)

@@ -1,5 +1,7 @@
 ﻿
-namespace DataGuardian.Windows
+using DataGuardian.GUI.UserControls;
+
+namespace DataGuardian.GUI.Windows
 {
     partial class WndEnterPath
     {
@@ -30,7 +32,7 @@ namespace DataGuardian.Windows
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WndEnterPath));
-            this.ctlPath = new DataGuardian.Controls.CtlPath();
+            this.ctlPath = new CtlPath();
             this.lblTitle = new System.Windows.Forms.Label();
             this.btnContinue = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
@@ -111,7 +113,7 @@ namespace DataGuardian.Windows
 
         #endregion
 
-        private Controls.CtlPath ctlPath;
+        private CtlPath ctlPath;
         private System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.Button btnContinue;
         private System.Windows.Forms.Button btnCancel;

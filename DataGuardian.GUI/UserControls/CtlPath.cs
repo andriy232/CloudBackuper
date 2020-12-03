@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
-using DataGuardian.GUI;
-using DataGuardian.Plugins;
-using DataGuardian.Windows;
-using Microsoft.WindowsAPICodePack.Dialogs;
+using DataGuardian.GUI.Windows;
 
-namespace DataGuardian.Controls
+namespace DataGuardian.GUI.UserControls
 {
     public partial class CtlPath : UserControl
     {

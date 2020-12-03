@@ -76,9 +76,13 @@ namespace DataGuardian.Impl
             FireNewLog(new LogEntry(InfoLogLevel.Error, source, ex.ToString()));
         }
 
-        public void Log(InfoLogLevel level, string source, string message, Exception ex)
+        public void Log(InfoLogLevel level, string source, string message, Exception ex = null)
         {
-            Serilog.Log.Error(ex, "Error in {Source}", source);
+            if (ex == null)
+                Serilog.Log.Information("{Message} in {Source}", message, source);
+            else
+                Serilog.Log.Error(ex, "Error in {Source}", source);
+            
             FireNewLog(new LogEntry(level, source, message, ex));
         }
 

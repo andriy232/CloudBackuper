@@ -23,6 +23,8 @@ namespace DataGuardian.Controls
             base.Dispose(disposing);
 
             CoreStatic.Instance.CloudAccountsManager.AccountsChanged -= OnAccountsChanged;
+            ctlFilter.FilterChanged -= OnFilterChanged;
+
         }
 
         #region Component Designer generated code
@@ -33,19 +35,22 @@ namespace DataGuardian.Controls
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CtlCloudAccounts));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tlpRoot = new System.Windows.Forms.TableLayoutPanel();
             this.tlpButtons = new System.Windows.Forms.FlowLayoutPanel();
             this.btnCreate = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.dgvData = new DataGuardian.GUI.Controls.GuardianDataGridView();
-            this.ctlFilter1 = new DataGuardian.Controls.CtlFilter();
             this.clmImage = new System.Windows.Forms.DataGridViewImageColumn();
             this.clmName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.clmType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ctlFilter = new DataGuardian.Controls.CtlFilter();
+            this.grbRoot = new System.Windows.Forms.GroupBox();
             this.tlpRoot.SuspendLayout();
             this.tlpButtons.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvData)).BeginInit();
+            this.grbRoot.SuspendLayout();
             this.SuspendLayout();
             // 
             // tlpRoot
@@ -55,23 +60,23 @@ namespace DataGuardian.Controls
             this.tlpRoot.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 170F));
             this.tlpRoot.Controls.Add(this.tlpButtons, 1, 0);
             this.tlpRoot.Controls.Add(this.dgvData, 0, 1);
-            this.tlpRoot.Controls.Add(this.ctlFilter1, 0, 0);
+            this.tlpRoot.Controls.Add(this.ctlFilter, 0, 0);
             this.tlpRoot.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlpRoot.Location = new System.Drawing.Point(0, 0);
+            this.tlpRoot.Location = new System.Drawing.Point(3, 22);
             this.tlpRoot.Name = "tlpRoot";
             this.tlpRoot.RowCount = 2;
             this.tlpRoot.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
             this.tlpRoot.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpRoot.Size = new System.Drawing.Size(374, 563);
+            this.tlpRoot.Size = new System.Drawing.Size(366, 532);
             this.tlpRoot.TabIndex = 1;
             // 
             // tlpButtons
             // 
-            this.tlpButtons.Controls.Add(this.btnCreate);
             this.tlpButtons.Controls.Add(this.btnDelete);
+            this.tlpButtons.Controls.Add(this.btnCreate);
             this.tlpButtons.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpButtons.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.tlpButtons.Location = new System.Drawing.Point(204, 0);
+            this.tlpButtons.Location = new System.Drawing.Point(196, 0);
             this.tlpButtons.Margin = new System.Windows.Forms.Padding(0);
             this.tlpButtons.Name = "tlpButtons";
             this.tlpButtons.Size = new System.Drawing.Size(170, 40);
@@ -80,9 +85,9 @@ namespace DataGuardian.Controls
             // btnCreate
             // 
             this.btnCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCreate.BackgroundImage = global::DataGuardian.Plugins.Properties.Resources.Img_Plus;
+            this.btnCreate.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnCreate.BackgroundImage")));
             this.btnCreate.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btnCreate.Location = new System.Drawing.Point(92, 3);
+            this.btnCreate.Location = new System.Drawing.Point(11, 3);
             this.btnCreate.Name = "btnCreate";
             this.btnCreate.Size = new System.Drawing.Size(75, 34);
             this.btnCreate.TabIndex = 0;
@@ -92,9 +97,9 @@ namespace DataGuardian.Controls
             // btnDelete
             // 
             this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDelete.BackgroundImage = global::DataGuardian.Plugins.Properties.Resources.Img_Close;
+            this.btnDelete.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnDelete.BackgroundImage")));
             this.btnDelete.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btnDelete.Location = new System.Drawing.Point(11, 3);
+            this.btnDelete.Location = new System.Drawing.Point(92, 3);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(75, 34);
             this.btnDelete.TabIndex = 1;
@@ -128,19 +133,8 @@ namespace DataGuardian.Controls
             this.dgvData.RowHeadersVisible = false;
             this.dgvData.RowHeadersWidth = 162;
             this.dgvData.RowTemplate.Height = 50;
-            this.dgvData.Size = new System.Drawing.Size(368, 517);
+            this.dgvData.Size = new System.Drawing.Size(360, 486);
             this.dgvData.TabIndex = 1;
-            // 
-            // ctlFilter1
-            // 
-            this.ctlFilter1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ctlFilter1.Location = new System.Drawing.Point(0, 0);
-            this.ctlFilter1.Margin = new System.Windows.Forms.Padding(0);
-            this.ctlFilter1.MaximumSize = new System.Drawing.Size(500, 40);
-            this.ctlFilter1.MinimumSize = new System.Drawing.Size(200, 40);
-            this.ctlFilter1.Name = "ctlFilter1";
-            this.ctlFilter1.Size = new System.Drawing.Size(204, 40);
-            this.ctlFilter1.TabIndex = 2;
             // 
             // clmImage
             // 
@@ -168,16 +162,40 @@ namespace DataGuardian.Controls
             this.clmType.Name = "clmType";
             this.clmType.ReadOnly = true;
             // 
+            // ctlFilter
+            // 
+            this.ctlFilter.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ctlFilter.Location = new System.Drawing.Point(0, 0);
+            this.ctlFilter.Margin = new System.Windows.Forms.Padding(0);
+            this.ctlFilter.MaximumSize = new System.Drawing.Size(500, 40);
+            this.ctlFilter.MinimumSize = new System.Drawing.Size(200, 40);
+            this.ctlFilter.Name = "ctlFilter";
+            this.ctlFilter.Size = new System.Drawing.Size(200, 40);
+            this.ctlFilter.TabIndex = 2;
+            // 
+            // grbRoot
+            // 
+            this.grbRoot.Controls.Add(this.tlpRoot);
+            this.grbRoot.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.grbRoot.Location = new System.Drawing.Point(1, 5);
+            this.grbRoot.Name = "grbRoot";
+            this.grbRoot.Size = new System.Drawing.Size(372, 557);
+            this.grbRoot.TabIndex = 2;
+            this.grbRoot.TabStop = false;
+            this.grbRoot.Text = "Your cloud Accounts";
+            // 
             // CtlCloudAccounts
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.tlpRoot);
+            this.Controls.Add(this.grbRoot);
             this.Name = "CtlCloudAccounts";
+            this.Padding = new System.Windows.Forms.Padding(1, 5, 1, 1);
             this.Size = new System.Drawing.Size(374, 563);
             this.tlpRoot.ResumeLayout(false);
             this.tlpButtons.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvData)).EndInit();
+            this.grbRoot.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -189,9 +207,10 @@ namespace DataGuardian.Controls
         private System.Windows.Forms.Button btnCreate;
         private System.Windows.Forms.Button btnDelete;
         private DataGuardian.GUI.Controls.GuardianDataGridView dgvData;
-        private CtlFilter ctlFilter1;
+        private CtlFilter ctlFilter;
         private System.Windows.Forms.DataGridViewImageColumn clmImage;
         private System.Windows.Forms.DataGridViewTextBoxColumn clmName;
         private System.Windows.Forms.DataGridViewTextBoxColumn clmType;
+        private System.Windows.Forms.GroupBox grbRoot;
     }
 }

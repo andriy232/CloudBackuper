@@ -1,5 +1,5 @@
 ﻿
-namespace DataGuardian.Controls
+namespace DataGuardian.GUI.UserControls
 {
     partial class CtlPath
     {

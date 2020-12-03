@@ -29,11 +29,14 @@ namespace DataGuardian.Controls
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgvData = new DataGuardian.GUI.Controls.GuardianDataGridView();
             this.clmTime = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.clmSource = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.clmMessage = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.grbRoot = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvData)).BeginInit();
+            this.grbRoot.SuspendLayout();
             this.SuspendLayout();
             // 
             // dgvData
@@ -46,14 +49,22 @@ namespace DataGuardian.Controls
             this.clmTime,
             this.clmSource,
             this.clmMessage});
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.LightGray;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvData.DefaultCellStyle = dataGridViewCellStyle1;
             this.dgvData.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgvData.Location = new System.Drawing.Point(0, 0);
+            this.dgvData.Location = new System.Drawing.Point(3, 22);
             this.dgvData.Margin = new System.Windows.Forms.Padding(6);
             this.dgvData.Name = "dgvData";
             this.dgvData.RowHeadersVisible = false;
             this.dgvData.RowHeadersWidth = 62;
             this.dgvData.RowTemplate.Height = 28;
-            this.dgvData.Size = new System.Drawing.Size(969, 468);
+            this.dgvData.Size = new System.Drawing.Size(961, 437);
             this.dgvData.TabIndex = 0;
             // 
             // clmTime
@@ -80,14 +91,27 @@ namespace DataGuardian.Controls
             this.clmMessage.Name = "clmMessage";
             this.clmMessage.ReadOnly = true;
             // 
+            // grbRoot
+            // 
+            this.grbRoot.Controls.Add(this.dgvData);
+            this.grbRoot.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.grbRoot.Location = new System.Drawing.Point(1, 5);
+            this.grbRoot.Name = "grbRoot";
+            this.grbRoot.Size = new System.Drawing.Size(967, 462);
+            this.grbRoot.TabIndex = 1;
+            this.grbRoot.TabStop = false;
+            this.grbRoot.Text = "Messages";
+            // 
             // CtlLog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.dgvData);
+            this.Controls.Add(this.grbRoot);
             this.Name = "CtlLog";
+            this.Padding = new System.Windows.Forms.Padding(1, 5, 1, 1);
             this.Size = new System.Drawing.Size(969, 468);
             ((System.ComponentModel.ISupportInitialize)(this.dgvData)).EndInit();
+            this.grbRoot.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -98,5 +122,6 @@ namespace DataGuardian.Controls
         private System.Windows.Forms.DataGridViewTextBoxColumn clmTime;
         private System.Windows.Forms.DataGridViewTextBoxColumn clmSource;
         private System.Windows.Forms.DataGridViewTextBoxColumn clmMessage;
+        private System.Windows.Forms.GroupBox grbRoot;
     }
 }

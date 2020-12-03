@@ -81,6 +81,12 @@
     <Compile Include="Windows\WndEnterPath.Designer.cs">
       <DependentUpon>WndEnterPath.cs</DependentUpon>
     </Compile>
+    <Compile Include="Windows\WndConfirmation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Windows\WndConfirmation.Designer.cs">
+      <DependentUpon>WndConfirmation.cs</DependentUpon>
+    </Compile>
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
@@ -100,6 +106,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Windows\WndEnterPath.resx">
       <DependentUpon>WndEnterPath.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Windows\WndConfirmation.resx">
+      <DependentUpon>WndConfirmation.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
