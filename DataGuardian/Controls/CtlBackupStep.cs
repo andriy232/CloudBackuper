@@ -161,7 +161,6 @@ namespace DataGuardian.Controls
             BackColor = Color.FromArgb(100, r.Next(0, 255), r.Next(0, 255), r.Next(0, 255));
 
             dtpStartTime.Value = DateTime.Today.AddDays(1);
-            dtpStartTime.MinDate = DateTime.Today;
 
             base.OnLoad(e);
         }

@@ -6,7 +6,7 @@
     <ProductVersion>3.10</ProductVersion>
     <ProjectGuid>579a2dc4-5136-4d55-a8d4-a7c0eb4351f8</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>NightKeeper.ClientInstaller</OutputName>
+    <OutputName>DataGuardian.ClientInstaller</OutputName>
     <OutputType>Package</OutputType>
     <Name>DataGuardian.ClientInstaller</Name>
   </PropertyGroup>
@@ -21,6 +21,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Product.wxs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DataGuardian\DataGuardian.csproj">
+      <Name>DataGuardian</Name>
+      <Project>{fc0d11a3-032d-4269-8b93-7dab6da31a23}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" Condition=" '$(WixTargetsPath)' != '' " />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets" Condition=" '$(WixTargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets') " />

@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DataGuardian.Impl
@@ -122,8 +123,6 @@ namespace DataGuardian.Impl
             Exception runTimeException = null;
             try
             {
-                if (!FileSystem.IsValidPath(TargetPath))
-                    throw new ArgumentException(nameof(TargetPath));
 
                 switch (Action)
                 {
@@ -157,6 +156,24 @@ namespace DataGuardian.Impl
             }
         }
 
+        public bool CheckIfLocalCopyExists()
+        {
+            var counter = 0;
+            while (true)
+            {
+                try
+                {
+                    return FileSystem.Exists(TargetPath);
+                }
+                catch (Exception ex)
+                {
+                    if (counter++ > 10)
+                        return false;
+                    Thread.Sleep(1000);
+                }
+            }
+        }
+
         private async Task PerformRestore()
         {
             if (Account == null)
@@ -180,6 +197,9 @@ namespace DataGuardian.Impl
 
         private void PerformToArchive()
         {
+            if (!FileSystem.IsValidPath(TargetPath))
+                throw new ArgumentException(nameof(TargetPath));
+
             if (!FileSystem.IsValidPath(ActionParameter))
                 throw new ArgumentException(nameof(ActionParameter));
 
@@ -188,10 +208,15 @@ namespace DataGuardian.Impl
 
         private void PerformSendToEmail()
         {
+            if (!FileSystem.IsValidPath(TargetPath))
+                throw new ArgumentException(nameof(TargetPath));
         }
 
         private void PerformCopy()
         {
+            if (!FileSystem.IsValidPath(TargetPath))
+                throw new ArgumentException(nameof(TargetPath));
+
             if (!FileSystem.IsValidPath(ActionParameter))
                 throw new ArgumentException(nameof(ActionParameter));
 
@@ -204,6 +229,8 @@ namespace DataGuardian.Impl
                 throw new ArgumentException(nameof(Account));
             if (Account?.CloudStorageProvider == null)
                 throw new ArgumentException(nameof(Account.CloudStorageProvider));
+            if (!FileSystem.IsValidPath(TargetPath))
+                throw new ArgumentException(nameof(TargetPath));
 
             var newLocalBackup = new LocalArchivedBackup(TargetPath, BackupFileName);
             await Account.CloudStorageProvider.UploadBackupAsync(Account, newLocalBackup);

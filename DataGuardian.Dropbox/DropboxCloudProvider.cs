@@ -193,7 +193,7 @@ namespace DataGuardian.Dropbox
         private async Task<RemoteBackupsState> ListFolderAsync(DropboxClient client, string backupFileName, string path)
         {
             var list = await client.Files.ListFolderAsync(path);
-            var files = list?.Entries?.Where(i => i.IsFile).Select(x => x.AsFile).ToList() ?? new List<FileMetadata>();
+            var files = list?.Entries?.Where(i => i.IsFile && i.Name.Contains(backupFileName)).Select(x => x.AsFile).ToList() ?? new List<FileMetadata>();
 
             while (list != null && list.HasMore)
             {
@@ -205,8 +205,8 @@ namespace DataGuardian.Dropbox
                 files.AddRange(filesMetadata);
             }
 
-            return new RemoteBackupsState(this,
-                list?.Entries?.Select(x => (x.AsFile.Id, x.Name, x.AsFile.ClientModified)));
+            var filtered = files.Select(x => (x.AsFile.Id, x.Name, x.AsFile.ClientModified));
+            return new RemoteBackupsState(this, filtered);
         }
 
         public override async Task UploadBackupAsync(IAccount account, LocalArchivedBackup localBackup)

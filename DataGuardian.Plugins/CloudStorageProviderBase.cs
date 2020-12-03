@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using DataGuardian.Plugins.Backups;
 using DataGuardian.Plugins.Plugins;
+using Newtonsoft.Json;
 
 namespace DataGuardian.Plugins
 {
@@ -28,5 +29,9 @@ namespace DataGuardian.Plugins
 
     public class SettingsBase
     {
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
+        }
     }
 }

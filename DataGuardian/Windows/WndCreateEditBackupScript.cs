@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using DataGuardian.Controls;
+﻿using DataGuardian.Controls;
 using DataGuardian.GUI;
 using DataGuardian.Impl;
 using DataGuardian.Plugins;
 using DataGuardian.Plugins.Core;
-using DataGuardian.Properties;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace DataGuardian.Windows
 {
@@ -95,7 +91,11 @@ namespace DataGuardian.Windows
         {
             SetName(_createScript.Name, _createScript.TargetPath);
 
-            AddNewStep(new BackupStep {TargetPath = _createScript.TargetPath});
+            AddNewStep(new BackupStep
+            {
+                TargetPath = _createScript.TargetPath,
+                BackupFileName = Path.GetFileNameWithoutExtension(_createScript.TargetPath)
+            });
         }
 
         private void SetName(string name, string path)
@@ -112,7 +112,11 @@ namespace DataGuardian.Windows
                 if (count > 0)
                     AddNewStep(CurrentStepsControl[count - 1].Step.Clone() as IBackupStep);
                 else
-                    AddNewStep(new BackupStep {TargetPath = _createScript.TargetPath});
+                    AddNewStep(new BackupStep
+                    {
+                        TargetPath = _createScript.TargetPath,
+                        BackupFileName = Path.GetFileNameWithoutExtension(_createScript.TargetPath)
+                    });
             }
             catch (Exception ex)
             {

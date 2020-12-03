@@ -59,6 +59,7 @@ namespace DataGuardian.Plugins
         DateTime LastPerformTime { get; }
 
         Task Perform();
+        bool CheckIfLocalCopyExists();
     }
 
     public enum BackupResultState

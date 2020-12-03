@@ -92,5 +92,20 @@ namespace DataGuardian.GUI
 
             return result;
         }
+
+        public static DialogResult ShowConfirmationDialog(string message)
+        {
+            var result = DialogResult.None;
+            var f = CoreStatic.Instance.GuiManager.MainWindow;
+            
+            f.Invoke(((Action) (() =>
+            {
+                using (var wnd = new WndConfirmation(message))
+                    result = wnd.ShowDialog();
+
+            })), null);
+
+            return result;
+        }
     }
 }
