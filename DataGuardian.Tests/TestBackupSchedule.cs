@@ -22,7 +22,7 @@ namespace DataGuardian.Tests
                 StartDate = new DateTime(2020, 01, 01),
             };
 
-            Assert.AreEqual(new DateTime(2020, 01, 01), backup.NextPerformDate);
+            Assert.AreEqual(new DateTime(2020, 01, 01), backup.NextPerformTime);
         }
 
         [TestMethod]
@@ -36,7 +36,7 @@ namespace DataGuardian.Tests
                 LastPerformTime = new DateTime(2020, 01, 01),
             };
 
-            Assert.AreEqual(DateTime.MaxValue, backup.NextPerformDate);
+            Assert.AreEqual(DateTime.MaxValue, backup.NextPerformTime);
         }
 
         [TestMethod]
@@ -51,7 +51,7 @@ namespace DataGuardian.Tests
                 StartDate = new DateTime(2020, 01, 01),
             };
 
-            Assert.AreEqual(new DateTime(2020, 01, 01), backup.NextPerformDate);
+            Assert.AreEqual(new DateTime(2020, 01, 01), backup.NextPerformTime);
         }
 
         [TestMethod]
@@ -65,7 +65,7 @@ namespace DataGuardian.Tests
                 LastPerformTime = new DateTime(2020, 01, 01),
             };
 
-            Assert.AreEqual(new DateTime(2020, 01, 03), backup.NextPerformDate);
+            Assert.AreEqual(new DateTime(2020, 01, 03), backup.NextPerformTime);
         }
 
         [TestMethod]
@@ -80,7 +80,7 @@ namespace DataGuardian.Tests
                 StartDate = new DateTime(2020, 01, 01),
             };
 
-            Assert.AreEqual(new DateTime(2020, 01, 06), backup.NextPerformDate);
+            Assert.AreEqual(new DateTime(2020, 01, 06), backup.NextPerformTime);
         }
 
         [TestMethod]
@@ -95,7 +95,7 @@ namespace DataGuardian.Tests
                 StartDate = new DateTime(2020, 01, 01),
             };
 
-            Assert.AreEqual(new DateTime(2020, 01, 10), backup.NextPerformDate);
+            Assert.AreEqual(new DateTime(2020, 01, 10), backup.NextPerformTime);
         }
 
         [TestMethod]
@@ -110,7 +110,7 @@ namespace DataGuardian.Tests
                 StartDate = new DateTime(2020, 01, 01),
             };
 
-            Assert.AreEqual(new DateTime(2020, 04, 05), backup.NextPerformDate);
+            Assert.AreEqual(new DateTime(2020, 04, 05), backup.NextPerformTime);
         }
     }
 }

@@ -19,7 +19,10 @@ namespace DataGuardian.Plugins
     {
         bool InvokeRequired { get; }
         Form MainWindow { get; }
+
         void SetWindow(Form form);
         T Invoke<T>(Func<T> func);
+
+        event EventHandler GuiLoaded;
     }
 }

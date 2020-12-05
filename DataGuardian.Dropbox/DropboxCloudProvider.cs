@@ -238,7 +238,7 @@ namespace DataGuardian.Dropbox
             }
         }
 
-        public override async Task DownloadBackupAsync(IAccount account, RemoteBackupsState.RemoteBackup backup, string outputPath)
+        public override async Task DownloadBackupAsync(IAccount account, RemoteBackup backup, string outputPath)
         {
             using (var client = await GetDropboxClient(account))
             {
@@ -276,7 +276,7 @@ namespace DataGuardian.Dropbox
             }
         }
 
-        public override async Task DeleteBackupAsync(IAccount account, RemoteBackupsState.RemoteBackup backup)
+        public override async Task DeleteBackupAsync(IAccount account, RemoteBackup backup)
         {
             using (var client = await GetDropboxClient(account))
             {

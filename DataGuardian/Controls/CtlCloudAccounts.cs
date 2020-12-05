@@ -62,9 +62,8 @@ namespace DataGuardian.Controls
 
         public IAccount SelectedCloudProvider
         {
-            get =>
-                dgvData.SelectedCells.Cast<DataGridViewCell>()?.FirstOrDefault()?.OwningRow.Tag as IAccount
-            ;
+            get => dgvData.SelectedCells.Cast<DataGridViewCell>()?
+                .FirstOrDefault()?.OwningRow.Tag as IAccount;
             set
             {
                 if (value != null)
@@ -79,14 +78,24 @@ namespace DataGuardian.Controls
             }
         }
 
-        private void btnCreate_Click(object sender, EventArgs e)
+        private void OnBtnCreateClick(object sender, EventArgs e)
         {
             CoreStatic.Instance.CloudAccountsManager.AddAccount(this);
         }
 
-        private void btnDelete_Click(object sender, EventArgs e)
+        private void OnBtnDeleteAccountClick(object sender, EventArgs e)
+        {
+            DeleteSelectedAccount();
+        }
+
+        private void DeleteSelectedAccount()
         {
             CoreStatic.Instance.CloudAccountsManager.RemoveAccount(SelectedCloudProvider);
+        }
+
+        private void OnCmdDeleteAccountClick(object sender, EventArgs e)
+        {
+            DeleteSelectedAccount();
         }
     }
 }

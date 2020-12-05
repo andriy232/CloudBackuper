@@ -121,4 +121,10 @@
   <data name="ApplicationIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Application.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Str_BackupManager_PleaseEnterName" xml:space="preserve">
+    <value>Please enter name and path for your backup script</value>
+  </data>
+  <data name="Str_BackupManager_BackupName" xml:space="preserve">
+    <value>New_backup_{0}</value>
+  </data>
 </root>

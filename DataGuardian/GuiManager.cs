@@ -14,6 +14,12 @@ namespace DataGuardian
         public void SetWindow(Form form)
         {
             MainWindow = form;
+            MainWindow.Load += OnLoad;
+        }
+
+        private void OnLoad(object sender, EventArgs e)
+        {
+            GuiLoaded?.Invoke(MainWindow, EventArgs.Empty);
         }
 
         public T Invoke<T>(Func<T> func)
@@ -28,5 +34,7 @@ namespace DataGuardian
                 return default(T);
             }
         }
+
+        public event EventHandler GuiLoaded;
     }
 }

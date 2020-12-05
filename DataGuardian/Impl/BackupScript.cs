@@ -63,7 +63,7 @@ namespace DataGuardian.Impl
 
         [NotMapped]
         public DateTime NextPerformTime =>
-            Steps != null && Steps.Any() ? Steps.Min(x => x.NextPerformDate) : DateTime.MinValue;
+            Steps != null && Steps.Any() ? Steps.Min(x => x.NextPerformTime) : DateTime.MinValue;
 
         private static string SerializeSteps(IReadOnlyCollection<IBackupStep> value)
         {

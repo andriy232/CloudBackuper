@@ -224,6 +224,8 @@ namespace DataGuardian.Controls
                     HideCtrs(lsbPeriodParameters, nudRecurEvery, lblRecurEvery, lblPeriodParameters);
                     lsbPeriodParameters.DataSource = null;
                     break;
+                case BackupPeriod.Minute:
+                case BackupPeriod.Hourly:
                 case BackupPeriod.Daily:
                     HideCtrs(lsbPeriodParameters, lblPeriodParameters);
                     ShowCtrs(nudRecurEvery, lblRecurEvery);

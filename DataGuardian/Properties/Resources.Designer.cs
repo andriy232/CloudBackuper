@@ -69,5 +69,23 @@ namespace DataGuardian.Properties {
                 return ((System.Drawing.Icon)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New_backup_{0}.
+        /// </summary>
+        internal static string Str_BackupManager_BackupName {
+            get {
+                return ResourceManager.GetString("Str_BackupManager_BackupName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please enter name and path for your backup script.
+        /// </summary>
+        internal static string Str_BackupManager_PleaseEnterName {
+            get {
+                return ResourceManager.GetString("Str_BackupManager_PleaseEnterName", resourceCulture);
+            }
+        }
     }
 }

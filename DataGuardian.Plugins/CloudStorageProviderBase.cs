@@ -23,8 +23,8 @@ namespace DataGuardian.Plugins
         public abstract object TryAuth();
         public abstract Task<RemoteBackupsState> GetBackupState(IAccount account, string backupFileName);
         public abstract Task UploadBackupAsync(IAccount account, LocalArchivedBackup localBackup);
-        public abstract Task DownloadBackupAsync(IAccount account, RemoteBackupsState.RemoteBackup backup, string outputPath);
-        public abstract Task DeleteBackupAsync(IAccount account, RemoteBackupsState.RemoteBackup backup);
+        public abstract Task DownloadBackupAsync(IAccount account, RemoteBackup backup, string outputPath);
+        public abstract Task DeleteBackupAsync(IAccount account, RemoteBackup backup);
     }
 
     public class SettingsBase

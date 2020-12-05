@@ -35,22 +35,26 @@ namespace DataGuardian.Controls
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CtlCloudAccounts));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tlpRoot = new System.Windows.Forms.TableLayoutPanel();
             this.tlpButtons = new System.Windows.Forms.FlowLayoutPanel();
-            this.btnCreate = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
+            this.btnCreate = new System.Windows.Forms.Button();
             this.dgvData = new DataGuardian.GUI.Controls.GuardianDataGridView();
             this.clmImage = new System.Windows.Forms.DataGridViewImageColumn();
             this.clmName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.clmType = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ctlFilter = new DataGuardian.Controls.CtlFilter();
             this.grbRoot = new System.Windows.Forms.GroupBox();
+            this.ctxMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.cmdDeleteAccount = new System.Windows.Forms.ToolStripMenuItem();
             this.tlpRoot.SuspendLayout();
             this.tlpButtons.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvData)).BeginInit();
             this.grbRoot.SuspendLayout();
+            this.ctxMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // tlpRoot
@@ -82,18 +86,6 @@ namespace DataGuardian.Controls
             this.tlpButtons.Size = new System.Drawing.Size(170, 40);
             this.tlpButtons.TabIndex = 0;
             // 
-            // btnCreate
-            // 
-            this.btnCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCreate.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnCreate.BackgroundImage")));
-            this.btnCreate.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btnCreate.Location = new System.Drawing.Point(11, 3);
-            this.btnCreate.Name = "btnCreate";
-            this.btnCreate.Size = new System.Drawing.Size(75, 34);
-            this.btnCreate.TabIndex = 0;
-            this.btnCreate.UseVisualStyleBackColor = true;
-            this.btnCreate.Click += new System.EventHandler(this.btnCreate_Click);
-            // 
             // btnDelete
             // 
             this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
@@ -104,7 +96,19 @@ namespace DataGuardian.Controls
             this.btnDelete.Size = new System.Drawing.Size(75, 34);
             this.btnDelete.TabIndex = 1;
             this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            this.btnDelete.Click += new System.EventHandler(this.OnBtnDeleteAccountClick);
+            // 
+            // btnCreate
+            // 
+            this.btnCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCreate.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnCreate.BackgroundImage")));
+            this.btnCreate.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.btnCreate.Location = new System.Drawing.Point(11, 3);
+            this.btnCreate.Name = "btnCreate";
+            this.btnCreate.Size = new System.Drawing.Size(75, 34);
+            this.btnCreate.TabIndex = 0;
+            this.btnCreate.UseVisualStyleBackColor = true;
+            this.btnCreate.Click += new System.EventHandler(this.OnBtnCreateClick);
             // 
             // dgvData
             // 
@@ -118,6 +122,7 @@ namespace DataGuardian.Controls
             this.clmName,
             this.clmType});
             this.tlpRoot.SetColumnSpan(this.dgvData, 2);
+            this.dgvData.ContextMenuStrip = this.ctxMenu;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
@@ -133,6 +138,7 @@ namespace DataGuardian.Controls
             this.dgvData.RowHeadersVisible = false;
             this.dgvData.RowHeadersWidth = 162;
             this.dgvData.RowTemplate.Height = 50;
+            this.dgvData.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvData.Size = new System.Drawing.Size(360, 486);
             this.dgvData.TabIndex = 1;
             // 
@@ -184,6 +190,21 @@ namespace DataGuardian.Controls
             this.grbRoot.TabStop = false;
             this.grbRoot.Text = "Your cloud Accounts";
             // 
+            // ctxMenu
+            // 
+            this.ctxMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this.ctxMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.cmdDeleteAccount});
+            this.ctxMenu.Name = "ctxMenu";
+            this.ctxMenu.Size = new System.Drawing.Size(202, 36);
+            // 
+            // cmdDeleteAccount
+            // 
+            this.cmdDeleteAccount.Name = "cmdDeleteAccount";
+            this.cmdDeleteAccount.Size = new System.Drawing.Size(201, 32);
+            this.cmdDeleteAccount.Text = "Delete account";
+            this.cmdDeleteAccount.Click += new System.EventHandler(this.OnCmdDeleteAccountClick);
+            // 
             // CtlCloudAccounts
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -196,6 +217,7 @@ namespace DataGuardian.Controls
             this.tlpButtons.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvData)).EndInit();
             this.grbRoot.ResumeLayout(false);
+            this.ctxMenu.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -212,5 +234,7 @@ namespace DataGuardian.Controls
         private System.Windows.Forms.DataGridViewTextBoxColumn clmName;
         private System.Windows.Forms.DataGridViewTextBoxColumn clmType;
         private System.Windows.Forms.GroupBox grbRoot;
+        private System.Windows.Forms.ContextMenuStrip ctxMenu;
+        private System.Windows.Forms.ToolStripMenuItem cmdDeleteAccount;
     }
 }

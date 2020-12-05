@@ -5,7 +5,7 @@
         /// <summary>
         /// Technical messages
         /// </summary>
-        Info = 1,
+        Information = 1,
 
         /// <summary>
         /// Errors

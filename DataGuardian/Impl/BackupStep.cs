@@ -27,7 +27,7 @@ namespace DataGuardian.Impl
 
         public int RecurEvery { get; set; } = 1;
 
-        public DateTime StartDate { get; set; } = DateTime.Today.AddDays(1);
+        public DateTime StartDate { get; set; } = DateTime.Today;
 
         public List<string> PeriodParametersList { get; set; }
 
@@ -49,25 +49,44 @@ namespace DataGuardian.Impl
             return dt1.Ticks > dt2.Ticks ? dt1 : dt2;
         }
 
+        public DateTime Max(DateTime dt1, DateTime dt2)
+        {
+            return dt1.Ticks < dt2.Ticks ? dt1 : dt2;
+        }
+
         [JsonIgnore]
-        public DateTime NextPerformDate
+        public DateTime NextPerformTime
         {
             get
             {
-                var nextPerformDate = Min(LastPerformTime, StartDate);
+                var lastPerformTime = Max(LastPerformTime, StartDate);
 
                 switch (Period)
                 {
                     case BackupPeriod.OneTime:
+                        // that means only one time
                         if (LastPerformTime != DateTime.MinValue) 
                             return DateTime.MaxValue;
 
                         return StartDate;
 
+                    case BackupPeriod.Minute:
+                        if (LastPerformTime == DateTime.MinValue)
+                            return StartDate;
+
+                        return lastPerformTime.AddMinutes(RecurEvery);
+
+                    case BackupPeriod.Hourly:
+                        if (LastPerformTime == DateTime.MinValue)
+                            return StartDate;
+
+                        return lastPerformTime.AddHours(RecurEvery);
+
                     case BackupPeriod.Daily:
                         if (LastPerformTime == DateTime.MinValue)
                             return StartDate;
-                        return LastPerformTime.AddDays(RecurEvery);
+
+                        return lastPerformTime.AddDays(RecurEvery);
 
                     case BackupPeriod.Weekly:
                         var daysOfWeek = PeriodParameters.Select(x =>
@@ -77,15 +96,15 @@ namespace DataGuardian.Impl
                         
                         if (daysOfWeek.Count != 0)
                         {
-                            while (!daysOfWeek.Contains(nextPerformDate.DayOfWeek))
-                                nextPerformDate = nextPerformDate.AddDays(1);
+                            while (!daysOfWeek.Contains(lastPerformTime.DayOfWeek))
+                                lastPerformTime = lastPerformTime.AddDays(1);
                         }
                         else
                         {
-                            nextPerformDate = nextPerformDate.AddDays(7 * RecurEvery);
+                            lastPerformTime = lastPerformTime.AddDays(7 * RecurEvery);
                         }
 
-                        return nextPerformDate;
+                        return lastPerformTime;
 
                     case BackupPeriod.Monthly:
                         var mothtes = PeriodParameters.Select(x =>
@@ -98,13 +117,13 @@ namespace DataGuardian.Impl
                             do
                             {
                                 var daysInMonth = CultureInfo.CurrentCulture.Calendar.GetDaysInMonth(
-                                    nextPerformDate.Year, nextPerformDate.Month);
+                                    lastPerformTime.Year, lastPerformTime.Month);
 
-                                nextPerformDate = nextPerformDate.AddDays(daysInMonth);
-                            } while (!mothtes.Contains((Month) nextPerformDate.Month));
+                                lastPerformTime = lastPerformTime.AddDays(daysInMonth);
+                            } while (!mothtes.Contains((Month) lastPerformTime.Month));
                         }
 
-                        return nextPerformDate;
+                        return lastPerformTime;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
@@ -118,7 +137,7 @@ namespace DataGuardian.Impl
             set => AccountId = value.Id;
         }
 
-        public async Task Perform()
+        public async Task Perform(CancellationToken cancellationToken)
         {
             Exception runTimeException = null;
             try
@@ -189,6 +208,8 @@ namespace DataGuardian.Impl
             if (lastBackup == null)
                 throw new ApplicationException("no backups");
 
+            FileSystem.CreateDirectoryIfNotExists(TargetPath);
+
             var zipPath = FileSystem.GetTempFilePath(".zip");
             await Account.CloudStorageProvider.DownloadBackupAsync(Account, lastBackup, zipPath);
 
@@ -235,7 +256,7 @@ namespace DataGuardian.Impl
             var newLocalBackup = new LocalArchivedBackup(TargetPath, BackupFileName);
             await Account.CloudStorageProvider.UploadBackupAsync(Account, newLocalBackup);
 
-            CoreStatic.Instance.Logger.Log(InfoLogLevel.Info, nameof(PerformBackup), "Backup successfully uploaded");
+            CoreStatic.Instance.Logger.Log(InfoLogLevel.Information, nameof(PerformBackup), "Backup successfully uploaded");
         }
 
         public object Clone()

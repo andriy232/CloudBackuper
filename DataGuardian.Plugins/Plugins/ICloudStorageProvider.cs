@@ -22,8 +22,8 @@ namespace DataGuardian.Plugins.Plugins
 
         Task UploadBackupAsync(IAccount account, LocalArchivedBackup localBackup);
 
-        Task DownloadBackupAsync(IAccount account, RemoteBackupsState.RemoteBackup backup, string outputPath);
+        Task DownloadBackupAsync(IAccount account, RemoteBackup backup, string outputPath);
 
-        Task DeleteBackupAsync(IAccount account, RemoteBackupsState.RemoteBackup backup);
+        Task DeleteBackupAsync(IAccount account, RemoteBackup backup);
     }
 }

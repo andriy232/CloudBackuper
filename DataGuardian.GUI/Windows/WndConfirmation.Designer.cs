@@ -94,6 +94,7 @@ namespace DataGuardian.GUI.Windows
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(498, 194);
             this.Controls.Add(this.tlpRoot);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));

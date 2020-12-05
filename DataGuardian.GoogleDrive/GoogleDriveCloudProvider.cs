@@ -53,7 +53,7 @@ namespace DataGuardian.GoogleDrive
                 }
 
                 var file = request.ResponseBody;
-                Core.Logger.Log($"Backup uploaded, file Id: {file.Id}");
+                Core.Logger.Log($"Backup uploaded, file Id: {file?.Id}");
             }
             catch (Exception ex)
             {
@@ -120,7 +120,7 @@ namespace DataGuardian.GoogleDrive
                 await Upload(account, service, localBackup.ResultPath);
         }
 
-        public override async Task DownloadBackupAsync(IAccount account, RemoteBackupsState.RemoteBackup backup, string outputPath)
+        public override async Task DownloadBackupAsync(IAccount account, RemoteBackup backup, string outputPath)
         {
             using (var service = await GetDriveServiceClient(account))
                 await DownloadToFile(service, backup.UniqueId, outputPath);
@@ -133,7 +133,7 @@ namespace DataGuardian.GoogleDrive
                 await file.DownloadAsync(stream);
         }
 
-        public override async Task DeleteBackupAsync(IAccount account, RemoteBackupsState.RemoteBackup backup)
+        public override async Task DeleteBackupAsync(IAccount account, RemoteBackup backup)
         {
             using (var service = await GetDriveServiceClient(account))
                 await Delete(service, backup.UniqueId);

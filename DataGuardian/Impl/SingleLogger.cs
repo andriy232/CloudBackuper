@@ -67,7 +67,7 @@ namespace DataGuardian.Impl
         public void Log(string source, string message)
         {
             Serilog.Log.Warning(message, source);
-            FireNewLog(new LogEntry(InfoLogLevel.Info, source, message));
+            FireNewLog(new LogEntry(InfoLogLevel.Information, source, message));
         }
 
         public void Log(string source, Exception ex)

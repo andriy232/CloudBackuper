@@ -2,6 +2,7 @@
 using DataGuardian.Plugins.Plugins;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DataGuardian.Plugins
@@ -54,11 +55,11 @@ namespace DataGuardian.Plugins
 
         string LastState { get; }
 
-        DateTime NextPerformDate { get; }
+        DateTime NextPerformTime { get; }
 
         DateTime LastPerformTime { get; }
 
-        Task Perform();
+        Task Perform(CancellationToken cancellationToken);
         bool CheckIfLocalCopyExists();
     }
 

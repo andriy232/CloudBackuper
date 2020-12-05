@@ -9,5 +9,24 @@ namespace DataGuardian.GUI.Controls
         {
             DefaultCellStyle.SelectionBackColor = Color.LightGray;
         }
+
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            try
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    var hitTestInfo = HitTest(e.X, e.Y);
+                    ClearSelection();
+                    Rows[hitTestInfo.RowIndex].Selected = true;
+                }
+            }
+            catch
+            {
+                // ignored
+            }
+
+            base.OnMouseDown(e);
+        }
     }
 }

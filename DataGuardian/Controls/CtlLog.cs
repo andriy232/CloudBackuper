@@ -69,7 +69,7 @@ namespace DataGuardian.Controls
         {
             switch (logType)
             {
-                case InfoLogLevel.Info:
+                case InfoLogLevel.Information:
                     return Color.Gray;
                 case InfoLogLevel.Error:
                     return Color.Tomato;
