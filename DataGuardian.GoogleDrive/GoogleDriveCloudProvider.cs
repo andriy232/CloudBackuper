@@ -73,7 +73,7 @@ namespace DataGuardian.GoogleDrive
             Core.Logger.Log($"Removing backup: {result}");
         }
 
-        private async Task<RemoteBackupsState> GetBackupsAsync(IAccount account, DriveService service)
+        private async Task<RemoteBackupsState> GetBackupsAsync(IAccount account, string backupFileName, DriveService service)
         {
             var settings = GetSettings(account);
             var folderGet = service.Files.Get(settings.DriveFolderId).SetFields();
@@ -95,6 +95,7 @@ namespace DataGuardian.GoogleDrive
                     .Where(x => x.Parents != null &&
                                 x.Parents.Count > 0 &&
                                 x.Trashed == false &&
+                                x.OriginalFilename.Contains(backupFileName) &&
                                 x.Parents.Any(p => p.Equals(folderResult.Id, StringComparison.OrdinalIgnoreCase)))
                     .ToList();
 
@@ -103,15 +104,16 @@ namespace DataGuardian.GoogleDrive
                 pageToken = listRequestResult.NextPageToken;
             } while (pageToken != null);
 
-            return new RemoteBackupsState(this,
-                backups.Select(x => (x.Id, x.Name,
-                    x.ModifiedTime ?? x.ModifiedByMeTime ?? x.CreatedTime ?? DateTime.MinValue)));
+            var tuples = backups.Select(x => (x.Id, x.Name,
+                x.ModifiedTime ?? x.ModifiedByMeTime ?? x.CreatedTime ?? DateTime.MinValue));
+
+            return new RemoteBackupsState(this, backupFileName, tuples);
         }
 
         public override async Task<RemoteBackupsState> GetBackupState(IAccount account, string backupFileName)
         {
             using (var service = await GetDriveServiceClient(account))
-                return await GetBackupsAsync(account, service);
+                return await GetBackupsAsync(account, backupFileName, service);
         }
 
         public override async Task UploadBackupAsync(IAccount account, LocalArchivedBackup localBackup)

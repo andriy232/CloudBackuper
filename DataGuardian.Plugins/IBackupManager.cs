@@ -6,17 +6,21 @@ namespace DataGuardian.Plugins
 {
     public interface IBackupManager : IPlugin
     {
-        void EditBackupScriptGui(IBackupScript backupScript);
-        void CreateBackupScriptGui();
-
-        void EditBackupScript(IBackupScript backupScript, IBackupScript newBackupScript);
-        void RemoveBackupScript(IBackupScript backupScript);
-        void AddNewBackupScript(IBackupScript backupScript);
-        Task Perform(IBackupScript script);
+        IEnumerable<IBackupScript> BackupScripts { get; }
 
         event EventHandler<IEnumerable<IBackupScript>> BackupScriptsChanged;
 
-        IEnumerable<IBackupScript> BackupScripts { get; }
-        
+        void CreateBackupScriptGui();
+
+        void EditBackupScriptGui(IBackupScript backupScript);
+        void EditBackupScript(IBackupScript script, IBackupScript updatedScript);
+
+        void RemoveBackupScriptGui(IBackupScript script);
+        void RemoveBackupScript(IBackupScript script);
+
+        Task ShowRemoteBackupsGui(IBackupScript script);
+        Task ShowRemoteBackupsGui(IBackupStep step);
+
+        Task Perform(IBackupScript script);
     }
 }

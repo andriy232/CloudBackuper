@@ -3,6 +3,7 @@ using DataGuardian.Plugins;
 using DataGuardian.Windows;
 using DataGuardian.Workers;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -10,6 +11,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using DataGuardian.Controls;
 using DataGuardian.GUI.Windows;
+using DataGuardian.Plugins.Backups;
+using DataGuardian.Plugins.Plugins;
 using DataGuardian.Properties;
 using Timer = System.Windows.Forms.Timer;
 
@@ -23,6 +26,7 @@ namespace DataGuardian.Impl
         private BackupDbWorker _dbWorker;
         private Timer _timer;
         private CancellationTokenSource _cancellationTokenSource;
+        private WndRemoteBackups _viewRemoteBackupsWnd;
 
         public event EventHandler<IEnumerable<IBackupScript>> BackupScriptsChanged;
 
@@ -126,7 +130,7 @@ namespace DataGuardian.Impl
 
         private async Task PerformRestoreWithGui(
             IBackupScript script,
-            IBackupStep failed, 
+            IBackupStep failed,
             CancellationToken cancellationToken)
         {
             var dialogResult = GuiHelper.ShowConfirmationDialog(
@@ -192,24 +196,6 @@ namespace DataGuardian.Impl
             return needPerform;
         }
 
-        public void RemoveBackupScript(IBackupScript selectedBackupScript)
-        {
-            try
-            {
-                if (selectedBackupScript == null)
-                    return;
-
-                _dbWorker.Delete(selectedBackupScript);
-                _scripts.Remove(selectedBackupScript);
-
-                Notify();
-            }
-            catch (Exception ex)
-            {
-                Core.Logger.Log("RemoveBackupScript", ex);
-            }
-        }
-
         #region GUI
 
         public void CreateBackupScriptGui()
@@ -236,7 +222,7 @@ namespace DataGuardian.Impl
                             if (newBackupScript == null)
                                 return;
 
-                            AddNewBackupScript(newBackupScript);
+                            CreateNewBackupScript(newBackupScript);
 
                             GuiHelper.ShowMessage("Backup script created");
                         }
@@ -258,7 +244,7 @@ namespace DataGuardian.Impl
                 if (wnd.ShowDialog() == DialogResult.OK && wnd.NewBackupScript != null)
                 {
                     var newBackupScript = wnd.NewBackupScript;
-                    if (newBackupScript == null)
+                    if (newBackupScript == null || backupScript.Equals(newBackupScript))
                         return;
 
                     EditBackupScript(backupScript, newBackupScript);
@@ -268,29 +254,117 @@ namespace DataGuardian.Impl
             }
         }
 
+        public async Task ShowRemoteBackupsGui(IBackupScript script)
+        {
+            if (script?.Steps == null)
+                return;
+
+            await ShowRemoteBackupsForBackupNames(script.Steps.Select(x => (x.Account, x.BackupFileName)));
+        }
+
+        public async Task ShowRemoteBackupsGui(IBackupStep step)
+        {
+            if (step == null)
+                return;
+
+            await ShowRemoteBackupsForBackupNames(new[] {(step.Account, step.BackupFileName)});
+        }
+
+        private async Task ShowRemoteBackupsForBackupNames(IEnumerable<(IAccount account, string fileName)> lst)
+        {
+            try
+            {
+                if (_viewRemoteBackupsWnd == null || _viewRemoteBackupsWnd.IsDisposed ||
+                    _viewRemoteBackupsWnd.Disposing || !_viewRemoteBackupsWnd.IsHandleCreated)
+                {
+                    _viewRemoteBackupsWnd = new WndRemoteBackups(Core);
+                    _viewRemoteBackupsWnd.Show();
+                }
+                else
+                {
+                    _viewRemoteBackupsWnd.WindowState = FormWindowState.Normal;
+                    _viewRemoteBackupsWnd.BringToFront();
+                    _viewRemoteBackupsWnd.Focus();
+                }
+
+                var states = new List<RemoteBackupsState>();
+                foreach (var (account, fileName) in lst)
+                {
+                    var remoteBackupsState = await account.CloudStorageProvider.GetBackupState(account, fileName);
+                    states.Add(remoteBackupsState);
+                }
+
+                _viewRemoteBackupsWnd.FillData(states);
+            }
+            catch (Exception ex)
+            {
+                Core.Logger.Log("Delete Backup Script", ex);
+                GuiHelper.ShowMessage(ex);
+            }
+        }
+
+        public void RemoveBackupScriptGui(IBackupScript script)
+        {
+            try
+            {
+                if (script == null)
+                    return;
+
+                RemoveBackupScript(script);
+                GuiHelper.ShowMessage("Backup script removed");
+            }
+            catch (Exception ex)
+            {
+                Core.Logger.Log("Delete Backup Script", ex);
+                GuiHelper.ShowMessage(ex);
+            }
+        }
+
         #endregion
 
-        public void EditBackupScript(IBackupScript backupScript, IBackupScript newBackupScript)
-        {
-            _dbWorker.Edit(newBackupScript);
+        #region Non gui
 
-            _scripts.Remove(backupScript);
-            _scripts.Add(newBackupScript);
-
-            Notify();
-        }
-
-        private void Notify()
-        {
-            BackupScriptsChanged?.Invoke(this, BackupScripts);
-        }
-
-        public void AddNewBackupScript(IBackupScript newBackupScript)
+        private void CreateNewBackupScript(IBackupScript newBackupScript)
         {
             _dbWorker.Save(newBackupScript);
             _scripts.Add(newBackupScript);
 
             Notify();
+        }
+
+        public void EditBackupScript(IBackupScript script, IBackupScript updatedScript)
+        {
+            _dbWorker.Edit(updatedScript);
+
+            _scripts.Remove(script);
+            _scripts.Add(updatedScript);
+
+            Notify();
+        }
+
+        public void RemoveBackupScript(IBackupScript script)
+        {
+            try
+            {
+                if (script == null)
+                    return;
+
+                _dbWorker.Delete(script);
+                _scripts.Remove(script);
+
+                Notify();
+            }
+            catch (Exception ex)
+            {
+                Core.Logger.Log("RemoveBackupScript", ex);
+            }
+        }
+
+        #endregion
+
+        private void Notify()
+        {
+            BackupScriptsChanged?.Invoke(this, BackupScripts);
         }
     }
 }

@@ -115,7 +115,7 @@ namespace DataGuardian.LocalServer
             var content = await response.Content.ReadAsStringAsync();
             var list = JsonConvert.DeserializeObject<List<RemoteBackup>>(content);
 
-            return new RemoteBackupsState(this, list);
+            return new RemoteBackupsState(this, backupFileName, list);
         }
 
         public override async Task UploadBackupAsync(IAccount account, LocalArchivedBackup localBackup)

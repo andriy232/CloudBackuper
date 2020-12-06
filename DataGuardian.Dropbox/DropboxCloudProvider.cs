@@ -217,7 +217,7 @@ namespace DataGuardian.Dropbox
             }
 
             var filtered = files.Select(x => (x.AsFile.Id, x.Name, x.AsFile.ClientModified));
-            return new RemoteBackupsState(this, filtered);
+            return new RemoteBackupsState(this, backupFileName, filtered);
         }
 
         public override async Task UploadBackupAsync(IAccount account, LocalArchivedBackup localBackup)

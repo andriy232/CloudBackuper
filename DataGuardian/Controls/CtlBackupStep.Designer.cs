@@ -62,7 +62,7 @@ namespace DataGuardian.Controls
             this.tlpRoot.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 46.68094F));
             this.tlpRoot.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 53.31906F));
             this.tlpRoot.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 345F));
-            this.tlpRoot.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 363F));
+            this.tlpRoot.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 364F));
             this.tlpRoot.Controls.Add(this.lblState, 0, 7);
             this.tlpRoot.Controls.Add(this.cmbAction, 0, 3);
             this.tlpRoot.Controls.Add(this.cmbPeriod, 0, 5);
@@ -103,7 +103,7 @@ namespace DataGuardian.Controls
             this.lblState.AutoSize = true;
             this.tlpRoot.SetColumnSpan(this.lblState, 4);
             this.lblState.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblState.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.lblState.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.lblState.ForeColor = System.Drawing.Color.DarkRed;
             this.lblState.Location = new System.Drawing.Point(3, 262);
             this.lblState.Margin = new System.Windows.Forms.Padding(3);
@@ -119,9 +119,9 @@ namespace DataGuardian.Controls
             this.cmbAction.FormattingEnabled = true;
             this.cmbAction.Location = new System.Drawing.Point(3, 115);
             this.cmbAction.Name = "cmbAction";
-            this.cmbAction.Size = new System.Drawing.Size(144, 28);
+            this.cmbAction.Size = new System.Drawing.Size(143, 28);
             this.cmbAction.TabIndex = 1;
-            this.cmbAction.SelectedIndexChanged += new System.EventHandler(this.cmbAction_SelectedIndexChanged);
+            this.cmbAction.SelectedIndexChanged += new System.EventHandler(this.OnCmbActionSelectedIndexChanged);
             // 
             // cmbPeriod
             // 
@@ -129,9 +129,9 @@ namespace DataGuardian.Controls
             this.cmbPeriod.FormattingEnabled = true;
             this.cmbPeriod.Location = new System.Drawing.Point(3, 194);
             this.cmbPeriod.Name = "cmbPeriod";
-            this.cmbPeriod.Size = new System.Drawing.Size(144, 28);
+            this.cmbPeriod.Size = new System.Drawing.Size(143, 28);
             this.cmbPeriod.TabIndex = 1;
-            this.cmbPeriod.SelectedIndexChanged += new System.EventHandler(this.cmbPeriod_SelectedIndexChanged);
+            this.cmbPeriod.SelectedIndexChanged += new System.EventHandler(this.OnCmbPeriodSelectedIndexChanged);
             // 
             // label1
             // 
@@ -168,7 +168,7 @@ namespace DataGuardian.Controls
             this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.label2.Location = new System.Drawing.Point(3, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(660, 22);
+            this.label2.Size = new System.Drawing.Size(659, 22);
             this.label2.TabIndex = 6;
             this.label2.Text = "Select path (or leave base path)";
             // 
@@ -189,15 +189,15 @@ namespace DataGuardian.Controls
             this.lsbPeriodParameters.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.lsbPeriodParameters.CheckOnClick = true;
             this.lsbPeriodParameters.FormattingEnabled = true;
-            this.lsbPeriodParameters.Location = new System.Drawing.Point(669, 183);
+            this.lsbPeriodParameters.Location = new System.Drawing.Point(668, 183);
             this.lsbPeriodParameters.Name = "lsbPeriodParameters";
-            this.lsbPeriodParameters.Size = new System.Drawing.Size(358, 50);
+            this.lsbPeriodParameters.Size = new System.Drawing.Size(359, 50);
             this.lsbPeriodParameters.TabIndex = 4;
             // 
             // lblPeriodParameters
             // 
             this.lblPeriodParameters.AutoSize = true;
-            this.lblPeriodParameters.Location = new System.Drawing.Point(669, 158);
+            this.lblPeriodParameters.Location = new System.Drawing.Point(668, 158);
             this.lblPeriodParameters.Name = "lblPeriodParameters";
             this.lblPeriodParameters.Size = new System.Drawing.Size(139, 20);
             this.lblPeriodParameters.TabIndex = 6;
@@ -206,7 +206,7 @@ namespace DataGuardian.Controls
             // dtpStartTime
             // 
             this.dtpStartTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.dtpStartTime.Location = new System.Drawing.Point(160, 195);
+            this.dtpStartTime.Location = new System.Drawing.Point(159, 195);
             this.dtpStartTime.Margin = new System.Windows.Forms.Padding(10, 3, 10, 3);
             this.dtpStartTime.Name = "dtpStartTime";
             this.dtpStartTime.Size = new System.Drawing.Size(151, 26);
@@ -215,7 +215,7 @@ namespace DataGuardian.Controls
             // lblRecurEvery
             // 
             this.lblRecurEvery.AutoSize = true;
-            this.lblRecurEvery.Location = new System.Drawing.Point(324, 158);
+            this.lblRecurEvery.Location = new System.Drawing.Point(323, 158);
             this.lblRecurEvery.Name = "lblRecurEvery";
             this.lblRecurEvery.Size = new System.Drawing.Size(140, 20);
             this.lblRecurEvery.TabIndex = 6;
@@ -224,7 +224,7 @@ namespace DataGuardian.Controls
             // lblStartOfAction
             // 
             this.lblStartOfAction.AutoSize = true;
-            this.lblStartOfAction.Location = new System.Drawing.Point(153, 158);
+            this.lblStartOfAction.Location = new System.Drawing.Point(152, 158);
             this.lblStartOfAction.Name = "lblStartOfAction";
             this.lblStartOfAction.Size = new System.Drawing.Size(155, 20);
             this.lblStartOfAction.TabIndex = 6;
@@ -233,7 +233,7 @@ namespace DataGuardian.Controls
             // nudRecurEvery
             // 
             this.nudRecurEvery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.nudRecurEvery.Location = new System.Drawing.Point(331, 195);
+            this.nudRecurEvery.Location = new System.Drawing.Point(330, 195);
             this.nudRecurEvery.Margin = new System.Windows.Forms.Padding(10, 3, 10, 3);
             this.nudRecurEvery.Name = "nudRecurEvery";
             this.nudRecurEvery.Size = new System.Drawing.Size(325, 26);
@@ -247,7 +247,7 @@ namespace DataGuardian.Controls
             // txtBackupFileName
             // 
             this.txtBackupFileName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtBackupFileName.Location = new System.Drawing.Point(324, 116);
+            this.txtBackupFileName.Location = new System.Drawing.Point(323, 116);
             this.txtBackupFileName.Name = "txtBackupFileName";
             this.txtBackupFileName.Size = new System.Drawing.Size(339, 26);
             this.txtBackupFileName.TabIndex = 5;
@@ -256,7 +256,7 @@ namespace DataGuardian.Controls
             // 
             this.cmbAccount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbAccount.FormattingEnabled = true;
-            this.cmbAccount.Location = new System.Drawing.Point(153, 115);
+            this.cmbAccount.Location = new System.Drawing.Point(152, 115);
             this.cmbAccount.Name = "cmbAccount";
             this.cmbAccount.Size = new System.Drawing.Size(165, 28);
             this.cmbAccount.TabIndex = 1;
@@ -264,7 +264,7 @@ namespace DataGuardian.Controls
             // lblSelectAccount
             // 
             this.lblSelectAccount.AutoSize = true;
-            this.lblSelectAccount.Location = new System.Drawing.Point(153, 79);
+            this.lblSelectAccount.Location = new System.Drawing.Point(152, 79);
             this.lblSelectAccount.Name = "lblSelectAccount";
             this.lblSelectAccount.Size = new System.Drawing.Size(117, 20);
             this.lblSelectAccount.TabIndex = 6;
@@ -273,7 +273,7 @@ namespace DataGuardian.Controls
             // lblActionParameter
             // 
             this.lblActionParameter.AutoSize = true;
-            this.lblActionParameter.Location = new System.Drawing.Point(324, 79);
+            this.lblActionParameter.Location = new System.Drawing.Point(323, 79);
             this.lblActionParameter.Name = "lblActionParameter";
             this.lblActionParameter.Size = new System.Drawing.Size(125, 20);
             this.lblActionParameter.TabIndex = 6;
@@ -282,18 +282,18 @@ namespace DataGuardian.Controls
             // ctlBackupPath
             // 
             this.ctlBackupPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.ctlBackupPath.Location = new System.Drawing.Point(669, 111);
+            this.ctlBackupPath.Location = new System.Drawing.Point(668, 111);
             this.ctlBackupPath.MaximumSize = new System.Drawing.Size(9999, 36);
             this.ctlBackupPath.MinimumSize = new System.Drawing.Size(0, 36);
             this.ctlBackupPath.Name = "ctlBackupPath";
             this.ctlBackupPath.SelectedPath = "";
-            this.ctlBackupPath.Size = new System.Drawing.Size(358, 36);
+            this.ctlBackupPath.Size = new System.Drawing.Size(359, 36);
             this.ctlBackupPath.TabIndex = 7;
             // 
             // lblEnterPath
             // 
             this.lblEnterPath.AutoSize = true;
-            this.lblEnterPath.Location = new System.Drawing.Point(669, 79);
+            this.lblEnterPath.Location = new System.Drawing.Point(668, 79);
             this.lblEnterPath.Name = "lblEnterPath";
             this.lblEnterPath.Size = new System.Drawing.Size(84, 20);
             this.lblEnterPath.TabIndex = 6;

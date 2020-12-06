@@ -84,7 +84,7 @@ namespace DataGuardian.Controls
 
         private void OnCmdDelete(object sender, EventArgs e)
         {
-            btnDelete_Click(sender, e);
+            OnBtnDeleteClick(sender, e);
         }
 
         private void OnBackupScriptsChanged(object sender, IEnumerable<IBackupScript> e)
@@ -167,24 +167,17 @@ namespace DataGuardian.Controls
             }
         }
 
-        private void btnDelete_Click(object sender, EventArgs e)
+        private void OnBtnDeleteClick(object sender, EventArgs e)
         {
-            try
-            {
-                if (SelectedBackupScript != null)
-                {
-                    CoreStatic.Instance.BackupManager.RemoveBackupScript(SelectedBackupScript);
-                    GuiHelper.ShowMessage("Backup script removed");
-                }
-            }
-            catch (Exception ex)
-            {
-                Core.Logger.Log(nameof(btnDelete_Click), ex);
-                GuiHelper.ShowMessage(ex);
-            }
+            Core.BackupManager.RemoveBackupScriptGui(SelectedBackupScript);
         }
 
         private void OnBtnEditClick(object sender, EventArgs e)
+        {
+            ShowEditBackupDialog();
+        }
+
+        private void ShowEditBackupDialog()
         {
             try
             {
@@ -207,7 +200,7 @@ namespace DataGuardian.Controls
             }
         }
 
-        private void btnCreate_Click(object sender, EventArgs e)
+        private void OnBtnCreateClick(object sender, EventArgs e)
         {
             try
             {
@@ -215,17 +208,17 @@ namespace DataGuardian.Controls
             }
             catch (Exception ex)
             {
-                Core.Logger.Log(nameof(btnCreate_Click), ex);
+                Core.Logger.Log(nameof(OnBtnCreateClick), ex);
                 GuiHelper.ShowMessage(ex);
             }
         }
 
-        private void dgvData_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        private void OnDgvDataCellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            OnBtnEditClick(sender, e);
+            ShowEditBackupDialog();
         }
 
-        private void dgvData_CellClick(object sender, DataGridViewCellEventArgs e)
+        private void OnDgvDataCellClick(object sender, DataGridViewCellEventArgs e)
         {
             try
             {
@@ -250,6 +243,11 @@ namespace DataGuardian.Controls
             {
                 Core.Logger.Log(nameof(Core.BackupManager.EditBackupScript), ex);
             }
+        }
+
+        private void OnCmdShowRemoteBackupsClick(object sender, EventArgs e)
+        {
+            Core.BackupManager.ShowRemoteBackupsGui(SelectedBackupScript);
         }
     }
 }

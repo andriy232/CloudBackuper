@@ -11,12 +11,15 @@ namespace DataGuardian.Plugins.Backups
     {
         public readonly List<RemoteBackup> Backups = new List<RemoteBackup>();
         public ICloudStorageProvider CloudStorageProvider { get; }
+        public string BackupName { get; }
 
         public RemoteBackupsState(
             ICloudStorageProvider cloudStorageProvider,
+            string backupFileName,
             IEnumerable<(string id, string Name, DateTime ClientModified)> valueTuples)
         {
-            CloudStorageProvider = cloudStorageProvider;
+            BackupName = backupFileName ?? throw new ArgumentException(nameof(backupFileName));
+            CloudStorageProvider = cloudStorageProvider ?? throw new ArgumentException(nameof(cloudStorageProvider));
 
             if (valueTuples != null)
                 Backups.AddRange(valueTuples.Select(x => new RemoteBackup(x.id, x.Name, x.ClientModified)));
@@ -24,9 +27,11 @@ namespace DataGuardian.Plugins.Backups
 
         public RemoteBackupsState(
             ICloudStorageProvider cloudStorageProvider,
+            string backupFileName,
             IEnumerable<RemoteBackup> backups)
         {
-            CloudStorageProvider = cloudStorageProvider;
+            BackupName = backupFileName ?? throw new ArgumentException(nameof(backupFileName));
+            CloudStorageProvider = cloudStorageProvider ?? throw new ArgumentException(nameof(cloudStorageProvider));
 
             Backups.AddRange(backups);
         }

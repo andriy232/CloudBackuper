@@ -33,6 +33,7 @@ namespace DataGuardian.Windows
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WndMain));
             this.splRoot = new System.Windows.Forms.SplitContainer();
+            this.ctlCloudAccounts = new DataGuardian.Controls.CtlCloudAccounts();
             this.splChild = new System.Windows.Forms.SplitContainer();
             this.ctlBackupScripts = new DataGuardian.Controls.CtlBackupScripts();
             this.ctlLog = new DataGuardian.Controls.CtlLog();
@@ -48,7 +49,7 @@ namespace DataGuardian.Windows
             this.preferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addToAutoStartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctlCloudAccounts1 = new DataGuardian.Controls.CtlCloudAccounts();
+            this.showRemoteBackupsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splRoot)).BeginInit();
             this.splRoot.Panel1.SuspendLayout();
             this.splRoot.Panel2.SuspendLayout();
@@ -68,7 +69,7 @@ namespace DataGuardian.Windows
             // 
             // splRoot.Panel1
             // 
-            this.splRoot.Panel1.Controls.Add(this.ctlCloudAccounts1);
+            this.splRoot.Panel1.Controls.Add(this.ctlCloudAccounts);
             // 
             // splRoot.Panel2
             // 
@@ -76,6 +77,16 @@ namespace DataGuardian.Windows
             this.splRoot.Size = new System.Drawing.Size(1233, 700);
             this.splRoot.SplitterDistance = 410;
             this.splRoot.TabIndex = 0;
+            // 
+            // ctlCloudAccounts1
+            // 
+            this.ctlCloudAccounts.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ctlCloudAccounts.Location = new System.Drawing.Point(0, 0);
+            this.ctlCloudAccounts.Name = "ctlCloudAccounts";
+            this.ctlCloudAccounts.Padding = new System.Windows.Forms.Padding(1, 5, 1, 1);
+            this.ctlCloudAccounts.SelectedCloudProvider = null;
+            this.ctlCloudAccounts.Size = new System.Drawing.Size(410, 700);
+            this.ctlCloudAccounts.TabIndex = 0;
             // 
             // splChild
             // 
@@ -100,6 +111,7 @@ namespace DataGuardian.Windows
             this.ctlBackupScripts.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ctlBackupScripts.Location = new System.Drawing.Point(0, 0);
             this.ctlBackupScripts.Name = "ctlBackupScripts";
+            this.ctlBackupScripts.Padding = new System.Windows.Forms.Padding(1, 5, 1, 1);
             this.ctlBackupScripts.SelectedBackupScript = null;
             this.ctlBackupScripts.Size = new System.Drawing.Size(819, 512);
             this.ctlBackupScripts.TabIndex = 0;
@@ -109,6 +121,7 @@ namespace DataGuardian.Windows
             this.ctlLog.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ctlLog.Location = new System.Drawing.Point(0, 0);
             this.ctlLog.Name = "ctlLog";
+            this.ctlLog.Padding = new System.Windows.Forms.Padding(1, 5, 1, 1);
             this.ctlLog.Size = new System.Drawing.Size(819, 184);
             this.ctlLog.TabIndex = 0;
             // 
@@ -142,28 +155,29 @@ namespace DataGuardian.Windows
             this.addProviderToolStripMenuItem.Name = "addProviderToolStripMenuItem";
             this.addProviderToolStripMenuItem.Size = new System.Drawing.Size(299, 34);
             this.addProviderToolStripMenuItem.Text = "Add cloud provider";
-            this.addProviderToolStripMenuItem.Click += new System.EventHandler(this.addProviderToolStripMenuItem_Click);
+            this.addProviderToolStripMenuItem.Click += new System.EventHandler(this.OnCmdAddProviderToolStripMenuItemClick);
             // 
             // editProviderToolStripMenuItem
             // 
             this.editProviderToolStripMenuItem.Name = "editProviderToolStripMenuItem";
             this.editProviderToolStripMenuItem.Size = new System.Drawing.Size(299, 34);
             this.editProviderToolStripMenuItem.Text = "Remove cloud provider";
-            this.editProviderToolStripMenuItem.Click += new System.EventHandler(this.editProviderToolStripMenuItem_Click);
+            this.editProviderToolStripMenuItem.Click += new System.EventHandler(this.OnCmdEditProviderToolStripMenuItemClick);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(299, 34);
             this.exitToolStripMenuItem.Text = "Exit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.OnCmdExitToolStripMenuItemClick);
             // 
             // backupToolStripMenuItem
             // 
             this.backupToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.createBackupScriptToolStripMenuItem,
             this.editBackupScriptToolStripMenuItem1,
-            this.removeBackupScriptToolStripMenuItem1});
+            this.removeBackupScriptToolStripMenuItem1,
+            this.showRemoteBackupsToolStripMenuItem});
             this.backupToolStripMenuItem.Name = "backupToolStripMenuItem";
             this.backupToolStripMenuItem.Size = new System.Drawing.Size(85, 29);
             this.backupToolStripMenuItem.Text = "Backup";
@@ -171,23 +185,23 @@ namespace DataGuardian.Windows
             // createBackupScriptToolStripMenuItem
             // 
             this.createBackupScriptToolStripMenuItem.Name = "createBackupScriptToolStripMenuItem";
-            this.createBackupScriptToolStripMenuItem.Size = new System.Drawing.Size(289, 34);
+            this.createBackupScriptToolStripMenuItem.Size = new System.Drawing.Size(291, 34);
             this.createBackupScriptToolStripMenuItem.Text = "Create backup script";
-            this.createBackupScriptToolStripMenuItem.Click += new System.EventHandler(this.createBackupScriptToolStripMenuItem_Click);
+            this.createBackupScriptToolStripMenuItem.Click += new System.EventHandler(this.OnCmdCreateBackupScriptToolStripMenuItemClick);
             // 
             // editBackupScriptToolStripMenuItem1
             // 
             this.editBackupScriptToolStripMenuItem1.Name = "editBackupScriptToolStripMenuItem1";
-            this.editBackupScriptToolStripMenuItem1.Size = new System.Drawing.Size(289, 34);
+            this.editBackupScriptToolStripMenuItem1.Size = new System.Drawing.Size(291, 34);
             this.editBackupScriptToolStripMenuItem1.Text = "Edit backup script";
-            this.editBackupScriptToolStripMenuItem1.Click += new System.EventHandler(this.editBackupScriptToolStripMenuItem1_Click);
+            this.editBackupScriptToolStripMenuItem1.Click += new System.EventHandler(this.OnCmdEditBackupScriptToolStripMenuItem1Click);
             // 
             // removeBackupScriptToolStripMenuItem1
             // 
             this.removeBackupScriptToolStripMenuItem1.Name = "removeBackupScriptToolStripMenuItem1";
-            this.removeBackupScriptToolStripMenuItem1.Size = new System.Drawing.Size(289, 34);
+            this.removeBackupScriptToolStripMenuItem1.Size = new System.Drawing.Size(291, 34);
             this.removeBackupScriptToolStripMenuItem1.Text = "Remove backup script";
-            this.removeBackupScriptToolStripMenuItem1.Click += new System.EventHandler(this.removeBackupScriptToolStripMenuItem1_Click);
+            this.removeBackupScriptToolStripMenuItem1.Click += new System.EventHandler(this.OnCmdRemoveBackupScriptToolStripMenuItemClick);
             // 
             // preferencesToolStripMenuItem
             // 
@@ -202,23 +216,21 @@ namespace DataGuardian.Windows
             this.addToAutoStartToolStripMenuItem.Name = "addToAutoStartToolStripMenuItem";
             this.addToAutoStartToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
             this.addToAutoStartToolStripMenuItem.Text = "Add to AutoStart";
-            this.addToAutoStartToolStripMenuItem.Click += new System.EventHandler(this.addToAutoStartToolStripMenuItem_Click);
+            this.addToAutoStartToolStripMenuItem.Click += new System.EventHandler(this.OnCmdAddToAutoStartToolStripMenuItemClick);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(78, 29);
             this.aboutToolStripMenuItem.Text = "About";
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.OnCmdAboutToolStripMenuItemClick);
             // 
-            // ctlCloudAccounts1
+            // showRemoteBackupsToolStripMenuItem
             // 
-            this.ctlCloudAccounts1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ctlCloudAccounts1.Location = new System.Drawing.Point(0, 0);
-            this.ctlCloudAccounts1.Name = "ctlCloudAccounts1";
-            this.ctlCloudAccounts1.SelectedCloudProvider = null;
-            this.ctlCloudAccounts1.Size = new System.Drawing.Size(410, 700);
-            this.ctlCloudAccounts1.TabIndex = 0;
+            this.showRemoteBackupsToolStripMenuItem.Name = "showRemoteBackupsToolStripMenuItem";
+            this.showRemoteBackupsToolStripMenuItem.Size = new System.Drawing.Size(291, 34);
+            this.showRemoteBackupsToolStripMenuItem.Text = "Show remote backups";
+            this.showRemoteBackupsToolStripMenuItem.Click += new System.EventHandler(this.OnCmdShowRemoteBackupsToolStripMenuItemClick);
             // 
             // WndMain
             // 
@@ -262,11 +274,11 @@ namespace DataGuardian.Windows
         private System.Windows.Forms.ToolStripMenuItem removeBackupScriptToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private CtlBackupScripts ctlBackupScripts;
-        private CtlCloudAccounts ctlCloudAccounts;
         private CtlLog ctlLog;
         private System.Windows.Forms.ToolStripMenuItem preferencesToolStripMenuItem;
         internal System.Windows.Forms.ToolStripMenuItem addToAutoStartToolStripMenuItem;
-        private CtlCloudAccounts ctlCloudAccounts1;
+        private CtlCloudAccounts ctlCloudAccounts;
+        private System.Windows.Forms.ToolStripMenuItem showRemoteBackupsToolStripMenuItem;
     }
 }
 

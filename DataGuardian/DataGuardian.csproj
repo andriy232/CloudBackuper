@@ -260,6 +260,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Windows\WndRemoteBackups.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Windows\WndRemoteBackups.Designer.cs">
+      <DependentUpon>WndRemoteBackups.cs</DependentUpon>
+    </Compile>
     <Compile Include="GuiManager.cs" />
     <Compile Include="Impl\BackupScript.cs" />
     <Compile Include="Controls\CtlBackupScripts.cs">
@@ -345,6 +351,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\CtlLog.resx">
       <DependentUpon>CtlLog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Windows\WndRemoteBackups.resx">
+      <DependentUpon>WndRemoteBackups.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Windows\WndAbout.resx">
       <DependentUpon>WndAbout.cs</DependentUpon>

@@ -61,6 +61,7 @@ namespace DataGuardian.Controls
             this.cmdDelete = new System.Windows.Forms.ToolStripMenuItem();
             this.ctlFilter = new DataGuardian.Controls.CtlFilter();
             this.gtbRoot = new System.Windows.Forms.GroupBox();
+            this.cmdShowRemoteBackups = new System.Windows.Forms.ToolStripMenuItem();
             this.tlpRoot.SuspendLayout();
             this.tlpButtons.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvData)).BeginInit();
@@ -108,7 +109,7 @@ namespace DataGuardian.Controls
             this.btnDelete.Size = new System.Drawing.Size(75, 34);
             this.btnDelete.TabIndex = 1;
             this.btnDelete.UseVisualStyleBackColor = true;
-            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            this.btnDelete.Click += new System.EventHandler(this.OnBtnDeleteClick);
             // 
             // btnEdit
             // 
@@ -132,7 +133,7 @@ namespace DataGuardian.Controls
             this.btnCreate.Size = new System.Drawing.Size(75, 34);
             this.btnCreate.TabIndex = 0;
             this.btnCreate.UseVisualStyleBackColor = true;
-            this.btnCreate.Click += new System.EventHandler(this.btnCreate_Click);
+            this.btnCreate.Click += new System.EventHandler(this.OnBtnCreateClick);
             // 
             // dgvData
             // 
@@ -170,8 +171,8 @@ namespace DataGuardian.Controls
             this.dgvData.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvData.Size = new System.Drawing.Size(972, 406);
             this.dgvData.TabIndex = 1;
-            this.dgvData.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvData_CellClick);
-            this.dgvData.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvData_CellContentDoubleClick);
+            this.dgvData.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnDgvDataCellClick);
+            this.dgvData.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.OnDgvDataCellContentDoubleClick);
             // 
             // clmCurrentState
             // 
@@ -251,34 +252,35 @@ namespace DataGuardian.Controls
             this.ctxScript.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.ctxScript.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.cmdEdit,
+            this.cmdShowRemoteBackups,
             this.cmdToggleDisable,
             this.cmdPerformNow,
             this.cmdDelete});
             this.ctxScript.Name = "ctxScript";
-            this.ctxScript.Size = new System.Drawing.Size(202, 132);
+            this.ctxScript.Size = new System.Drawing.Size(262, 197);
             // 
             // cmdEdit
             // 
             this.cmdEdit.Name = "cmdEdit";
-            this.cmdEdit.Size = new System.Drawing.Size(201, 32);
+            this.cmdEdit.Size = new System.Drawing.Size(261, 32);
             this.cmdEdit.Text = "Edit";
             // 
             // cmdToggleDisable
             // 
             this.cmdToggleDisable.Name = "cmdToggleDisable";
-            this.cmdToggleDisable.Size = new System.Drawing.Size(201, 32);
+            this.cmdToggleDisable.Size = new System.Drawing.Size(261, 32);
             this.cmdToggleDisable.Text = "Enable/Disable";
             // 
             // cmdPerformNow
             // 
             this.cmdPerformNow.Name = "cmdPerformNow";
-            this.cmdPerformNow.Size = new System.Drawing.Size(201, 32);
+            this.cmdPerformNow.Size = new System.Drawing.Size(261, 32);
             this.cmdPerformNow.Text = "Perform now";
             // 
             // cmdDelete
             // 
             this.cmdDelete.Name = "cmdDelete";
-            this.cmdDelete.Size = new System.Drawing.Size(201, 32);
+            this.cmdDelete.Size = new System.Drawing.Size(261, 32);
             this.cmdDelete.Text = "Delete";
             // 
             // ctlFilter
@@ -302,6 +304,13 @@ namespace DataGuardian.Controls
             this.gtbRoot.TabIndex = 1;
             this.gtbRoot.TabStop = false;
             this.gtbRoot.Text = "Your backup Scripts";
+            // 
+            // cmdShowRemoteBackups
+            // 
+            this.cmdShowRemoteBackups.Name = "cmdShowRemoteBackups";
+            this.cmdShowRemoteBackups.Size = new System.Drawing.Size(261, 32);
+            this.cmdShowRemoteBackups.Text = "Show remote backups";
+            this.cmdShowRemoteBackups.Click += new System.EventHandler(this.OnCmdShowRemoteBackupsClick);
             // 
             // CtlBackupScripts
             // 
@@ -343,5 +352,6 @@ namespace DataGuardian.Controls
         private System.Windows.Forms.ToolStripMenuItem cmdPerformNow;
         private System.Windows.Forms.ToolStripMenuItem cmdDelete;
         private System.Windows.Forms.GroupBox gtbRoot;
+        private System.Windows.Forms.ToolStripMenuItem cmdShowRemoteBackups;
     }
 }

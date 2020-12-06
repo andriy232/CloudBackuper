@@ -37,7 +37,7 @@ namespace DataGuardian.Windows
             this.lblName = new System.Windows.Forms.Label();
             this.lblTargetPath = new System.Windows.Forms.Label();
             this.txtName = new System.Windows.Forms.TextBox();
-            this.ctlPath = new CtlPath();
+            this.ctlPath = new DataGuardian.GUI.UserControls.CtlPath();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.tlpRoot.SuspendLayout();
@@ -156,7 +156,7 @@ namespace DataGuardian.Windows
             this.ClientSize = new System.Drawing.Size(1278, 485);
             this.Controls.Add(this.tlpRoot);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximumSize = new System.Drawing.Size(1300, 80000);
+            this.MaximumSize = new System.Drawing.Size(80000, 80000);
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(1300, 400);
             this.Name = "WndCreateEditBackupScript";

@@ -1,4 +1,5 @@
-﻿using DataGuardian.Impl;
+﻿using DataGuardian.GUI.Controls;
+using DataGuardian.Impl;
 using DataGuardian.Plugins;
 using DataGuardian.Plugins.Plugins;
 using System;
@@ -7,13 +8,13 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using DataGuardian.GUI.Controls;
 
 namespace DataGuardian.Controls
 {
     public partial class CtlBackupStep : UserControlBase
     {
         private IBackupStep _originalStep;
+        private Button _btnShowRemoteBackups;
 
         public string SelectedPath
         {
@@ -124,6 +125,8 @@ namespace DataGuardian.Controls
                 _originalStep = value;
                 SelectedPath = value.TargetPath;
                 SelectedAccount = value.Account;
+                cmbAccount.Refresh();
+                cmbAccount.Invalidate();
 
                 SelectedBackupAction = value.Action;
                 SelectedActionParameter = value.ActionParameter;
@@ -133,7 +136,7 @@ namespace DataGuardian.Controls
                 SelectedPeriodParameters = value.PeriodParameters;
                 SelectedRecurEvery = value.RecurEvery;
                 SelectedStartDate = value.StartDate;
-                State = string.IsNullOrWhiteSpace(value.LastState) ? "Not performed yet" : value.LastState;
+                State = string.IsNullOrWhiteSpace(value.LastState) ? $"Everything fine, last perform time: {value.LastPerformTime}" : value.LastState;
             }
         }
 
@@ -147,27 +150,12 @@ namespace DataGuardian.Controls
         {
             InitializeComponent();
 
-            cmbAction.DataSource = Enum.GetValues(typeof(BackupAction));
-            cmbPeriod.DataSource = Enum.GetValues(typeof(BackupPeriod));
             SetAccounts(accounts);
-
-            foreach (var label in tlpRoot.Controls.OfType<Label>())
-                label.BackColor = Color.Transparent;
-
-            cmbAccount.SelectedIndexChanged += (o, e) =>
-            {
-
-            };
         }
 
         private void SetAccounts(IEnumerable<IAccount> accounts)
         {
-            //cmbAccount.Items.Clear();
-            //
-            //foreach (var account in accounts.ToArray())
-            //    cmbAccount.Items.Add(account);
-
-            cmbAccount.DataSource = accounts.Cast<CloudProviderAccount>().ToArray();
+            cmbAccount.DataSource = accounts.ToArray();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -175,48 +163,72 @@ namespace DataGuardian.Controls
             var r = new Random();
             BackColor = Color.FromArgb(100, r.Next(0, 255), r.Next(0, 255), r.Next(0, 255));
 
+            _btnShowRemoteBackups = new Button
+            {
+                Name = "btnShowRemoteBackups",
+                Text = "Show Remote Backups",
+                Dock = DockStyle.Fill,
+                MaximumSize = new Size(9999, ctlBackupPath.Height),
+                Size = new Size(9999, ctlBackupPath.Height),
+                Margin = txtBackupFileName.Margin,
+                Anchor = AnchorStyles.Left | AnchorStyles.Right
+            };
+            _btnShowRemoteBackups.Click += OnBtnShowRemoteBackupsClick;
+
+            cmbAction.DataSource = Enum.GetValues(typeof(BackupAction));
+            cmbPeriod.DataSource = Enum.GetValues(typeof(BackupPeriod));
+
+            foreach (var label in tlpRoot.Controls.OfType<Label>())
+                label.BackColor = Color.Transparent;
+
             dtpStartTime.Value = DateTime.Today.AddDays(1);
 
             base.OnLoad(e);
         }
 
-        private void cmbAction_SelectedIndexChanged(object sender, EventArgs e)
+        private async void OnBtnShowRemoteBackupsClick(object sender, EventArgs e)
+        {
+            await Core.BackupManager.ShowRemoteBackupsGui(Step);
+        }
+
+        private void OnCmbActionSelectedIndexChanged(object sender, EventArgs e)
         {
             switch (SelectedBackupAction)
             {
                 case BackupAction.BackupTo:
                     lblActionParameter.Text = "Enter backup FileName";
 
-                    HideCtrs(lblEnterPath, ctlBackupPath);
+                    ReplaceControls(ctlBackupPath, _btnShowRemoteBackups);
+                    HideCtrs(lblEnterPath);
                     ShowCtrs(lblSelectAccount, cmbAccount, lblActionParameter, txtBackupFileName);
-
-                    SetAccounts(Core.CloudAccountsManager.Accounts);
                     break;
                 case BackupAction.RestoreTo:
                     lblActionParameter.Text = "Enter backup FileName";
 
-                    ShowCtrs(lblSelectAccount, cmbAccount, lblActionParameter, txtBackupFileName, lblEnterPath, ctlBackupPath);
-
-                    SetAccounts(Core.CloudAccountsManager.Accounts);
+                    ReplaceControls(ctlBackupPath, _btnShowRemoteBackups);
+                    ShowCtrs(lblSelectAccount, cmbAccount, lblActionParameter, txtBackupFileName, lblEnterPath);
                     break;
                 case BackupAction.CopyTo:
+                    ReplaceControls(_btnShowRemoteBackups, ctlBackupPath);
                     HideCtrs(lblSelectAccount, cmbAccount, lblActionParameter, txtBackupFileName);
-                    ShowCtrs(lblEnterPath, ctlBackupPath);
+                    ShowCtrs(lblEnterPath);
                     break;
                 case BackupAction.SendToEmail:
-                    HideCtrs(lblSelectAccount, cmbAccount, lblEnterPath, ctlBackupPath);
+                    ReplaceControls(_btnShowRemoteBackups, ctlBackupPath);
+                    HideCtrs(lblSelectAccount, cmbAccount, lblEnterPath);
                     ShowCtrs(lblActionParameter, txtBackupFileName);
                     break;
                 case BackupAction.Archive:
+                    ReplaceControls(_btnShowRemoteBackups, ctlBackupPath);
                     HideCtrs(lblSelectAccount, cmbAccount, lblActionParameter, txtBackupFileName);
-                    ShowCtrs(lblEnterPath, ctlBackupPath);
+                    ShowCtrs(lblEnterPath);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        private void cmbPeriod_SelectedIndexChanged(object sender, EventArgs e)
+        private void OnCmbPeriodSelectedIndexChanged(object sender, EventArgs e)
         {
             switch (SelectedBackupPeriod)
             {
@@ -254,6 +266,14 @@ namespace DataGuardian.Controls
         {
             foreach (var ctrl in controls)
                 ctrl.Visible = true;
+        }
+
+        private void ReplaceControls(Control oldControl, Control newControl)
+        {
+            var cellPosition = tlpRoot.GetCellPosition(oldControl);
+            tlpRoot.Controls.Remove(oldControl);
+
+            tlpRoot.Controls.Add(newControl, cellPosition.Column, cellPosition.Row);
         }
     }
 }
