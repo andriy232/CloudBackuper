@@ -80,11 +80,56 @@ namespace DataGuardian.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error during perform Local files check.
+        /// </summary>
+        internal static string Str_BackupManager_CronJobError {
+            get {
+                return ResourceManager.GetString("Str_BackupManager_CronJobError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Data not restored, please check.
+        /// </summary>
+        internal static string Str_BackupManager_DataNotRestored {
+            get {
+                return ResourceManager.GetString("Str_BackupManager_DataNotRestored", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Data restored successfully.
+        /// </summary>
+        internal static string Str_BackupManager_DataRestoredSuccessfully {
+            get {
+                return ResourceManager.GetString("Str_BackupManager_DataRestoredSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Seems local version of &apos;{0}&apos; - [{1}] missing.{2}Do you want to restore it from last remote backup?.
+        /// </summary>
+        internal static string Str_BackupManager_LocalVersionMissing {
+            get {
+                return ResourceManager.GetString("Str_BackupManager_LocalVersionMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please enter name and path for your backup script.
         /// </summary>
         internal static string Str_BackupManager_PleaseEnterName {
             get {
                 return ResourceManager.GetString("Str_BackupManager_PleaseEnterName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start of backup: &apos;{0}&apos;.
+        /// </summary>
+        internal static string Str_BackupManager_StartBackup {
+            get {
+                return ResourceManager.GetString("Str_BackupManager_StartBackup", resourceCulture);
             }
         }
     }

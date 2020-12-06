@@ -127,4 +127,19 @@
   <data name="Str_BackupManager_BackupName" xml:space="preserve">
     <value>New_backup_{0}</value>
   </data>
+  <data name="Str_BackupManager_DataRestoredSuccessfully" xml:space="preserve">
+    <value>Data restored successfully</value>
+  </data>
+  <data name="Str_BackupManager_DataNotRestored" xml:space="preserve">
+    <value>Data not restored, please check</value>
+  </data>
+  <data name="Str_BackupManager_LocalVersionMissing" xml:space="preserve">
+    <value>Seems local version of '{0}' - [{1}] missing.{2}Do you want to restore it from last remote backup?</value>
+  </data>
+  <data name="Str_BackupManager_StartBackup" xml:space="preserve">
+    <value>Start of backup: '{0}'</value>
+  </data>
+  <data name="Str_BackupManager_CronJobError" xml:space="preserve">
+    <value>Error during perform Local files check</value>
+  </data>
 </root>

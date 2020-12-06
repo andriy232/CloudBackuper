@@ -46,15 +46,15 @@ namespace DataGuardian.Controls
             this.clmImage = new System.Windows.Forms.DataGridViewImageColumn();
             this.clmName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.clmType = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ctlFilter = new DataGuardian.Controls.CtlFilter();
-            this.grbRoot = new System.Windows.Forms.GroupBox();
             this.ctxMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cmdDeleteAccount = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctlFilter = new DataGuardian.Controls.CtlFilter();
+            this.grbRoot = new System.Windows.Forms.GroupBox();
             this.tlpRoot.SuspendLayout();
             this.tlpButtons.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvData)).BeginInit();
-            this.grbRoot.SuspendLayout();
             this.ctxMenu.SuspendLayout();
+            this.grbRoot.SuspendLayout();
             this.SuspendLayout();
             // 
             // tlpRoot
@@ -168,6 +168,21 @@ namespace DataGuardian.Controls
             this.clmType.Name = "clmType";
             this.clmType.ReadOnly = true;
             // 
+            // ctxMenu
+            // 
+            this.ctxMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this.ctxMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.cmdDeleteAccount});
+            this.ctxMenu.Name = "ctxMenu";
+            this.ctxMenu.Size = new System.Drawing.Size(202, 36);
+            // 
+            // cmdDeleteAccount
+            // 
+            this.cmdDeleteAccount.Name = "cmdDeleteAccount";
+            this.cmdDeleteAccount.Size = new System.Drawing.Size(201, 32);
+            this.cmdDeleteAccount.Text = "Delete account";
+            this.cmdDeleteAccount.Click += new System.EventHandler(this.OnCmdDeleteAccountClick);
+            // 
             // ctlFilter
             // 
             this.ctlFilter.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -190,21 +205,6 @@ namespace DataGuardian.Controls
             this.grbRoot.TabStop = false;
             this.grbRoot.Text = "Your cloud Accounts";
             // 
-            // ctxMenu
-            // 
-            this.ctxMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
-            this.ctxMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.cmdDeleteAccount});
-            this.ctxMenu.Name = "ctxMenu";
-            this.ctxMenu.Size = new System.Drawing.Size(202, 36);
-            // 
-            // cmdDeleteAccount
-            // 
-            this.cmdDeleteAccount.Name = "cmdDeleteAccount";
-            this.cmdDeleteAccount.Size = new System.Drawing.Size(201, 32);
-            this.cmdDeleteAccount.Text = "Delete account";
-            this.cmdDeleteAccount.Click += new System.EventHandler(this.OnCmdDeleteAccountClick);
-            // 
             // CtlCloudAccounts
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -216,8 +216,8 @@ namespace DataGuardian.Controls
             this.tlpRoot.ResumeLayout(false);
             this.tlpButtons.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvData)).EndInit();
-            this.grbRoot.ResumeLayout(false);
             this.ctxMenu.ResumeLayout(false);
+            this.grbRoot.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

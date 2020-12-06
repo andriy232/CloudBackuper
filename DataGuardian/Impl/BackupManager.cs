@@ -18,8 +18,8 @@ namespace DataGuardian.Impl
     public class BackupManager : PluginBase, IBackupManager
     {
         private readonly List<IBackupScript> _scripts = new List<IBackupScript>();
-        private object _locker = new object();
-        private bool _performingJob = false;
+        private readonly object _locker = new object();
+        private bool _performingJob;
         private BackupDbWorker _dbWorker;
         private Timer _timer;
         private CancellationTokenSource _cancellationTokenSource;
@@ -72,18 +72,20 @@ namespace DataGuardian.Impl
             {
                 try
                 {
+                    Core.Logger.Log(string.Format(Resources.Str_BackupManager_StartBackup, backupScript.Name));
+
                     foreach (var backupStep in backupScript.Steps.ToList())
                     {
                         var needRestore = NeedRestoreStep(backupStep);
                         if (needRestore)
-                            await PerformRestore(backupScript, backupStep, cancellationToken);
+                            await PerformRestoreWithGui(backupScript, backupStep, cancellationToken);
                     }
 
                     await Perform(backupScript);
                 }
                 catch (Exception ex)
                 {
-                    Core.Logger.Log($"Error during perform Local files check", ex);
+                    Core.Logger.Log(Resources.Str_BackupManager_CronJobError, ex);
                 }
             }
 
@@ -96,13 +98,14 @@ namespace DataGuardian.Impl
             return backupStep.Action == BackupAction.BackupTo && !backupStep.CheckIfLocalCopyExists();
         }
 
-        private async Task PerformRestore(
+        private async Task PerformRestoreWithGui(
             IBackupScript script,
             IBackupStep failed, 
             CancellationToken cancellationToken)
         {
             var dialogResult = GuiHelper.ShowConfirmationDialog(
-                $"Seems local version of '{script.Name}' - [{failed.TargetPath}] missing.{Environment.NewLine}Do you want to restore it from last remote backup?");
+                string.Format(Resources.Str_BackupManager_LocalVersionMissing,
+                    script.Name, failed.TargetPath, Environment.NewLine));
 
             if (dialogResult == DialogResult.OK)
             {
@@ -126,8 +129,8 @@ namespace DataGuardian.Impl
                 EditBackupScript(script, script);
 
                 GuiHelper.ShowMessage(failed.CheckIfLocalCopyExists()
-                    ? "Data restored successfully"
-                    : "Data not restored, please check");
+                    ? Resources.Str_BackupManager_DataRestoredSuccessfully
+                    : Resources.Str_BackupManager_DataNotRestored);
             }
         }
 
