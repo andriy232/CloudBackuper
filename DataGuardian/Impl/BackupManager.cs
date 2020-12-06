@@ -44,10 +44,9 @@ namespace DataGuardian.Impl
             StartTimer();
         }
 
-
         private void StartTimer()
         {
-            _timer = new Timer {Interval = (int) TimeSpan.FromMinutes(1).TotalSeconds};
+            _timer = new Timer {Interval = (int) TimeSpan.FromMinutes(1).TotalMilliseconds};
             _timer.Tick += OnTimerTick;
             _timer.Start();
 
@@ -68,18 +67,35 @@ namespace DataGuardian.Impl
             lock (_locker)
                 _performingJob = true;
 
-            foreach (var backupScript in GetScriptsToPerform())
+            foreach (var backupScript in GetBackupList())
+            {
+                try
+                {
+                    foreach (var backupStep in backupScript.Steps.ToList())
+                    {
+                        var needRestore = NeedRestoreStep(backupStep);
+                        if (!needRestore)
+                            continue;
+
+                        Core.Logger.Log(string.Format(
+                            Resources.Str_BackupManager_LocalVersionMissingLog,
+                            backupScript.TargetPath,
+                            backupScript.Name));
+
+                        await PerformRestoreWithGui(backupScript, backupStep, cancellationToken);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Core.Logger.Log(Resources.Str_BackupManager_CronJobError, ex);
+                }
+            }
+
+            foreach (var backupScript in GetBackupListToPerform())
             {
                 try
                 {
                     Core.Logger.Log(string.Format(Resources.Str_BackupManager_StartBackup, backupScript.Name));
-
-                    foreach (var backupStep in backupScript.Steps.ToList())
-                    {
-                        var needRestore = NeedRestoreStep(backupStep);
-                        if (needRestore)
-                            await PerformRestoreWithGui(backupScript, backupStep, cancellationToken);
-                    }
 
                     await Perform(backupScript);
                 }
@@ -91,6 +107,16 @@ namespace DataGuardian.Impl
 
             lock (_locker)
                 _performingJob = false;
+        }
+
+        private List<IBackupScript> GetBackupList()
+        {
+            return BackupScripts.Where(x => x.Enabled).ToList();
+        }
+
+        private List<IBackupScript> GetBackupListToPerform()
+        {
+            return BackupScripts.Where(x => x.Enabled && x.Steps.Any(NeedPerform)).ToList();
         }
 
         private static bool NeedRestoreStep(IBackupStep backupStep)
@@ -158,11 +184,6 @@ namespace DataGuardian.Impl
             EditBackupScript(backupScript, backupScript);
 
             backupScript.CurrentState = BackupCurrentState.Finished;
-        }
-
-        private IEnumerable<IBackupScript> GetScriptsToPerform()
-        {
-            return BackupScripts.Where(x => x.Enabled && x.Steps.Any(NeedPerform)).ToList();
         }
 
         private static bool NeedPerform(IBackupStep s)

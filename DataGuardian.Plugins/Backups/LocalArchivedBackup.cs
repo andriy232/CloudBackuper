@@ -38,7 +38,7 @@ namespace DataGuardian.Plugins.Backups
                 var entryName = Path.GetFileName(sourcePath);
                 var destinationPath = Path.Combine(_tempDir, entryName);
 
-                _core.Logger.Log($"Copying data to temp: {destinationPath}");
+                _core.Logger.Log(InfoLogLevel.Message, "Backup", $"Copying data to temp: {destinationPath}");
                 Directory.CreateDirectory(destinationPath);
 
                 if (FileSystem.IsDirectory(sourcePath))
@@ -53,11 +53,11 @@ namespace DataGuardian.Plugins.Backups
                 var zipName = $"{backupFileName}_{DateTime.Today:dd-MM-yyyy}_{DateTime.Now:HH-mm-ss}.zip";
                 ResultPath = Path.Combine(_tempDir, zipName);
 
-                _core.Logger.Log($"Creating archive: {ResultPath}");
+                _core.Logger.Log(InfoLogLevel.Message, "Backup", $"Creating archive: {ResultPath}");
 
                 Zipper.CreateZip(ResultPath, destinationPath);
 
-                _core.Logger.Log($"Data archived: {ResultPath}");
+                _core.Logger.Log(InfoLogLevel.Message, "Backup", $"Data archived: {ResultPath}");
             }
             catch (Exception ex)
             {

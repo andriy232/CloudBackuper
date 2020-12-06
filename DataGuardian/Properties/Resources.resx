@@ -142,4 +142,7 @@
   <data name="Str_BackupManager_CronJobError" xml:space="preserve">
     <value>Error during perform Local files check</value>
   </data>
+  <data name="Str_BackupManager_LocalVersionMissingLog" xml:space="preserve">
+    <value>Local version is missing: '{0}', need to restore {1} from remote copy</value>
+  </data>
 </root>

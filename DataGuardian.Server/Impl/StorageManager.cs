@@ -79,7 +79,7 @@ namespace DataGuardian.Server.Impl
         private RemoteBackup FileToRemoteBackupState(string fileName)
         {
             return new RemoteBackup(
-                GetIdByFileName(fileName),
+                GetIdByFileName(Path.GetFileName(fileName)),
                 Path.GetFileName(fileName),
                 new FileInfo(fileName).LastWriteTime);
         }

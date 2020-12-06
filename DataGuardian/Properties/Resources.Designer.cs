@@ -116,6 +116,15 @@ namespace DataGuardian.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Local version is missing: &apos;{0}&apos;, need to restore {1} from remote copy.
+        /// </summary>
+        internal static string Str_BackupManager_LocalVersionMissingLog {
+            get {
+                return ResourceManager.GetString("Str_BackupManager_LocalVersionMissingLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please enter name and path for your backup script.
         /// </summary>
         internal static string Str_BackupManager_PleaseEnterName {

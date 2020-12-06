@@ -46,12 +46,12 @@ namespace DataGuardian.Impl
 
         public DateTime Min(DateTime dt1, DateTime dt2)
         {
-            return dt1.Ticks > dt2.Ticks ? dt1 : dt2;
+            return dt1.Ticks < dt2.Ticks ? dt1 : dt2;
         }
 
         public DateTime Max(DateTime dt1, DateTime dt2)
         {
-            return dt1.Ticks < dt2.Ticks ? dt1 : dt2;
+            return dt1.Ticks > dt2.Ticks ? dt1 : dt2;
         }
 
         [JsonIgnore]
