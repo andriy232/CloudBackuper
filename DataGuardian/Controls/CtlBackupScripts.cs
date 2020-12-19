@@ -1,7 +1,6 @@
 ﻿using DataGuardian.GUI;
 using DataGuardian.Impl;
 using DataGuardian.Plugins;
-using DataGuardian.Plugins.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -72,7 +71,7 @@ namespace DataGuardian.Controls
                     if (script.CurrentState == BackupCurrentState.Processing)
                         return;
 
-                    script.Enabled = script.Enabled!;
+                    script.Enabled = !script.Enabled;
                     Core.BackupManager.EditBackupScript(script, script);
                 }
             }
@@ -132,6 +131,7 @@ namespace DataGuardian.Controls
             row.Cells[clmCurrentState.Index].Value = backupScript.LastPerformTime == DateTime.MinValue
                 ? BackupCurrentState.NotStarted
                 : backupScript.CurrentState;
+            dgvData.InvalidateRow(row.Index);
         }
 
         private void OnScriptStateChanged(object sender, BackupCurrentState e)

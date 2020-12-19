@@ -56,12 +56,12 @@ namespace DataGuardian.Controls
             this.clmLastState = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ctxScript = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cmdEdit = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmdShowRemoteBackups = new System.Windows.Forms.ToolStripMenuItem();
             this.cmdToggleDisable = new System.Windows.Forms.ToolStripMenuItem();
             this.cmdPerformNow = new System.Windows.Forms.ToolStripMenuItem();
             this.cmdDelete = new System.Windows.Forms.ToolStripMenuItem();
             this.ctlFilter = new DataGuardian.Controls.CtlFilter();
             this.gtbRoot = new System.Windows.Forms.GroupBox();
-            this.cmdShowRemoteBackups = new System.Windows.Forms.ToolStripMenuItem();
             this.tlpRoot.SuspendLayout();
             this.tlpButtons.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvData)).BeginInit();
@@ -157,7 +157,7 @@ namespace DataGuardian.Controls
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.LightGray;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.ControlDarkDark;
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvData.DefaultCellStyle = dataGridViewCellStyle1;
@@ -257,13 +257,20 @@ namespace DataGuardian.Controls
             this.cmdPerformNow,
             this.cmdDelete});
             this.ctxScript.Name = "ctxScript";
-            this.ctxScript.Size = new System.Drawing.Size(262, 197);
+            this.ctxScript.Size = new System.Drawing.Size(262, 164);
             // 
             // cmdEdit
             // 
             this.cmdEdit.Name = "cmdEdit";
             this.cmdEdit.Size = new System.Drawing.Size(261, 32);
             this.cmdEdit.Text = "Edit";
+            // 
+            // cmdShowRemoteBackups
+            // 
+            this.cmdShowRemoteBackups.Name = "cmdShowRemoteBackups";
+            this.cmdShowRemoteBackups.Size = new System.Drawing.Size(261, 32);
+            this.cmdShowRemoteBackups.Text = "Show remote backups";
+            this.cmdShowRemoteBackups.Click += new System.EventHandler(this.OnCmdShowRemoteBackupsClick);
             // 
             // cmdToggleDisable
             // 
@@ -304,13 +311,6 @@ namespace DataGuardian.Controls
             this.gtbRoot.TabIndex = 1;
             this.gtbRoot.TabStop = false;
             this.gtbRoot.Text = "Your backup Scripts";
-            // 
-            // cmdShowRemoteBackups
-            // 
-            this.cmdShowRemoteBackups.Name = "cmdShowRemoteBackups";
-            this.cmdShowRemoteBackups.Size = new System.Drawing.Size(261, 32);
-            this.cmdShowRemoteBackups.Text = "Show remote backups";
-            this.cmdShowRemoteBackups.Click += new System.EventHandler(this.OnCmdShowRemoteBackupsClick);
             // 
             // CtlBackupScripts
             // 

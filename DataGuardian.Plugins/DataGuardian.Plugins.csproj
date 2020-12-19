@@ -285,6 +285,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SettingsBase.cs" />
     <Compile Include="StringExt.cs" />
     <Compile Include="Unmanaged.cs" />
     <Compile Include="Zipper.cs" />

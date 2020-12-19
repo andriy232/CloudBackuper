@@ -2,13 +2,11 @@
 using System.Threading.Tasks;
 using DataGuardian.Plugins.Backups;
 using DataGuardian.Plugins.Plugins;
-using Newtonsoft.Json;
 
 namespace DataGuardian.Plugins
 {
     public abstract class CloudStorageProviderBase<T> : PluginBase, ICloudStorageProvider where T : SettingsBase
     {
-        public virtual string Name { get; }
         public virtual string Description { get; }
         public virtual byte[] Logo { get; }
         public virtual Guid Id { get; }
@@ -25,13 +23,20 @@ namespace DataGuardian.Plugins
         public abstract Task UploadBackupAsync(IAccount account, LocalArchivedBackup localBackup);
         public abstract Task DownloadBackupAsync(IAccount account, RemoteBackup backup, string outputPath);
         public abstract Task DeleteBackupAsync(IAccount account, RemoteBackup backup);
-    }
 
-    public class SettingsBase
-    {
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this, Formatting.Indented);
+            return Name;
+        }
+
+        protected void Log(string source, string message)
+        {
+            Core.Logger.Log(InfoLogLevel.Information, source, message);
+        }
+
+        protected void Trace(string source, string message)
+        {
+            Core.Logger.Log(InfoLogLevel.Debug, source, message);
         }
     }
 }

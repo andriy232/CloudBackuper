@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 using DataGuardian.GUI;
 using DataGuardian.Plugins;
@@ -17,6 +16,8 @@ namespace DataGuardian.Impl
         public event EventHandler<AccountsChangedEventArgs> AccountsChanged;
         private AccountsDbWorker _dbWorker;
         public IEnumerable<IAccount> Accounts => _accounts;
+
+        public override string Name => "Cloud Accounts";
 
         public override void Init(ICore core)
         {

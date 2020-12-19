@@ -7,6 +7,8 @@ namespace DataGuardian.Impl
 {
     public class UserSettings : PluginBase, ISettings
     {
+        public override string Name => "Settings";
+
         public string ConnectionString { get; }
 
         public string DataDirectory { get; }

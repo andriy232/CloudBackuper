@@ -266,7 +266,7 @@
     <Compile Include="Windows\WndRemoteBackups.Designer.cs">
       <DependentUpon>WndRemoteBackups.cs</DependentUpon>
     </Compile>
-    <Compile Include="GuiManager.cs" />
+    <Compile Include="Impl\GuiManager.cs" />
     <Compile Include="Impl\BackupScript.cs" />
     <Compile Include="Controls\CtlBackupScripts.cs">
       <SubType>UserControl</SubType>
@@ -298,10 +298,10 @@
     <Compile Include="Controls\CtlLog.Designer.cs">
       <DependentUpon>CtlLog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Core.cs" />
+    <Compile Include="Impl\Core.cs" />
     <Compile Include="Impl\BackupStep.cs" />
     <Compile Include="Impl\SingleLogger.cs" />
-    <Compile Include="MyApplicationContext.cs" />
+    <Compile Include="Impl\MyApplicationContext.cs" />
     <Compile Include="Workers\BackupDbWorker.cs" />
     <Compile Include="Impl\BackupManager.cs" />
     <Compile Include="DbLevel\BackupsDbContext.cs" />
@@ -437,6 +437,9 @@
       <Project>{213B5527-9F39-43CD-A49A-93B1C4E8E8CC}</Project>
       <Name>DataGuardian.Plugins</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Application.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

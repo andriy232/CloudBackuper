@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using DataGuardian.Properties;
 using DataGuardian.Windows;
 
-namespace DataGuardian
+namespace DataGuardian.Impl
 {
     internal class MyApplicationContext : ApplicationContext
     {

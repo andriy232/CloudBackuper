@@ -16,6 +16,8 @@ namespace DataGuardian.Impl
         private string _logFilePath;
         private string _logFileDir;
 
+        public override string Name => "Logger";
+
         public override void Init(ICore core)
         {
             base.Init(core);
@@ -66,23 +68,39 @@ namespace DataGuardian.Impl
 
         public void Log(string source, string message)
         {
-            Serilog.Log.Warning(message, source);
-            FireNewLog(new LogEntry(InfoLogLevel.Information, source, message));
+            Log(InfoLogLevel.Information, source, message);
         }
 
         public void Log(string source, Exception ex)
         {
-            Serilog.Log.Error(ex, "Error in {Source}", source);
-            FireNewLog(new LogEntry(InfoLogLevel.Error, source, ex.ToString()));
+            Log(InfoLogLevel.Error, source, string.Empty, ex);
         }
 
         public void Log(InfoLogLevel level, string source, string message, Exception ex = null)
         {
             if (ex == null)
-                Serilog.Log.Information("{Message} in {Source}", message, source);
+            {
+                switch (level)
+                {
+                    case InfoLogLevel.Error:
+                        Serilog.Log.Error("{Message} in {Source}", message, source);
+                        break;
+                    case InfoLogLevel.Information:
+                        Serilog.Log.Information("{Message} in {Source}", message, source);
+                        break;
+                    case InfoLogLevel.Warning:
+                        Serilog.Log.Warning("{Message} in {Source}", message, source);
+                        break;
+                    case InfoLogLevel.Debug:
+                        Serilog.Log.Debug("{Message} in {Source}", message, source);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(level), level, null);
+                }
+            }
             else
                 Serilog.Log.Error(ex, "Error in {Source}", source);
-            
+
             FireNewLog(new LogEntry(level, source, message, ex));
         }
 

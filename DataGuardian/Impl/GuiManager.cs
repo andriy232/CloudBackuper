@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using DataGuardian.Plugins;
 
-namespace DataGuardian
+namespace DataGuardian.Impl
 {
     public class GuiManager : IGuiManager
     {

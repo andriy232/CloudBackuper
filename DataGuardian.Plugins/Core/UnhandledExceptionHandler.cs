@@ -5,6 +5,8 @@ namespace DataGuardian.Plugins.Core
 {
     public sealed class UnhandledExceptionHandler : PluginBase
     {
+        public override string Name => "Unhandled Exceptions";
+
         public override void Init(ICore core)
         {
             base.Init(core);
@@ -18,7 +20,9 @@ namespace DataGuardian.Plugins.Core
             try
             {
                 var ex = e.Exception;
-                if (ex.Source == "EntityFramework" || ex.Message.Contains("no such table: __MigrationHistory") || ex.Message.Contains("no such table: EdmMetadata"))
+                if (ex.Source == "EntityFramework"
+                    || ex.Message.Contains("no such table: __MigrationHistory")
+                    || ex.Message.Contains("no such table: EdmMetadata"))
                     return;
 
                 HandleException(ex);

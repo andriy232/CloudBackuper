@@ -11,7 +11,7 @@ namespace DataGuardian.Server.Plugins
 
         Task<MemoryStream> ReadFile(string userDirectory, string backupId);
 
-        Task<string> ReadState(string userDirectory);
+        IEnumerable<RemoteBackup> GetLocalBackupsState(string userDirectory, string backupName);
 
         Task Delete(string userDirectory, string backupId);
     }

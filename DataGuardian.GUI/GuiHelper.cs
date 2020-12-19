@@ -17,7 +17,16 @@ namespace DataGuardian.GUI
 
         public static void ShowMessage(Exception ex)
         {
-            ShowMessage(ex.ToString());
+            var exceptionMessage = ex.ToString();
+            var rows = exceptionMessage.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
+            var message = exceptionMessage;
+
+            const int amountOfRows = 10;
+            if (rows.Length > amountOfRows)
+                message = string.Join(Environment.NewLine, rows.Take(amountOfRows)) +
+                          $"{Environment.NewLine}Find full message at log";
+            
+            ShowMessage(message);
         }
 
         public static void OpenDirectory(string path)

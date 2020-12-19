@@ -134,7 +134,7 @@ namespace DataGuardian.Impl
         public IAccount Account
         {
             get => CoreStatic.Instance.CloudAccountsManager.Accounts.FirstOrDefault(x => x.Id == AccountId);
-            set => AccountId = value.Id;
+            set => AccountId = value?.Id ?? 0;
         }
 
         public async Task Perform(CancellationToken cancellationToken)
@@ -166,6 +166,7 @@ namespace DataGuardian.Impl
             }
             catch (Exception ex)
             {
+                LogError(nameof(Perform), $"Backup [{BackupFileName}] failed to [{Action}]");
                 runTimeException = ex;
             }
             finally
@@ -214,6 +215,18 @@ namespace DataGuardian.Impl
             await Account.CloudStorageProvider.DownloadBackupAsync(Account, lastBackup, zipPath);
 
             await Zipper.Unzip(zipPath, TargetPath);
+
+            LogInfo(nameof(PerformRestore), $"Backup [{BackupFileName}] successfully restored from [{Account}]");
+        }
+
+        private static void LogInfo(string source, string message)
+        {
+            CoreStatic.Instance.Logger.Log(InfoLogLevel.Information, source, message);
+        }
+
+        private static void LogError(string source, string message)
+        {
+            CoreStatic.Instance.Logger.Log(InfoLogLevel.Error, source, message);
         }
 
         private void PerformToArchive()
@@ -225,6 +238,8 @@ namespace DataGuardian.Impl
                 throw new ArgumentException(nameof(ActionParameter));
 
             Zipper.CreateZip(TargetPath, ActionParameter);
+
+            LogInfo(nameof(PerformRestore), $"Backup [{BackupFileName}] successfully archived");
         }
 
         private void PerformSendToEmail()
@@ -256,7 +271,7 @@ namespace DataGuardian.Impl
             var newLocalBackup = new LocalArchivedBackup(TargetPath, BackupFileName);
             await Account.CloudStorageProvider.UploadBackupAsync(Account, newLocalBackup);
 
-            CoreStatic.Instance.Logger.Log(InfoLogLevel.Information, nameof(PerformBackup), "Backup successfully uploaded");
+            CoreStatic.Instance.Logger.Log(InfoLogLevel.Information, nameof(PerformBackup), $"Backup [{BackupFileName}] successfully uploaded to [{Account}]");
         }
 
         public object Clone()
@@ -265,6 +280,7 @@ namespace DataGuardian.Impl
             {
                 Account = Account,
                 TargetPath = TargetPath,
+                AccountId = AccountId,
                 Action = Action,
                 ActionParameter = ActionParameter,
                 Period = Period,

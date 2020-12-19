@@ -10,21 +10,16 @@
         /// <summary>
         /// Errors
         /// </summary>
-        Error = 2,
-
-        /// <summary>
-        /// xTasyTrader and xTasyTrader trading messages
-        /// </summary>
-        Message = 3,
+        Error,
 
         /// <summary>
         /// Warnings
         /// </summary>
-        Warning = 4,
+        Warning,
 
         /// <summary>
-        /// Alerts
+        /// Write only to log, do not warn
         /// </summary>
-        Alert = 5
+        Debug
     }
 }

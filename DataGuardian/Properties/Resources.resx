@@ -145,4 +145,7 @@
   <data name="Str_BackupManager_LocalVersionMissingLog" xml:space="preserve">
     <value>Local version is missing: '{0}', need to restore {1} from remote copy</value>
   </data>
+  <data name="Str_WndRemoteBackups_CannotDeleteRemote" xml:space="preserve">
+    <value>Cannot delete backup, error: {0}</value>
+  </data>
 </root>

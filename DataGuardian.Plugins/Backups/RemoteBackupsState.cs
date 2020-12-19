@@ -12,6 +12,7 @@ namespace DataGuardian.Plugins.Backups
         public readonly List<RemoteBackup> Backups = new List<RemoteBackup>();
         public ICloudStorageProvider CloudStorageProvider { get; }
         public string BackupName { get; }
+        public IBackupStep Parent { get; set; }
 
         public RemoteBackupsState(
             ICloudStorageProvider cloudStorageProvider,
@@ -33,7 +34,8 @@ namespace DataGuardian.Plugins.Backups
             BackupName = backupFileName ?? throw new ArgumentException(nameof(backupFileName));
             CloudStorageProvider = cloudStorageProvider ?? throw new ArgumentException(nameof(cloudStorageProvider));
 
-            Backups.AddRange(backups);
+            if (backups != null)
+                Backups.AddRange(backups);
         }
 
         public override string ToString()

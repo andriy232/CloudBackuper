@@ -4,7 +4,6 @@ using DataGuardian.Plugins;
 using DataGuardian.Plugins.Plugins;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -136,7 +135,9 @@ namespace DataGuardian.Controls
                 SelectedPeriodParameters = value.PeriodParameters;
                 SelectedRecurEvery = value.RecurEvery;
                 SelectedStartDate = value.StartDate;
-                State = string.IsNullOrWhiteSpace(value.LastState) ? $"Everything fine, last perform time: {value.LastPerformTime}" : value.LastState;
+                State = string.IsNullOrWhiteSpace(value.LastState)
+                    ? $"Everything fine, {(value.LastPerformTime != DateTime.MinValue ? $"last perform time: {value.LastPerformTime}" : "not performed yet")}"
+                    : value.LastState;
             }
         }
 

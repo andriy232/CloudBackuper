@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using DataGuardian.Plugins;
 using DataGuardian.Plugins.Core;
 using DataGuardian.Plugins.Plugins;
 

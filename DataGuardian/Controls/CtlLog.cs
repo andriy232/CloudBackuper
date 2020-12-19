@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
+using DataGuardian.GUI.Controls;
 using DataGuardian.Plugins;
 using DataGuardian.Plugins.Core;
-using DataGuardian.Windows;
 
 namespace DataGuardian.Controls
 {
-    public partial class CtlLog : UserControl
+    public partial class CtlLog : UserControlBase
     {
         public CtlLog()
         {
@@ -25,6 +24,7 @@ namespace DataGuardian.Controls
 
             CoreStatic.Instance.Logger.NewLog += OnNewLog;
             LoadLogs();
+            dgvData.ClearSelection();
         }
 
         private void LoadLogs()
@@ -51,10 +51,13 @@ namespace DataGuardian.Controls
         {
             try
             {
+                if (log.Level == InfoLogLevel.Debug)
+                    return;
+
                 var row = dgvData.Rows[dgvData.Rows.Add()];
                 row.Cells[clmTime.Index].Value = log.Timestamp;
                 row.Cells[clmMessage.Index].Value = log.Message;
-                row.Cells[clmSource.Index].Value = log.PropertiesSource ?? log.Source;
+                row.Cells[clmSource.Index].Value = log.SavedSource;
                 row.DefaultCellStyle.BackColor = GetColor(log.Level);
 
                 dgvData.FirstDisplayedScrollingRowIndex = dgvData.RowCount - 1;
@@ -70,15 +73,13 @@ namespace DataGuardian.Controls
             switch (logType)
             {
                 case InfoLogLevel.Information:
-                    return Color.Gray;
+                    return Color.LightGray;
                 case InfoLogLevel.Error:
                     return Color.Tomato;
-                case InfoLogLevel.Message:
-                    return Color.DarkSeaGreen;
                 case InfoLogLevel.Warning:
                     return Color.Yellow;
-                case InfoLogLevel.Alert:
-                    return Color.Orange;
+                case InfoLogLevel.Debug:
+                    return Color.Green;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(logType), logType, null);
             }

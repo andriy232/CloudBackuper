@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using DataGuardian.GoogleDrive.Properties;
@@ -53,15 +54,12 @@ namespace DataGuardian.GoogleDrive
                 }
 
                 var file = request.ResponseBody;
-                Core.Logger.Log($"Backup uploaded, file Id: {file?.Id}");
+
+                Trace(nameof(Upload), $"Backup uploaded, file Id: {file?.Id}");
             }
             catch (Exception ex)
             {
-                Core.Logger.Log(ex.ToString());
-            }
-            finally
-            {
-                Core.Logger.Log("Clean up garbage");
+                Log(Name, ex.ToString());
             }
         }
 
@@ -70,7 +68,7 @@ namespace DataGuardian.GoogleDrive
         {
             var request = service.Files.Delete(backupUniqueId);
             var result = await request.ExecuteAsync();
-            Core.Logger.Log($"Removing backup: {result}");
+            Trace(Name, $"Removing backup: {result}");
         }
 
         private async Task<RemoteBackupsState> GetBackupsAsync(IAccount account, string backupFileName, DriveService service)
@@ -86,7 +84,7 @@ namespace DataGuardian.GoogleDrive
 
             var backups = new List<File>();
             string pageToken;
-            Core.Logger.Log("Searching for backups");
+
             do
             {
                 var listRequestResult = await listRequest.ExecuteAsync();
@@ -143,6 +141,8 @@ namespace DataGuardian.GoogleDrive
 
         private async Task<DriveService> GetDriveServiceClient(IAccount account)
         {
+            ServicePointManager.ServerCertificateValidationCallback = (sender, certificate, chain, errors) => true;
+
             var credential = await GetAuthCredentialsAsync(account);
             var initializer = new BaseClientService.Initializer
             {
@@ -242,7 +242,6 @@ namespace DataGuardian.GoogleDrive
                             "user",
                             CancellationToken.None,
                             new FileDataStore(authDataDir, true)).GetAwaiter().GetResult();
-                        Core.Logger.Log($"Credential file saved to: {authDataDir}");
                         return cred;
                     }
                 }

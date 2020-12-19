@@ -69,23 +69,16 @@ namespace DataGuardian.LocalServer
                 .FirstOrDefault(tcp => tcp.Address.Equals(IPAddress.Any) && portsRange.Contains(tcp.Port));
         }
 
-        private static void PerformHacks()
-        {
-            ServicePointManager.Expect100Continue = true;
-            ServicePointManager.SecurityProtocol =
-                SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
-            ServicePointManager.ServerCertificateValidationCallback = (sender, certificate, chain, errors) => true;
-        }
-
         private HttpClient GetClient()
         {
-            PerformHacks();
             return new HttpClient();
         }
 
         private Uri GetUri(string path, string query = "")
         {
             var endpoint = GetEndpoint();
+            if (endpoint == null)
+                throw new ApplicationException("no running LocalServer detected in local network");
 
             var address = new UriBuilder(Uri.UriSchemeHttps, IPAddress.Loopback.ToString(), endpoint.Port)
             {
@@ -96,12 +89,15 @@ namespace DataGuardian.LocalServer
             return address.Uri;
         }
 
-        private Uri BuildUri(string path, IAccount account, string backupUniqueId = "")
+        private Uri BuildUri(string path, IAccount account, string backupUniqueId = "", string backupName = "")
         {
             var query = $"userId={GetSettings(account).UID}";
 
             if (!string.IsNullOrWhiteSpace(backupUniqueId))
                 query += $"&backupId={backupUniqueId}";
+
+            if (!string.IsNullOrWhiteSpace(backupName))
+                query += $"&backupName={backupName}";
 
             return GetUri(path, query);
         }
@@ -110,7 +106,7 @@ namespace DataGuardian.LocalServer
         {
             using var client = GetClient();
 
-            var uri = BuildUri("state", account);
+            var uri = BuildUri("state", account, backupName: backupFileName);
             var response = await client.GetAsync(uri);
             var content = await response.Content.ReadAsStringAsync();
             var list = JsonConvert.DeserializeObject<List<RemoteBackup>>(content);
@@ -133,16 +129,7 @@ namespace DataGuardian.LocalServer
 
             formData.Add(fileContent);
 
-
             var response = await client.PostAsync(uri, formData);
-
-            // using var request = new HttpRequestMessage
-            // {
-            //     Method = HttpMethod.Post,
-            //     RequestUri = uri,
-            //     Content = new StreamContent(File.OpenRead(localBackup.ResultPath)),
-            // };
-            // using var response = await client.SendAsync(request);
 
             if (response.StatusCode != HttpStatusCode.OK)
                 throw new Exception("send failed");

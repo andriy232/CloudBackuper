@@ -3,7 +3,6 @@ using DataGuardian.Plugins;
 using DataGuardian.Windows;
 using DataGuardian.Workers;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -31,6 +30,8 @@ namespace DataGuardian.Impl
         public event EventHandler<IEnumerable<IBackupScript>> BackupScriptsChanged;
 
         public IEnumerable<IBackupScript> BackupScripts => _scripts;
+
+        public override string Name => "Backup manager";
 
         public override void Init(ICore core)
         {
@@ -99,8 +100,6 @@ namespace DataGuardian.Impl
             {
                 try
                 {
-                    Core.Logger.Log(string.Format(Resources.Str_BackupManager_StartBackup, backupScript.Name));
-
                     await Perform(backupScript);
                 }
                 catch (Exception ex)
@@ -153,7 +152,7 @@ namespace DataGuardian.Impl
                 script.Steps.Add(backupStep);
                 EditBackupScript(script, script);
 
-                await PerformScript(script, true, cancellationToken);
+                await PerformScriptPrivate(script, true, cancellationToken);
 
                 script.Steps.Remove(backupStep);
                 EditBackupScript(script, script);
@@ -166,10 +165,12 @@ namespace DataGuardian.Impl
 
         public async Task Perform(IBackupScript script)
         {
-            await PerformScript(script, true, _cancellationTokenSource.Token);
+            Core.Logger.Log(string.Format(Resources.Str_BackupManager_StartBackup, script.Name));
+
+            await PerformScriptPrivate(script, true, _cancellationTokenSource.Token);
         }
 
-        private async Task PerformScript(IBackupScript backupScript, bool force, CancellationToken cancellationToken)
+        private async Task PerformScriptPrivate(IBackupScript backupScript, bool force, CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested)
                 return;
@@ -254,12 +255,23 @@ namespace DataGuardian.Impl
             }
         }
 
+        public async Task DeleteRemoteBackup(IBackupStep step, RemoteBackup remoteBackup)
+        {
+            if (step?.Account?.CloudStorageProvider == null)
+                throw new ArgumentException(nameof(step));
+            if (remoteBackup == null)
+                throw new ArgumentException(nameof(remoteBackup));
+            
+            await step.Account.CloudStorageProvider.DeleteBackupAsync(step.Account, remoteBackup);
+            Core.Logger.Log(Name, "Successfully removed remote backup");
+        }
+
         public async Task ShowRemoteBackupsGui(IBackupScript script)
         {
             if (script?.Steps == null)
                 return;
 
-            await ShowRemoteBackupsForBackupNames(script.Steps.Select(x => (x.Account, x.BackupFileName)));
+            await ShowRemoteBackupsForBackupNames(script.Steps);
         }
 
         public async Task ShowRemoteBackupsGui(IBackupStep step)
@@ -267,10 +279,10 @@ namespace DataGuardian.Impl
             if (step == null)
                 return;
 
-            await ShowRemoteBackupsForBackupNames(new[] {(step.Account, step.BackupFileName)});
+            await ShowRemoteBackupsForBackupNames(new[] {step});
         }
 
-        private async Task ShowRemoteBackupsForBackupNames(IEnumerable<(IAccount account, string fileName)> lst)
+        private async Task ShowRemoteBackupsForBackupNames(IEnumerable<IBackupStep> steps)
         {
             try
             {
@@ -288,19 +300,33 @@ namespace DataGuardian.Impl
                 }
 
                 var states = new List<RemoteBackupsState>();
-                foreach (var (account, fileName) in lst)
+                foreach (var step in steps)
                 {
-                    var remoteBackupsState = await account.CloudStorageProvider.GetBackupState(account, fileName);
-                    states.Add(remoteBackupsState);
+                    try
+                    {
+                        states.Add(await GetRemoteBackupStatePrivate(step));
+                    }
+                    catch (Exception ex)
+                    {
+                        Core.Logger.Log(InfoLogLevel.Error, "Show remote backups",
+                            $"Cannot receive list of [{step.BackupFileName}] backups from [{step.Account}], error: {ex}");
+                    }
                 }
 
                 _viewRemoteBackupsWnd.FillData(states);
             }
             catch (Exception ex)
             {
-                Core.Logger.Log("Delete Backup Script", ex);
+                Core.Logger.Log("Show remote backups", ex);
                 GuiHelper.ShowMessage(ex);
             }
+        }
+
+        private async Task<RemoteBackupsState> GetRemoteBackupStatePrivate(IBackupStep step)
+        {
+            var remoteBackupsState = await step.Account.CloudStorageProvider.GetBackupState(step.Account, step.BackupFileName);
+            remoteBackupsState.Parent = step;
+            return remoteBackupsState;
         }
 
         public void RemoveBackupScriptGui(IBackupScript script)

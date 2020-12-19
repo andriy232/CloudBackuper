@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DataGuardian.Plugins.Backups;
 
 namespace DataGuardian.Plugins
 {
@@ -18,9 +19,12 @@ namespace DataGuardian.Plugins
         void RemoveBackupScriptGui(IBackupScript script);
         void RemoveBackupScript(IBackupScript script);
 
+        Task DeleteRemoteBackup(IBackupStep step, RemoteBackup remoteBackup);
+
         Task ShowRemoteBackupsGui(IBackupScript script);
         Task ShowRemoteBackupsGui(IBackupStep step);
 
         Task Perform(IBackupScript script);
+        
     }
 }

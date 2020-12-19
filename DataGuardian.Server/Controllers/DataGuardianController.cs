@@ -1,25 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DataGuardian.Server.Plugins;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Net.Http.Headers;
-using System;
-using System.IO;
-using System.Net.Http.Headers;
-using System.Net.Mime;
-using System.Threading.Tasks;
-using DataGuardian.Server.Impl;
-using DataGuardian.Server.Plugins;
-using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using Serilog;
-using Serilog.Core;
+using System;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 using ContentDispositionHeaderValue = Microsoft.Net.Http.Headers.ContentDispositionHeaderValue;
 using MediaTypeHeaderValue = Microsoft.Net.Http.Headers.MediaTypeHeaderValue;
 
 namespace DataGuardian.Server.Controllers
 {
     [ApiController]
-    [Microsoft.AspNetCore.Mvc.Route("[controller]")]
+    [Route("[controller]")]
     public class DataGuardianController : ControllerBase
     {
         private readonly string[] _permittedExtensions = {".zip"};
@@ -116,16 +108,18 @@ namespace DataGuardian.Server.Controllers
         }
 
         [HttpGet("state")]
-        public async Task<IActionResult> GetState([FromQuery] string userId)
+        public async Task<IActionResult> GetState([FromQuery] string userId, [FromQuery] string backupName)
         {
             var userDirectory = _authManager.GetUserDirectory(userId);
 
             if (string.IsNullOrWhiteSpace(userDirectory))
                 throw new Exception("Not registered user");
+            if (string.IsNullOrWhiteSpace(backupName))
+                throw new Exception("backup name is empty");
 
-            var state = await _storageManager.ReadState(userDirectory);
-
-            return await Task.FromResult(Ok(state));
+            var state = _storageManager.GetLocalBackupsState(userDirectory, backupName);
+            var serializedState = JsonConvert.SerializeObject(state);
+            return await Task.FromResult(Ok(serializedState));
         }
 
         [HttpDelete("delete")]

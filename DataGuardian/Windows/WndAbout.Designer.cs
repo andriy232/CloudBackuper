@@ -61,9 +61,9 @@ namespace DataGuardian.Windows
             this.tlpRoot.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 75F));
             this.tlpRoot.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tlpRoot.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 206F));
-            this.tlpRoot.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 39F));
-            this.tlpRoot.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
-            this.tlpRoot.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
+            this.tlpRoot.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
+            this.tlpRoot.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
+            this.tlpRoot.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
             this.tlpRoot.Size = new System.Drawing.Size(798, 444);
             this.tlpRoot.TabIndex = 1;
             // 
@@ -75,7 +75,7 @@ namespace DataGuardian.Windows
             this.pictureBox1.Margin = new System.Windows.Forms.Padding(15);
             this.pictureBox1.Name = "pictureBox1";
             this.tlpRoot.SetRowSpan(this.pictureBox1, 3);
-            this.pictureBox1.Size = new System.Drawing.Size(248, 310);
+            this.pictureBox1.Size = new System.Drawing.Size(248, 308);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
@@ -85,7 +85,7 @@ namespace DataGuardian.Windows
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 25F);
-            this.label1.Location = new System.Drawing.Point(281, 21);
+            this.label1.Location = new System.Drawing.Point(281, 20);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(514, 58);
             this.label1.TabIndex = 1;
@@ -97,7 +97,8 @@ namespace DataGuardian.Windows
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.label3.Location = new System.Drawing.Point(281, 103);
+            this.label3.ForeColor = System.Drawing.SystemColors.AppWorkspace;
+            this.label3.Location = new System.Drawing.Point(281, 101);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(514, 29);
             this.label3.TabIndex = 4;
@@ -109,7 +110,7 @@ namespace DataGuardian.Windows
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label4.Location = new System.Drawing.Point(281, 212);
+            this.label4.Location = new System.Drawing.Point(281, 210);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(514, 50);
             this.label4.TabIndex = 5;
@@ -121,18 +122,18 @@ namespace DataGuardian.Windows
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(281, 349);
+            this.label2.Location = new System.Drawing.Point(281, 345);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(514, 20);
             this.label2.TabIndex = 3;
-            this.label2.Text = "by Harasivka Andrii";
+            this.label2.Text = "by Harasivka Andrii, student of TNTU, SPm-61";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // linkLabel1
             // 
             this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.linkLabel1.AutoSize = true;
-            this.linkLabel1.Location = new System.Drawing.Point(281, 388);
+            this.linkLabel1.Location = new System.Drawing.Point(281, 380);
             this.linkLabel1.Name = "linkLabel1";
             this.linkLabel1.Size = new System.Drawing.Size(514, 20);
             this.linkLabel1.TabIndex = 2;
@@ -144,7 +145,7 @@ namespace DataGuardian.Windows
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(281, 420);
+            this.label5.Location = new System.Drawing.Point(281, 416);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(514, 20);
             this.label5.TabIndex = 3;
@@ -163,7 +164,7 @@ namespace DataGuardian.Windows
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(820, 500);
             this.Name = "WndAbout";
-            this.Text = "About Application";
+            this.Text = "About";
             this.tlpRoot.ResumeLayout(false);
             this.tlpRoot.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();

@@ -141,5 +141,14 @@ namespace DataGuardian.Properties {
                 return ResourceManager.GetString("Str_BackupManager_StartBackup", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot delete backup, error: {0}.
+        /// </summary>
+        internal static string Str_WndRemoteBackups_CannotDeleteRemote {
+            get {
+                return ResourceManager.GetString("Str_WndRemoteBackups_CannotDeleteRemote", resourceCulture);
+            }
+        }
     }
 }

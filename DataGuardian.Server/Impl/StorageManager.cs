@@ -68,12 +68,15 @@ namespace DataGuardian.Server.Impl
             return memory;
         }
 
-        public Task<string> ReadState(string userDirectory)
+        public IEnumerable<RemoteBackup> GetLocalBackupsState(string userDirectory, string backupName)
         {
-            var remoteBackups = Directory.GetFiles(userDirectory, "*.*")
+            if (string.IsNullOrWhiteSpace(userDirectory) || !Directory.Exists(userDirectory))
+                return new List<RemoteBackup>();
+
+            var searchPattern = $"{backupName}*.*";
+            return Directory.GetFiles(userDirectory, searchPattern)
                 .Select(FileToRemoteBackupState)
                 .ToList();
-            return Task.FromResult(JsonConvert.SerializeObject(remoteBackups));
         }
 
         private RemoteBackup FileToRemoteBackupState(string fileName)

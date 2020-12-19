@@ -1,14 +1,16 @@
-﻿using DataGuardian.Impl;
-using DataGuardian.Plugins;
-using DataGuardian.Plugins.Core;
-using DataGuardian.Plugins.Plugins;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Security;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
+using DataGuardian.Plugins;
+using DataGuardian.Plugins.Core;
+using DataGuardian.Plugins.Plugins;
 
-namespace DataGuardian
+namespace DataGuardian.Impl
 {
     public class Core : ICore
     {
@@ -20,7 +22,7 @@ namespace DataGuardian
         public ICloudAccountsManager CloudAccountsManager { get; }
 
         public IEnumerable<ICloudStorageProvider> CloudStorageProviders => _cloudProviders;
-        
+
         public IGuiManager GuiManager { get; }
 
         public ISettings Settings { get; }
@@ -37,8 +39,35 @@ namespace DataGuardian
             GuiManager = new GuiManager();
 
             CoreStatic.SetCore(this);
+            PerformSystemHacks();
 
             Start();
+        }
+
+        private static void PerformSystemHacks()
+        {
+            try
+            {
+                ServicePointManager.Expect100Continue = true;
+
+                ServicePointManager.SecurityProtocol =
+                    SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+
+                ServicePointManager.ServerCertificateValidationCallback = ServerCertificateValidationCallback;
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+
+        private static bool ServerCertificateValidationCallback(
+            object sender,
+            X509Certificate certificate,
+            X509Chain chain,
+            SslPolicyErrors errors)
+        {
+            return true;
         }
 
         private void Start()
@@ -53,8 +82,14 @@ namespace DataGuardian
             }
 
             var pluginsToInit = GetPluginsToInit();
+            var hashSet = new HashSet<string>();
             foreach (var plugin in pluginsToInit)
             {
+                if (string.IsNullOrWhiteSpace(plugin.Name))
+                    throw new ApplicationException("Name cannot be null");
+                if (!hashSet.Add(plugin.Name))
+                    throw new ApplicationException($"duplicated plugin: {plugin.Name}");
+
                 plugin.Init(this);
             }
         }
@@ -77,7 +112,7 @@ namespace DataGuardian
                 .Union(_cloudProviders);
         }
 
-        private IEnumerable<T> GetObjectsFromAssembly<T>(Assembly assembly) where T : class
+        private static IEnumerable<T> GetObjectsFromAssembly<T>(Assembly assembly) where T : class
         {
             var findType = typeof(T);
 
