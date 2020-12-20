@@ -1,31 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="53EED8F1-FE64-4400-9160-EC147BDD8773" Name="DataGuardian" Language="1033"
-	         Version="1.0.0.0" Manufacturer="Andrew" UpgradeCode="90629c22-4c68-493f-a5aa-b9bf17562455">
-		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+  <Product Id="53EED8F1-FE64-4400-9160-EC147BDD8773" Name="DataGuardian" Language="1033"
+           Version="1.0.0.0" Manufacturer="Andrew" UpgradeCode="90629c22-4c68-493f-a5aa-b9bf17562455">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
 
-		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
-		<MediaTemplate />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate />
 
-		<Feature Id="ProductFeature" Title="DataGuardian" Level="1">
-			<ComponentGroupRef Id="ProductComponents" />
-		</Feature>
-	</Product>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="DataGuardian" />
+      </Directory>
+    </Directory>
 
-	<Fragment>
-		<Directory Id="TARGETDIR" Name="SourceDir">
-			<Directory Id="ProgramFilesFolder">
-				<Directory Id="INSTALLFOLDER" Name="DataGuardian" />
-			</Directory>
-		</Directory>
-	</Fragment>
+    <Feature Id="ProductFeature" Title="DataGuardian" Level="1">
+      <ComponentGroupRef Id="HeatGenerated" />
+    </Feature>
 
-	<Fragment>
-		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-			<Component Id="ProductComponent">
-				<File Source="$(var.DataGuardian.TargetPath)" />
-			</Component>
-		</ComponentGroup>
-	</Fragment>
+  </Product>
 </Wix>

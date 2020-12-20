@@ -7,35 +7,34 @@
     <ProjectGuid>579a2dc4-5136-4d55-a8d4-a7c0eb4351f8</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
     <OutputName>DataGuardian.ClientInstaller</OutputName>
-    <OutputType>Package</OutputType>
+    <OutputType>Bundle</OutputType>
     <Name>DataGuardian.ClientInstaller</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
-    <DefineConstants>Debug</DefineConstants>
+    <DefineConstants>HarvestPath=..\Bin\Debug</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="HeatGeneratedFileList.wxs" />
     <Compile Include="Product.wxs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DataGuardian\DataGuardian.csproj">
-      <Name>DataGuardian</Name>
-      <Project>{fc0d11a3-032d-4269-8b93-7dab6da31a23}</Project>
-      <Private>True</Private>
-      <DoNotHarvest>True</DoNotHarvest>
-      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
-      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" Condition=" '$(WixTargetsPath)' != '' " />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets" Condition=" '$(WixTargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets') " />
   <Target Name="EnsureWixToolsetInstalled" Condition=" '$(WixTargetsImported)' != 'true' ">
     <Error Text="The WiX Toolset v3.11 (or newer) build tools must be installed to build this project. To download the WiX Toolset, see http://wixtoolset.org/releases/" />
+  </Target>
+  
+  <PropertyGroup>
+    <DefineConstants>HarvestPath=..\Bin\Release</DefineConstants>
+  </PropertyGroup>
+
+  <Target Name="BeforeBuild">
+    <HeatDirectory Directory="C:\src\DataGuardian\Bin\Release\" PreprocessorVariable="var.HarvestPath" OutputFile="HeatGeneratedFileList.wxs" ComponentGroupName="HeatGenerated" DirectoryRefId="INSTALLFOLDER" AutogenerateGuids="true" ToolPath="$(WixToolPath)" SuppressFragments="true" SuppressRegistry="true" SuppressRootDirectory="true" />
   </Target>
   <!--
 	To modify your build process, add your task inside one of the targets below and uncomment it.
