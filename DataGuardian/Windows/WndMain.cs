@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using DataGuardian.Plugins;
 using DataGuardian.Plugins.Core;
@@ -22,6 +23,12 @@ namespace DataGuardian.Windows
         {
             base.OnLoad(e);
             SetStartupState();
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            e.Cancel = true;
+            Hide();
         }
 
         private void SetStartupState()

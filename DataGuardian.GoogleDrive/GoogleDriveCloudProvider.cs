@@ -222,7 +222,7 @@ namespace DataGuardian.GoogleDrive
             settings.AuthInfoPath = authDataDir;
 
             if (string.IsNullOrWhiteSpace(settings.DriveFolderId))
-                settings.DriveFolderId = GuiHelper.ReadLine("Enter folder id:");
+                settings.DriveFolderId = GuiHelper.ReadLine("Enter folder id (url) in your Google Drive (https://drive.google.com/drive/my-drive) :");
 
             return (credential, settings);
         }
@@ -255,7 +255,7 @@ namespace DataGuardian.GoogleDrive
         public override object TryAuth()
         {
             var userCredentialsPath = GuiHelper.ReadPath(
-                "Enter path to credentials Json:");
+                "Enter path to credentials.Json (https://drive.google.com/drive/my-drive):");
             if (!FileSystem.Exists(userCredentialsPath))
                 throw new ApplicationException(nameof(userCredentialsPath));
 

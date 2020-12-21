@@ -10,8 +10,8 @@ namespace DataGuardian.GUI.Windows
 
         public string Question
         {
-            get => label1.Text?.Trim();
-            set => label1.Text = value?.Trim();
+            get => linkLabel1.Text?.Trim();
+            set => linkLabel1.Text = value?.Trim();
         }
 
         public WndEnterText(string question)

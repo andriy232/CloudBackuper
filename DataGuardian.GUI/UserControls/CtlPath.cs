@@ -34,7 +34,7 @@ namespace DataGuardian.GUI.UserControls
             _mode = file;
         }
 
-        public void SelectDialog()
+        public void SelectDialog(string title = "")
         {
             try
             {
@@ -43,6 +43,9 @@ namespace DataGuardian.GUI.UserControls
                     case FileSystemObject.File:
                         using (var fbd = new OpenFileDialog())
                         {
+                            if (!string.IsNullOrWhiteSpace(title))
+                                fbd.Title = title;
+
                             var result = fbd.ShowDialog();
 
                             if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.FileName))
@@ -55,6 +58,9 @@ namespace DataGuardian.GUI.UserControls
                     case FileSystemObject.Folder:
                         using (var fbd = new FolderBrowserDialog())
                         {
+                            if (!string.IsNullOrWhiteSpace(title))
+                                fbd.Description = title;
+
                             var result = fbd.ShowDialog();
 
                             if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))

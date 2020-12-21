@@ -21,6 +21,13 @@ namespace DataGuardian.GUI.Windows
             InitializeComponent();
 
             lblTitle.Text = message;
+            var index = message.IndexOf("https:");
+            if (index > 0)
+            {
+                var end = message.LastIndexOf("/");
+                lblTitle.LinkArea = new LinkArea(index, end-index);
+            }
+
             txtName.Text = name;
             ctlPath.SelectedPath = path;
 
@@ -29,7 +36,7 @@ namespace DataGuardian.GUI.Windows
             if (string.IsNullOrWhiteSpace(path))
             {
                 ctlPath.SetMode(FileSystemObject.File);
-                ctlPath.SelectDialog();
+                ctlPath.SelectDialog(lblTitle.Text);
             }
 
             txtName.Focus();

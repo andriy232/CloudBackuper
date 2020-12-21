@@ -61,17 +61,18 @@ namespace DataGuardian.Controls
             // 
             this.tlpRoot.ColumnCount = 2;
             this.tlpRoot.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpRoot.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 170F));
+            this.tlpRoot.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 113F));
             this.tlpRoot.Controls.Add(this.tlpButtons, 1, 0);
             this.tlpRoot.Controls.Add(this.dgvData, 0, 1);
             this.tlpRoot.Controls.Add(this.ctlFilter, 0, 0);
             this.tlpRoot.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlpRoot.Location = new System.Drawing.Point(3, 22);
+            this.tlpRoot.Location = new System.Drawing.Point(2, 15);
+            this.tlpRoot.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.tlpRoot.Name = "tlpRoot";
             this.tlpRoot.RowCount = 2;
-            this.tlpRoot.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.tlpRoot.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
             this.tlpRoot.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpRoot.Size = new System.Drawing.Size(366, 532);
+            this.tlpRoot.Size = new System.Drawing.Size(243, 345);
             this.tlpRoot.TabIndex = 1;
             // 
             // tlpButtons
@@ -80,10 +81,10 @@ namespace DataGuardian.Controls
             this.tlpButtons.Controls.Add(this.btnCreate);
             this.tlpButtons.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpButtons.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.tlpButtons.Location = new System.Drawing.Point(196, 0);
+            this.tlpButtons.Location = new System.Drawing.Point(130, 0);
             this.tlpButtons.Margin = new System.Windows.Forms.Padding(0);
             this.tlpButtons.Name = "tlpButtons";
-            this.tlpButtons.Size = new System.Drawing.Size(170, 40);
+            this.tlpButtons.Size = new System.Drawing.Size(113, 26);
             this.tlpButtons.TabIndex = 0;
             // 
             // btnDelete
@@ -91,9 +92,10 @@ namespace DataGuardian.Controls
             this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDelete.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnDelete.BackgroundImage")));
             this.btnDelete.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btnDelete.Location = new System.Drawing.Point(92, 3);
+            this.btnDelete.Location = new System.Drawing.Point(61, 2);
+            this.btnDelete.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(75, 34);
+            this.btnDelete.Size = new System.Drawing.Size(50, 22);
             this.btnDelete.TabIndex = 1;
             this.btnDelete.UseVisualStyleBackColor = true;
             this.btnDelete.Click += new System.EventHandler(this.OnBtnDeleteAccountClick);
@@ -103,9 +105,10 @@ namespace DataGuardian.Controls
             this.btnCreate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCreate.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnCreate.BackgroundImage")));
             this.btnCreate.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.btnCreate.Location = new System.Drawing.Point(11, 3);
+            this.btnCreate.Location = new System.Drawing.Point(7, 2);
+            this.btnCreate.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnCreate.Name = "btnCreate";
-            this.btnCreate.Size = new System.Drawing.Size(75, 34);
+            this.btnCreate.Size = new System.Drawing.Size(50, 22);
             this.btnCreate.TabIndex = 0;
             this.btnCreate.UseVisualStyleBackColor = true;
             this.btnCreate.Click += new System.EventHandler(this.OnBtnCreateClick);
@@ -132,14 +135,15 @@ namespace DataGuardian.Controls
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvData.DefaultCellStyle = dataGridViewCellStyle1;
             this.dgvData.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgvData.Location = new System.Drawing.Point(3, 43);
+            this.dgvData.Location = new System.Drawing.Point(2, 28);
+            this.dgvData.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.dgvData.Name = "dgvData";
             this.dgvData.ReadOnly = true;
             this.dgvData.RowHeadersVisible = false;
             this.dgvData.RowHeadersWidth = 162;
             this.dgvData.RowTemplate.Height = 50;
             this.dgvData.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvData.Size = new System.Drawing.Size(360, 486);
+            this.dgvData.Size = new System.Drawing.Size(239, 315);
             this.dgvData.TabIndex = 1;
             // 
             // clmImage
@@ -174,12 +178,12 @@ namespace DataGuardian.Controls
             this.ctxMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.cmdDeleteAccount});
             this.ctxMenu.Name = "ctxMenu";
-            this.ctxMenu.Size = new System.Drawing.Size(202, 36);
+            this.ctxMenu.Size = new System.Drawing.Size(154, 26);
             // 
             // cmdDeleteAccount
             // 
             this.cmdDeleteAccount.Name = "cmdDeleteAccount";
-            this.cmdDeleteAccount.Size = new System.Drawing.Size(201, 32);
+            this.cmdDeleteAccount.Size = new System.Drawing.Size(153, 22);
             this.cmdDeleteAccount.Text = "Delete account";
             this.cmdDeleteAccount.Click += new System.EventHandler(this.OnCmdDeleteAccountClick);
             // 
@@ -188,31 +192,34 @@ namespace DataGuardian.Controls
             this.ctlFilter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ctlFilter.Location = new System.Drawing.Point(0, 0);
             this.ctlFilter.Margin = new System.Windows.Forms.Padding(0);
-            this.ctlFilter.MaximumSize = new System.Drawing.Size(500, 40);
-            this.ctlFilter.MinimumSize = new System.Drawing.Size(200, 40);
+            this.ctlFilter.MaximumSize = new System.Drawing.Size(333, 26);
+            this.ctlFilter.MinimumSize = new System.Drawing.Size(133, 26);
             this.ctlFilter.Name = "ctlFilter";
-            this.ctlFilter.Size = new System.Drawing.Size(200, 40);
+            this.ctlFilter.Size = new System.Drawing.Size(133, 26);
             this.ctlFilter.TabIndex = 2;
             // 
             // grbRoot
             // 
             this.grbRoot.Controls.Add(this.tlpRoot);
             this.grbRoot.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.grbRoot.Location = new System.Drawing.Point(1, 5);
+            this.grbRoot.Location = new System.Drawing.Point(1, 3);
+            this.grbRoot.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.grbRoot.Name = "grbRoot";
-            this.grbRoot.Size = new System.Drawing.Size(372, 557);
+            this.grbRoot.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.grbRoot.Size = new System.Drawing.Size(247, 362);
             this.grbRoot.TabIndex = 2;
             this.grbRoot.TabStop = false;
             this.grbRoot.Text = "Your cloud Accounts";
             // 
             // CtlCloudAccounts
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.grbRoot);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "CtlCloudAccounts";
-            this.Padding = new System.Windows.Forms.Padding(1, 5, 1, 1);
-            this.Size = new System.Drawing.Size(374, 563);
+            this.Padding = new System.Windows.Forms.Padding(1, 3, 1, 1);
+            this.Size = new System.Drawing.Size(249, 366);
             this.tlpRoot.ResumeLayout(false);
             this.tlpButtons.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvData)).EndInit();
