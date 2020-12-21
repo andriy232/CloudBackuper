@@ -77,5 +77,11 @@ namespace DataGuardian.Windows
         {
             Core.BackupManager.ShowRemoteBackupsGui(ctlBackupScripts.SelectedBackupScript);
         }
+
+        private void WndMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            e.Cancel = true;
+            Hide();
+        }
     }
 }

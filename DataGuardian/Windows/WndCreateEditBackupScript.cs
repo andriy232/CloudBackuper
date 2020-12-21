@@ -93,7 +93,7 @@ namespace DataGuardian.Windows
             AddNewStep(new BackupStep
             {
                 TargetPath = _createScript.TargetPath,
-                BackupFileName = Path.GetFileNameWithoutExtension(_createScript.TargetPath)
+                BackupFileName = BackupName
             });
         }
 
@@ -113,8 +113,9 @@ namespace DataGuardian.Windows
                 else
                     AddNewStep(new BackupStep
                     {
-                        TargetPath = _createScript.TargetPath,
-                        BackupFileName = Path.GetFileNameWithoutExtension(_createScript.TargetPath)
+                        TargetPath = _createScript?.TargetPath ?? TargetPath,
+                        BackupFileName = BackupName,
+                        StartDate = DateTime.Today
                     });
             }
             catch (Exception ex)
@@ -211,6 +212,19 @@ namespace DataGuardian.Windows
             {
                 GuiHelper.ShowMessage(ex);
             }
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            if (IsValid())
+                DialogResult = DialogResult.OK;
+            else
+                GuiHelper.ShowMessage("Parameters not valid");
+        }
+
+        private bool IsValid()
+        {
+            return CurrentStepsControl.All(x => x.IsValid());
         }
     }
 }

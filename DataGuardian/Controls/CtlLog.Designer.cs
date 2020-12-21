@@ -19,6 +19,7 @@ namespace DataGuardian.Controls
                 components.Dispose();
             }
             base.Dispose(disposing);
+            DataGuardian.Plugins.Core.CoreStatic.Instance.Logger.NewLog -= OnNewLog;
         }
 
         #region Component Designer generated code

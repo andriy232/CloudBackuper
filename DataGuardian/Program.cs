@@ -18,7 +18,7 @@ namespace DataGuardian
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            if (true)
+            if (false)
                 Application.Run(new WndMain());
             else
                 Application.Run(new MyApplicationContext());

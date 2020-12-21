@@ -286,7 +286,8 @@ namespace DataGuardian.Impl
                 Period = Period,
                 RecurEvery = RecurEvery,
                 StartDate = StartDate,
-                PeriodParametersList = PeriodParametersList
+                PeriodParametersList = PeriodParametersList,
+                BackupFileName = BackupFileName
             };
         }
     }

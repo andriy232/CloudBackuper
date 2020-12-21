@@ -240,6 +240,9 @@ namespace DataGuardian.Impl
 
         public void EditBackupScriptGui(IBackupScript backupScript)
         {
+            ((BackupScript) backupScript).Enabled = false;
+            EditBackupScript(backupScript, backupScript);
+
             using (var wnd = new WndCreateEditBackupScript(backupScript, null))
             {
                 if (wnd.ShowDialog() == DialogResult.OK && wnd.NewBackupScript != null)

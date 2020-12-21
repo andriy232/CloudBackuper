@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using DataGuardian.Plugins.Core;
 using DataGuardian.Properties;
 using DataGuardian.Windows;
 
@@ -7,7 +8,7 @@ namespace DataGuardian.Impl
 {
     internal class MyApplicationContext : ApplicationContext
     {
-        private WndMain _configWindow;
+        private static Form ConfigWindow => CoreStatic.Instance.GuiManager.MainWindow;
 
         public MyApplicationContext()
         {
@@ -22,18 +23,20 @@ namespace DataGuardian.Impl
             };
 
             notifyIcon.DoubleClick += OnNotifyIconDoubleClick;
+         
+            Application.Run(new WndMain());
         }
 
         private void OnNotifyIconDoubleClick(object sender, EventArgs e)
         {
             ShowMainWindow();
         }
-
+        
         private void Exit(object sender, EventArgs e)
         {
             try
             {
-                _configWindow.Dispose();
+                ConfigWindow.Dispose();
             }
             catch
             {
@@ -57,16 +60,13 @@ namespace DataGuardian.Impl
 
         private void ShowMainWindow()
         {
-            if (_configWindow == null || _configWindow.Disposing || _configWindow.IsDisposed)
-                _configWindow = new WndMain();
-
-            if (_configWindow.Visible)
+            if (ConfigWindow.Visible)
             {
-                _configWindow.Activate();
+                ConfigWindow.Activate();
             }
             else
             {
-                _configWindow.ShowDialog();
+                ConfigWindow.Show();
             }
         }
     }

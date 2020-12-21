@@ -68,7 +68,7 @@ namespace DataGuardian.GoogleDrive
         {
             var request = service.Files.Delete(backupUniqueId);
             var result = await request.ExecuteAsync();
-            Trace(Name, $"Removing backup: {result}");
+            Log(Name, $"Removing backup: {result}");
         }
 
         private async Task<RemoteBackupsState> GetBackupsAsync(IAccount account, string backupFileName, DriveService service)

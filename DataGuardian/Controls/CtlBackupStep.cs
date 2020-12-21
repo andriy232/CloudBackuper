@@ -107,7 +107,7 @@ namespace DataGuardian.Controls
                 return new BackupStep
                 {
                     TargetPath = SelectedPath,
-                    Account = (CloudProviderAccount)SelectedAccount,
+                    Account = (CloudProviderAccount) SelectedAccount,
 
                     Action = SelectedBackupAction,
                     ActionParameter = SelectedActionParameter,
@@ -275,6 +275,13 @@ namespace DataGuardian.Controls
             tlpRoot.Controls.Remove(oldControl);
 
             tlpRoot.Controls.Add(newControl, cellPosition.Column, cellPosition.Row);
+        }
+
+        public bool IsValid()
+        {
+            return SelectedAccount != null &&
+                   !string.IsNullOrWhiteSpace(SelectedBackupFileName) &&
+                   !string.IsNullOrWhiteSpace(SelectedPath);
         }
     }
 }

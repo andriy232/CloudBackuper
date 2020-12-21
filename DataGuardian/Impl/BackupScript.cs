@@ -72,10 +72,17 @@ namespace DataGuardian.Impl
 
         private List<IBackupStep> DeserializeSteps()
         {
-            if (string.IsNullOrWhiteSpace(StepsState))
-                return new List<IBackupStep>();
+            try
+            {
+                if (string.IsNullOrWhiteSpace(StepsState))
+                    return new List<IBackupStep>();
 
-            return JsonConvert.DeserializeObject<List<BackupStep>>(StepsState).Cast<IBackupStep>().ToList();
+                return JsonConvert.DeserializeObject<List<BackupStep>>(StepsState).Cast<IBackupStep>().ToList();
+            }
+            catch
+            {
+                return new List<IBackupStep>();
+            }
         }
 
         public BackupScript()

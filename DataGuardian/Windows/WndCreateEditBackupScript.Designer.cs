@@ -1,7 +1,4 @@
-﻿
-using DataGuardian.GUI.UserControls;
-
-namespace DataGuardian.Windows
+﻿namespace DataGuardian.Windows
 {
     partial class WndCreateEditBackupScript
     {
@@ -139,7 +136,6 @@ namespace DataGuardian.Windows
             // btnSave
             // 
             this.btnSave.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnSave.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnSave.Location = new System.Drawing.Point(1181, 425);
             this.btnSave.Margin = new System.Windows.Forms.Padding(3, 3, 3, 10);
             this.btnSave.MaximumSize = new System.Drawing.Size(220, 50);
@@ -148,6 +144,7 @@ namespace DataGuardian.Windows
             this.btnSave.TabIndex = 0;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // WndCreateEditBackupScript
             // 
@@ -174,7 +171,7 @@ namespace DataGuardian.Windows
         private System.Windows.Forms.Label lblName;
         private System.Windows.Forms.Label lblTargetPath;
         private System.Windows.Forms.TextBox txtName;
-        private CtlPath ctlPath;
+        private DataGuardian.GUI.UserControls.CtlPath ctlPath;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnSave;
     }

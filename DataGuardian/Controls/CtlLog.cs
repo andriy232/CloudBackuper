@@ -51,6 +51,9 @@ namespace DataGuardian.Controls
         {
             try
             {
+                if (dgvData.Disposing || dgvData.IsDisposed)
+                    return;
+
                 if (log.Level == InfoLogLevel.Debug)
                     return;
 
