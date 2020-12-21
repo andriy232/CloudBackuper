@@ -152,17 +152,6 @@ namespace DataGuardian.Controls
             InitializeComponent();
 
             SetAccounts(accounts);
-        }
-
-        private void SetAccounts(IEnumerable<IAccount> accounts)
-        {
-            cmbAccount.DataSource = accounts.ToArray();
-        }
-
-        protected override void OnLoad(EventArgs e)
-        {
-            var r = new Random();
-            BackColor = Color.FromArgb(100, r.Next(0, 255), r.Next(0, 255), r.Next(0, 255));
 
             _btnShowRemoteBackups = new Button
             {
@@ -178,6 +167,17 @@ namespace DataGuardian.Controls
 
             cmbAction.DataSource = Enum.GetValues(typeof(BackupAction));
             cmbPeriod.DataSource = Enum.GetValues(typeof(BackupPeriod));
+        }
+
+        private void SetAccounts(IEnumerable<IAccount> accounts)
+        {
+            cmbAccount.DataSource = accounts.ToArray();
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            var r = new Random();
+            BackColor = Color.FromArgb(100, r.Next(0, 255), r.Next(0, 255), r.Next(0, 255));
 
             foreach (var label in tlpRoot.Controls.OfType<Label>())
                 label.BackColor = Color.Transparent;
