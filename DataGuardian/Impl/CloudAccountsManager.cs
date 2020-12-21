@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using DataGuardian.GUI;
 using DataGuardian.Plugins;
@@ -42,6 +43,10 @@ namespace DataGuardian.Impl
                     {
                         var selectedProvider = dlg.ActiveCloudProvider;
                         var name = GuiHelper.ReadLine("Please enter name for new cloud account");
+                       
+                        if(Core.CloudAccountsManager.Accounts.Any(x=>x.Name.Trim().Equals(name, StringComparison.Ordinal)))
+                           throw new ApplicationException("Such account exists");
+
                         var connectionInfo = selectedProvider.TryAuth();
                         var newAccount = new CloudProviderAccount(name, selectedProvider, connectionInfo.ToString());
 
@@ -53,6 +58,7 @@ namespace DataGuardian.Impl
             }
             catch (Exception ex)
             {
+                GuiHelper.ShowMessage($"Cannot add account, error: {ex.Message}");
                 Core?.Logger?.Log("AddAccount", ex);
             }
         }
