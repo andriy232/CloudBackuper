@@ -214,6 +214,8 @@ namespace DataGuardian.Impl
                 {
                     if (selectPathWnd.ShowDialog() != DialogResult.OK)
                         return;
+                    if (BackupScripts.Any(x => x.Name.Trim().Equals(selectPathWnd.Params.Name, StringComparison.Ordinal)))
+                        throw new ApplicationException("Such script name already exists");
 
                     using (var wnd = new WndCreateEditBackupScript(null, selectPathWnd.Params))
                     {
@@ -232,7 +234,7 @@ namespace DataGuardian.Impl
             }
             catch (Exception ex)
             {
-                GuiHelper.ShowMessage("Backup script failed");
+                GuiHelper.ShowMessage($"Backup script failed, error: {ex.Message}");
                 Core.Logger.Log(InfoLogLevel.Error, nameof(CreateBackupScriptGui), "Backup script failed", ex);
             }
         }
